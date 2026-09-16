@@ -137,11 +137,36 @@ def get_ghn_config():
         "dashboard_id": 317,
         "jwt_token": ""
     }
+    # Read from environment variables first (for Render deployment)
+    env_token = os.environ.get("GHN_TOKEN", "")
+    env_remote_ip = os.environ.get("GHN_REMOTE_IP", "")
+    env_user_id = os.environ.get("GHN_USER_ID", "")
+    env_dashboard_id = os.environ.get("GHN_DASHBOARD_ID", "")
+    if env_token:
+        default_config["token"] = env_token
+    if env_remote_ip:
+        default_config["remote_ip"] = env_remote_ip
+    if env_user_id:
+        try:
+            default_config["user_id"] = int(env_user_id)
+        except Exception:
+            pass
+    if env_dashboard_id:
+        try:
+            default_config["dashboard_id"] = int(env_dashboard_id)
+        except Exception:
+            pass
+
     if os.path.exists(CONFIG_FILE):
         try:
             with open(CONFIG_FILE, "r", encoding="utf-8") as f:
                 saved = json.load(f)
                 default_config.update(saved)
+                # Always prefer env var token over saved file if env is set
+                if env_token:
+                    default_config["token"] = env_token
+                if env_remote_ip:
+                    default_config["remote_ip"] = env_remote_ip
         except Exception as e:
             print("Config read error:", e)
     return default_config
