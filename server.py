@@ -8,16 +8,18 @@ from updater import parse_looker_response, save_and_merge, DATA_FILE
 PORT = int(os.environ.get("PORT", 8080))
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 BACKLOG_FILE = os.path.join(DIRECTORY, "backlog_data.json")
+ORDERS_FILE = os.path.join(DIRECTORY, "orders_data.json")
 
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
 
     def do_GET(self):
-        if self.path == "/" or self.path == "":
+        url_path = self.path.split("?")[0]
+        if url_path == "/" or url_path == "":
             self.path = "/index.html"
             return super().do_GET()
-        elif self.path == "/api/data":
+        elif url_path == "/api/data":
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Access-Control-Allow-Origin", "*")
@@ -35,7 +37,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             }
             self.wfile.write(json.dumps(response, ensure_ascii=False).encode("utf-8"))
             return
-        elif self.path == "/api/backlog":
+        elif url_path == "/api/backlog":
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Access-Control-Allow-Origin", "*")
@@ -52,7 +54,20 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             }
             self.wfile.write(json.dumps(response, ensure_ascii=False).encode("utf-8"))
             return
-        elif self.path == "/health" or self.path == "/ping":
+        elif url_path == "/api/orders":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            
+            orders_data = {"orders": []}
+            if os.path.exists(ORDERS_FILE):
+                with open(ORDERS_FILE, "r", encoding="utf-8") as f:
+                    orders_data = json.load(f)
+
+            self.wfile.write(json.dumps(orders_data, ensure_ascii=False).encode("utf-8"))
+            return
+        elif url_path == "/health" or url_path == "/ping":
             self.send_response(200)
             self.send_header("Content-Type", "text/plain")
             self.end_headers()
@@ -103,6 +118,87 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "status": "error",
                     "message": f"Failed to parse data: {str(e)}"
                 }
+                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+            return
+        elif self.path == "/api/orders/update":
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_body = self.rfile.read(content_length).decode('utf-8')
+            try:
+                payload = json.loads(post_body)
+                orders_data = {}
+                if os.path.exists(ORDERS_FILE):
+                    with open(ORDERS_FILE, "r", encoding="utf-8") as f:
+                        orders_data = json.load(f)
+                
+                # if raw list of orders provided
+                if isinstance(payload, list):
+                    orders_data["orders"] = payload
+                    orders_data["records_count"] = len(payload)
+                elif isinstance(payload, dict):
+                    if "orders" in payload:
+                        orders_data["orders"] = payload["orders"]
+                        orders_data["records_count"] = len(payload["orders"])
+                        if "summary" in payload:
+                            orders_data["summary"] = payload["summary"]
+                    else:
+                        orders_data = payload
+                
+                with open(ORDERS_FILE, "w", encoding="utf-8") as f:
+                    json.dump(orders_data, f, ensure_ascii=False, indent=2)
+                
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                res = {
+                    "status": "success",
+                    "message": f"Cập nhật thành công {len(orders_data.get('orders', []))} mã đơn hàng!",
+                    "total_orders": len(orders_data.get('orders', []))
+                }
+                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                res = {"status": "error", "message": str(e)}
+                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+            return
+        elif self.path == "/api/orders/toggle-check":
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_body = self.rfile.read(content_length).decode('utf-8')
+            try:
+                payload = json.loads(post_body)
+                order_code = payload.get("order_code", "")
+                checked = payload.get("checked", True)
+                
+                if os.path.exists(ORDERS_FILE):
+                    with open(ORDERS_FILE, "r", encoding="utf-8") as f:
+                        orders_data = json.load(f)
+                    
+                    found = False
+                    for ord in orders_data.get("orders", []):
+                        if ord.get("order_code") == order_code:
+                            ord["checked"] = checked
+                            found = True
+                            break
+                    
+                    if found:
+                        with open(ORDERS_FILE, "w", encoding="utf-8") as f:
+                            json.dump(orders_data, f, ensure_ascii=False, indent=2)
+                
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                res = {"status": "success", "order_code": order_code, "checked": checked}
+                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                res = {"status": "error", "message": str(e)}
                 self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
             return
         else:
