@@ -127,43 +127,36 @@ def save_and_merge(records):
 
     return sorted_records
 
-def sync_metabase_live():
-    """Calls GHN Metabase Token API, fetches card 4885, and updates orders_data.json & backlog_data.json."""
-    import urllib.request
+CONFIG_FILE = os.path.join(os.path.dirname(__file__), "ghn_config.json")
+
+def get_ghn_config():
+    default_config = {
+        "token": "4a90250c-0485-4ec9-8a12-efcbcf76624e",
+        "remote_ip": "14.254.55.151",
+        "user_id": 3007413,
+        "dashboard_id": 317,
+        "jwt_token": ""
+    }
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+                saved = json.load(f)
+                default_config.update(saved)
+        except Exception as e:
+            print("Config read error:", e)
+    return default_config
+
+def save_ghn_config(cfg):
+    current = get_ghn_config()
+    current.update(cfg)
+    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+        json.dump(current, f, ensure_ascii=False, indent=2)
+    return current
+
+def process_and_save_metabase_rows(rows):
+    """Processes raw Metabase rows array into structured order objects and updates backlog_data.json and orders_data.json."""
     import datetime
-
-    token_url = 'https://baocao-v2-api.ghn.vn/baocao-service/report/dashboard/metabase-token'
-    token_headers = {
-        'accept': 'application/json, text/plain, */*',
-        'content-type': 'application/json',
-        'origin': 'https://baocao.ghn.vn',
-        'referer': 'https://baocao.ghn.vn/',
-        'remote-ip': '14.254.55.151',
-        'token': '4a90250c-0485-4ec9-8a12-efcbcf76624e',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36'
-    }
-    token_data = json.dumps({'user_id': 3007413, 'dashboard_id': 317}).encode('utf-8')
-    req = urllib.request.Request(token_url, data=token_data, headers=token_headers, method='POST')
-
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        res = json.loads(resp.read().decode('utf-8'))
-        jwt_token = res['data']['token']
-
-    query_url = f'https://data-bi.ghn.vn/api/embed/dashboard/{jwt_token}/dashcard/6243/card/4885?parameters=%7B%22kho%22%3Anull%2C%22ma_kho%22%3A%5B%2220335000%22%5D%2C%22phan_loai%22%3Anull%7D'
-    query_headers = {
-        'accept': 'application/json',
-        'content-type': 'application/json',
-        'referer': 'https://data-bi.ghn.vn/embed/sdk/v1',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36',
-        'x-metabase-client': 'embedding-simple',
-        'x-metabase-embed-referrer': 'https://baocao.ghn.vn/dashboards/6a71852ca20df68be00411c2',
-        'x-metabase-locale': 'en'
-    }
-    req2 = urllib.request.Request(query_url, headers=query_headers, method='GET')
-    with urllib.request.urlopen(req2, timeout=60) as resp2:
-        query_res = json.loads(resp2.read().decode('utf-8'))
-        rows = query_res.get('data', {}).get('rows', [])
-
+    
     formatted_orders = []
     unique_packages = set()
     total_weight = 0.0
@@ -321,4 +314,48 @@ def sync_metabase_live():
         json.dump(backlog_output, f, ensure_ascii=False, indent=2)
 
     return len(formatted_orders)
+
+def sync_metabase_live(override_token=None, override_jwt=None):
+    """Calls GHN Metabase Token API, fetches card 4885, and updates orders_data.json & backlog_data.json."""
+    import urllib.request
+
+    cfg = get_ghn_config()
+    token = override_token or cfg.get('token', '')
+    jwt_token = override_jwt or cfg.get('jwt_token', '')
+
+    if not jwt_token or override_token:
+        token_url = 'https://baocao-v2-api.ghn.vn/baocao-service/report/dashboard/metabase-token'
+        token_headers = {
+            'accept': 'application/json, text/plain, */*',
+            'content-type': 'application/json',
+            'origin': 'https://baocao.ghn.vn',
+            'referer': 'https://baocao.ghn.vn/',
+            'remote-ip': cfg.get('remote_ip', '14.254.55.151'),
+            'token': token,
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36'
+        }
+        token_data = json.dumps({'user_id': cfg.get('user_id', 3007413), 'dashboard_id': cfg.get('dashboard_id', 317)}).encode('utf-8')
+        req = urllib.request.Request(token_url, data=token_data, headers=token_headers, method='POST')
+
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            res = json.loads(resp.read().decode('utf-8'))
+            jwt_token = res['data']['token']
+            save_ghn_config({'token': token, 'jwt_token': jwt_token})
+
+    query_url = f'https://data-bi.ghn.vn/api/embed/dashboard/{jwt_token}/dashcard/6243/card/4885?parameters=%7B%22kho%22%3Anull%2C%22ma_kho%22%3A%5B%2220335000%22%5D%2C%22phan_loai%22%3Anull%7D'
+    query_headers = {
+        'accept': 'application/json',
+        'content-type': 'application/json',
+        'referer': 'https://data-bi.ghn.vn/embed/sdk/v1',
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36',
+        'x-metabase-client': 'embedding-simple',
+        'x-metabase-embed-referrer': 'https://baocao.ghn.vn/dashboards/6a71852ca20df68be00411c2',
+        'x-metabase-locale': 'en'
+    }
+    req2 = urllib.request.Request(query_url, headers=query_headers, method='GET')
+    with urllib.request.urlopen(req2, timeout=60) as resp2:
+        query_res = json.loads(resp2.read().decode('utf-8'))
+        rows = query_res.get('data', {}).get('rows', [])
+
+    return process_and_save_metabase_rows(rows)
 

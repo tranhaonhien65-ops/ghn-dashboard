@@ -139,6 +139,11 @@
           <span id="countdownTimer" class="font-mono text-ghn-blue dark:text-sky-400 font-bold text-[11px] bg-white dark:bg-slate-900 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800">29:59</span>
         </div>
 
+        <button onclick="openSyncModal()" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-md shadow-emerald-500/20 active:scale-95 transition" title="Cài đặt cầu nối đồng bộ tự động">
+          <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+          <span>Cầu Nối 1-Click</span>
+        </button>
+
         <button onclick="manualSyncNow()" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-ghn-orange to-orange-600 hover:from-ghn-orange-hover hover:to-orange-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition" title="Làm mới số liệu ngay">
           <i data-lucide="refresh-cw" id="syncIcon" class="w-3.5 h-3.5"></i>
           <span>Làm mới</span>
@@ -1083,6 +1088,141 @@
           <span>Cập nhật ngay</span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- SYNC BRIDGE MODAL (BOOKMARKLET & TOKEN MANAGER) -->
+  <div id="syncBridgeModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-700 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl transition-colors max-h-[90vh] overflow-y-auto custom-scrollbar">
+      
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+            <i data-lucide="zap" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <span>Cầu Nối Đồng Bộ Tự Động GHN Metabase</span>
+              <span class="text-[10px] bg-emerald-500/10 text-emerald-500 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">Khuyên dùng</span>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Tự động bắt dữ liệu từ trình duyệt &amp; đồng bộ về Dashboard không cần F12</p>
+          </div>
+        </div>
+        <button onclick="closeSyncModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Tab Switcher Inside Modal -->
+      <div class="flex items-center bg-slate-100 dark:bg-slate-950 p-1 rounded-xl text-xs gap-1">
+        <button onclick="switchSyncModalTab('bookmarklet')" id="btnTabModalBookmarklet" class="flex-1 py-2 rounded-lg font-bold bg-emerald-600 text-white shadow-sm transition">⚡ Dấu Trang 1-Click (Dễ nhất)</button>
+        <button onclick="switchSyncModalTab('userscript')" id="btnTabModalUserscript" class="flex-1 py-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition">🤖 Tiện Ích Tự Động 100%</button>
+        <button onclick="switchSyncModalTab('manual')" id="btnTabModalManual" class="flex-1 py-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition">🔑 Nhập Token / cURL</button>
+      </div>
+
+      <!-- TAB 1: BOOKMARKLET -->
+      <div id="modalTabBookmarklet" class="space-y-4">
+        <div class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 rounded-xl p-4 text-xs space-y-2">
+          <div class="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+            <i data-lucide="sparkles" class="w-4 h-4"></i> Hướng dẫn kích hoạt 3 bước (Chỉ làm 1 lần duy nhất):
+          </div>
+          <ol class="list-decimal list-inside space-y-1 text-slate-700 dark:text-slate-300">
+            <li><strong>Kéo nút màu xanh bên dưới</strong> thả lên <strong>thanh Dấu trang (Bookmark bar)</strong> của Cốc Cốc / Chrome (hoặc bấm nút "Sao chép mã").</li>
+            <li>Mở tab trang web <strong><a href="https://baocao.ghn.vn" target="_blank" class="text-ghn-blue underline font-bold">baocao.ghn.vn</a></strong>.</li>
+            <li>Bấm vào nút <strong>"⚡ Đồng Bộ GHN"</strong> trên thanh dấu trang &rarr; Toàn bộ số liệu 6.000+ đơn sẽ được cập nhật ngay lập tức!</li>
+          </ol>
+        </div>
+
+        <!-- Draggable Button -->
+        <div class="flex flex-col items-center justify-center p-6 bg-slate-50 dark:bg-slate-950/80 border-2 border-dashed border-emerald-500/40 rounded-2xl gap-3 text-center">
+          <span class="text-xs text-slate-500 dark:text-slate-400">👇 Kéo nút này thả vào thanh Bookmark của trình duyệt:</span>
+          <a id="dragBookmarkletLink" href="javascript:(async function(){const t=document.createElement('div');t.style.cssText='position:fixed;top:24px;right:24px;z-index:9999999;background:linear-gradient(135deg,#0068a7,#0284c7);color:white;padding:16px 24px;border-radius:16px;font-family:sans-serif;font-size:14px;box-shadow:0 12px 30px rgba(0,0,0,0.35);font-weight:bold;transition:all 0.3s;display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,0.2);';t.innerHTML='<span style=\x22font-size:22px;\x22>⏳</span> <span>Đang trích xuất dữ liệu kho GHN...</span>';document.body.appendChild(t);try{let k=localStorage.getItem('token')||localStorage.getItem('accessToken')||'';if(!k){for(let i=0;i<localStorage.length;i++){const s=localStorage.key(i),v=localStorage.getItem(s);if(v&&v.includes('token')&&v.length>20){try{const p=JSON.parse(v);if(p.token)k=p.token;else if(p.accessToken)k=p.accessToken;}catch(e){}}}}const h={'accept':'application/json, text/plain, */*','content-type':'application/json'};if(k)h['token']=k;const rT=await fetch('https://baocao-v2-api.ghn.vn/baocao-service/report/dashboard/metabase-token',{method:'POST',headers:h,body:JSON.stringify({user_id:3007413,dashboard_id:317})});let jT='';if(rT.ok){const d=await rT.json();jT=d?.data?.token||'';}let payload={token:k,jwt_token:jT,timestamp:new Date().toISOString()};if(jT){t.innerHTML='<span style=\x22font-size:22px;\x22>📦</span> <span>Đang tải danh sách mã đơn từ Metabase...</span>';const qR=await fetch(`https://data-bi.ghn.vn/api/embed/dashboard/${jT}/dashcard/6243/card/4885?parameters=%7B%22kho%22%3Anull%2C%22ma_kho%22%3A%5B%2220335000%22%5D%2C%22phan_loai%22%3Anull%7D`);if(qR.ok){const qJ=await qR.json();payload.rows=qJ?.data?.rows||[];}}t.innerHTML='<span style=\x22font-size:22px;\x22>🚀</span> <span>Đang gửi về Dashboard...</span>';let sMsg='';for(const ep of['https://ghn-dashboard.onrender.com/api/token/update','http://localhost:8080/api/token/update']){try{const res=await fetch(ep,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});if(res.ok){const rJ=await res.json();sMsg=rJ.message||'';break;}}catch(e){}}t.style.background='linear-gradient(135deg, #059669, #10b981)';t.innerHTML=`<span style=\x22font-size:22px;\x22>🎉</span> <span>${sMsg||'Đồng bộ thành công về Dashboard!'}</span>`;setTimeout(()=>{t.remove();},5000);}catch(err){t.style.background='linear-gradient(135deg, #dc2626, #b91c1c)';t.innerHTML=`<span style=\x22font-size:22px;\x22>❌</span> <span>Lỗi: ${err.message}</span>`;setTimeout(()=>{t.remove();},6000);}})();" class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-black px-6 py-3 rounded-2xl shadow-xl shadow-emerald-500/30 cursor-grab active:cursor-grabbing transform hover:scale-105 transition">
+            <i data-lucide="zap" class="w-5 h-5"></i>
+            <span>⚡ Kéo Vào Dấu Trang: Đồng Bộ GHN</span>
+          </a>
+          <button onclick="copyBookmarkletCode()" class="text-xs text-slate-500 hover:text-ghn-orange underline flex items-center gap-1 mt-1">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Hoặc bấm đây để Sao chép mã JavaScript</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 2: USERSCRIPT -->
+      <div id="modalTabUserscript" class="space-y-4 hidden">
+        <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-xl p-4 text-xs space-y-2">
+          <div class="font-bold text-blue-800 dark:text-blue-300 flex items-center gap-1.5">
+            <i data-lucide="bot" class="w-4 h-4"></i> Tiện ích tự động 100% (Zero-Click):
+          </div>
+          <p class="text-slate-700 dark:text-slate-300">
+            Cài đặt tiện ích <strong>Tampermonkey</strong> trên trình duyệt Cốc Cốc / Chrome &rarr; Dán đoạn mã bên dưới vào. Mỗi khi bạn mở tab <code>baocao.ghn.vn</code>, số liệu sẽ tự động đẩy về Dashboard ngầm mà bạn không cần bấm bất kỳ nút nào!
+          </p>
+        </div>
+
+        <div class="relative">
+          <pre id="userscriptCodeBox" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-[11px] text-slate-300 font-mono overflow-x-auto max-h-48 custom-scrollbar">// ==UserScript==
+// @name         GHN Dashboard Auto-Sync Bridge
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  Tự động đồng bộ số liệu Metabase từ baocao.ghn.vn về GHN Dashboard
+// @author       Hao Nhien
+// @match        https://baocao.ghn.vn/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+    async function syncToDashboard() {
+        try {
+            let k = localStorage.getItem('token') || localStorage.getItem('accessToken') || '';
+            if (!k) {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const s = localStorage.key(i), v = localStorage.getItem(s);
+                    if (v && v.includes('token') && v.length > 20) {
+                        try { const p = JSON.parse(v); if (p.token) k = p.token; else if (p.accessToken) k = p.accessToken; } catch(e) {}
+                    }
+                }
+            }
+            const h = { 'accept': 'application/json, text/plain, */*', 'content-type': 'application/json' };
+            if (k) h['token'] = k;
+            const rT = await fetch('https://baocao-v2-api.ghn.vn/baocao-service/report/dashboard/metabase-token', { method: 'POST', headers: h, body: JSON.stringify({ user_id: 3007413, dashboard_id: 317 }) });
+            let jT = '';
+            if (rT.ok) { const d = await rT.json(); jT = d?.data?.token || ''; }
+            let payload = { token: k, jwt_token: jT, timestamp: new Date().toISOString() };
+            if (jT) {
+                const qR = await fetch(`https://data-bi.ghn.vn/api/embed/dashboard/${jT}/dashcard/6243/card/4885?parameters=%7B%22kho%22%3Anull%2C%22ma_kho%22%3A%5B%2220335000%22%5D%2C%22phan_loai%22%3Anull%7D`);
+                if (qR.ok) { const qJ = await qR.json(); payload.rows = qJ?.data?.rows || []; }
+            }
+            for (const ep of ['https://ghn-dashboard.onrender.com/api/token/update', 'http://localhost:8080/api/token/update']) {
+                try { await fetch(ep, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) }); } catch(e) {}
+            }
+            console.log('[GHN Bridge] Synced orders to Dashboard successfully!');
+        } catch(e) {}
+    }
+    setTimeout(syncToDashboard, 3000);
+    setInterval(syncToDashboard, 600000);
+})();</pre>
+          <button onclick="copyUserscriptCode()" class="absolute top-2 right-2 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow transition flex items-center gap-1.5">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Sao chép Script</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 3: MANUAL TOKEN / CURL -->
+      <div id="modalTabManual" class="space-y-4 hidden">
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Dán Token hoặc lệnh cURL mới từ GHN:</label>
+          <textarea id="manualTokenInput" rows="4" placeholder="Dán chuỗi token hoặc lệnh cURL (từ F12 Network) vào đây..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-xs text-slate-800 dark:text-slate-200 font-mono focus:border-ghn-orange focus:outline-none custom-scrollbar resize-none"></textarea>
+        </div>
+        <div class="flex justify-end">
+          <button onclick="submitManualToken()" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-ghn-orange to-orange-600 hover:from-ghn-orange-hover hover:to-orange-700 text-white text-xs font-bold shadow-md shadow-orange-500/20 active:scale-95 transition">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Lưu &amp; Đồng bộ ngay</span>
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -2820,6 +2960,74 @@
       }
       if (activeReport === 'export') {
         renderCharts();
+      }
+    }
+
+    // Sync Bridge Modal Handlers
+    function openSyncModal() {
+      document.getElementById('syncBridgeModal').classList.remove('hidden');
+    }
+    function closeSyncModal() {
+      document.getElementById('syncBridgeModal').classList.add('hidden');
+    }
+    function switchSyncModalTab(tab) {
+      const tabs = ['bookmarklet', 'userscript', 'manual'];
+      tabs.forEach(t => {
+        const pane = document.getElementById('modalTab' + t.charAt(0).toUpperCase() + t.slice(1));
+        const btn = document.getElementById('btnTabModal' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (t === tab) {
+          pane.classList.remove('hidden');
+          btn.className = 'flex-1 py-2 rounded-lg font-bold bg-emerald-600 text-white shadow-sm transition';
+        } else {
+          pane.classList.add('hidden');
+          btn.className = 'flex-1 py-2 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition';
+        }
+      });
+    }
+    function copyBookmarkletCode() {
+      const code = document.getElementById('dragBookmarkletLink').getAttribute('href');
+      navigator.clipboard.writeText(code).then(() => {
+        showToast('📋 Đã sao chép mã Bookmarklet vào bộ nhớ tạm!');
+      }).catch(() => {
+        alert('Vui lòng sao chép thủ công từ thuộc tính liên kết.');
+      });
+    }
+    function copyUserscriptCode() {
+      const code = document.getElementById('userscriptCodeBox').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        showToast('📋 Đã sao chép mã Userscript Tampermonkey!');
+      });
+    }
+    async function submitManualToken() {
+      const input = document.getElementById('manualTokenInput').value.trim();
+      if (!input) return alert('Vui lòng nhập Token hoặc lệnh cURL!');
+      
+      let token = input;
+      let remote_ip = '14.254.55.151';
+
+      if (input.includes('curl')) {
+        const tokenMatch = input.match(/'token:\s*([^']+)'/i) || input.match(/"token:\s*([^"]+)"/i);
+        if (tokenMatch) token = tokenMatch[1].trim();
+        const ipMatch = input.match(/'remote-ip:\s*([^']+)'/i) || input.match(/"remote-ip:\s*([^"]+)"/i);
+        if (ipMatch) remote_ip = ipMatch[1].trim();
+      }
+
+      try {
+        const res = await fetch('/api/token/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: token, remote_ip: remote_ip })
+        });
+        const resJson = await res.json();
+        if (resJson.status === 'success') {
+          closeSyncModal();
+          showToast(resJson.message || '🎉 Đã cập nhật Token thành công!');
+          fetchDashboardData();
+        } else {
+          alert('❌ ' + resJson.message);
+        }
+      } catch(e) {
+        alert('❌ Lỗi kết nối máy chủ: ' + e.message);
       }
     }
   </script>

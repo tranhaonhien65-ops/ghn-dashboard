@@ -273,6 +273,68 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 res = {"status": "error", "message": str(e)}
                 self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
             return
+        elif self.path == "/api/token/update" or self.path == "/api/sync-payload":
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_body = self.rfile.read(content_length).decode('utf-8')
+            try:
+                payload = json.loads(post_body)
+                from updater import save_ghn_config, sync_metabase_live, process_and_save_metabase_rows
+                
+                # If direct rows sent by bookmarklet / userscript
+                if "rows" in payload and isinstance(payload["rows"], list) and len(payload["rows"]) > 0:
+                    count = process_and_save_metabase_rows(payload["rows"])
+                    if "token" in payload and payload["token"]:
+                        save_ghn_config({"token": payload["token"]})
+                    if "jwt_token" in payload and payload["jwt_token"]:
+                        save_ghn_config({"jwt_token": payload["jwt_token"]})
+                    
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    res = {
+                        "status": "success",
+                        "message": f"🎉 Đã đồng bộ thành công {count:,} đơn hàng trực tiếp từ GHN Metabase!".replace(",", "."),
+                        "total_orders": count
+                    }
+                    self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+                    return
+
+                # If token or jwt_token sent
+                cfg_update = {}
+                if "token" in payload and payload["token"]:
+                    cfg_update["token"] = payload["token"]
+                if "jwt_token" in payload and payload["jwt_token"]:
+                    cfg_update["jwt_token"] = payload["jwt_token"]
+                if "remote_ip" in payload and payload["remote_ip"]:
+                    cfg_update["remote_ip"] = payload["remote_ip"]
+                
+                if cfg_update:
+                    save_ghn_config(cfg_update)
+                
+                count = sync_metabase_live(
+                    override_token=payload.get("token"),
+                    override_jwt=payload.get("jwt_token")
+                )
+                
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                res = {
+                    "status": "success",
+                    "message": f"🎉 Đã cập nhật Token và đồng bộ thành công {count:,} đơn hàng!".replace(",", "."),
+                    "total_orders": count
+                }
+                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+            except Exception as e:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                res = {"status": "error", "message": f"Lỗi đồng bộ: {str(e)}"}
+                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+            return
         else:
             self.send_error(404, "Endpoint not found")
 
@@ -280,7 +342,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, token, accept, origin")
         self.end_headers()
 
 def auto_sync_metabase_worker():
