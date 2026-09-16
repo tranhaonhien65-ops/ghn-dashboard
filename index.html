@@ -615,24 +615,34 @@
       </div>
     </div>
 
-    <!-- MAIN ORDERS INTERACTIVE TABLE -->
+    <!-- MAIN ORDERS INTERACTIVE TABLE (METABASE CHI TIẾT MỨC MÃ ĐƠN) -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="list" class="w-5 h-5 text-emerald-400"></i>
+            Chi tiết mức mã đơn & mã kiện (Metabase Card #GHN)
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">Khớp 100% cấu trúc báo cáo Metabase nội bộ GHN &bull; Hỗ trợ máy quét mã vạch Barcode</p>
+        </div>
+      </div>
       <div class="overflow-x-auto custom-scrollbar border border-slate-800 rounded-xl bg-slate-950/80">
         <table class="w-full text-xs text-left border-collapse font-mono">
           <thead>
             <tr class="bg-slate-900 border-b border-slate-800 text-slate-300 uppercase font-semibold font-sans">
-              <th class="p-3 text-center w-12 border-r border-slate-800">
+              <th class="p-3 text-center w-10 border-r border-slate-800">
                 <input type="checkbox" id="masterCheckbox" onchange="toggleMasterCheckbox(this.checked)" class="rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-0 cursor-pointer">
               </th>
-              <th class="p-3 border-r border-slate-800 w-14 text-center">STT</th>
-              <th class="p-3 border-r border-slate-800 text-amber-400">Mã Kiện / Bao Hàng</th>
-              <th class="p-3 border-r border-slate-800 text-sky-400">Mã Vận Đơn (GHN)</th>
-              <th class="p-3 border-r border-slate-800 text-orange-400 font-sans">Khâu Xử Lý</th>
-              <th class="p-3 text-right border-r border-slate-800 text-emerald-400">Khối Lượng</th>
-              <th class="p-3 border-r border-slate-800 font-sans">Thời Gian Nhập / Tồn</th>
-              <th class="p-3 border-r border-slate-800 font-sans">Tuyến / Điểm Đến Kế Tiếp</th>
-              <th class="p-3 text-center border-r border-slate-800 font-sans">Mức Độ Ưu Tiên</th>
-              <th class="p-3 text-center font-sans">Thao Tác</th>
+              <th class="p-3 border-r border-slate-800 text-sky-400">Mã đơn</th>
+              <th class="p-3 border-r border-slate-800 text-amber-400">Mã kiện</th>
+              <th class="p-3 border-r border-slate-800">Mã kho</th>
+              <th class="p-3 border-r border-slate-800 font-sans">Kho</th>
+              <th class="p-3 border-r border-slate-800 font-sans text-orange-400">Phân loại</th>
+              <th class="p-3 border-r border-slate-800 font-sans text-slate-400">Nhóm</th>
+              <th class="p-3 border-r border-slate-800 font-sans text-emerald-400">Tỉnh/TP</th>
+              <th class="p-3 border-r border-slate-800 font-sans">Vào trạng thái lúc</th>
+              <th class="p-3 text-right border-r border-slate-800 font-sans">Số giờ đã nằm</th>
+              <th class="p-3 text-center font-sans">Thao tác</th>
             </tr>
           </thead>
           <tbody id="ordersTableBody" class="divide-y divide-slate-800/60">
@@ -1363,47 +1373,20 @@
     }
 
     function generateSampleOrdersClient() {
-      const stages = [
-        { stage: 'Chờ xuất', status_desc: 'Chờ xe bốc hàng', pkg_count: 949, order_count: 1483, sample: 120, dests: ['SOC Đà Nẵng', 'Bưu Cục Quy Nhơn', 'SOC Nha Trang', 'KTC Tân Bình', 'SOC Pleiku'] },
-        { stage: 'Chờ phân loại', status_desc: 'Chờ tại line chia chọn', pkg_count: 36, order_count: 899, sample: 80, dests: ['Line Sorter A1', 'Line Sorter B2', 'Khu Hàng Quá Khổ'] },
-        { stage: 'Chờ xuất kiện chuyển tiếp', status_desc: 'Luân chuyển liên vùng', pkg_count: 26, order_count: 84, sample: 84, dests: ['KTC Củ Chi', 'KTC Long Biên', 'SOC Buôn Ma Thuột'] },
-        { stage: 'Đang luân chuyển đến KTC', status_desc: 'Trên đường vận chuyển đến KTC', pkg_count: 3783, order_count: 7805, sample: 150, dests: ['Xe tải 77C-123.45', 'Xe tải 77H-889.90', 'Xe trung chuyển Quy Nhơn'] }
+      const realScreenshot = [
+        { ma_don: 'VNGH8054858912', ma_kien: '26YTZ40124', ma_kho: '20335000', kho: 'Kho Trung Chuyển Bình Định', phan_loai: 'Đang luân chuyển đến KTC', nhom: 'Đang luân chuyển đến KTC', tinh_tp: 'Quảng Ninh', vao_trang_thai_luc: 'September 16, 2026, 04:15:00', so_gio_da_nam: 5.5, checked: false },
+        { ma_don: 'VNGH8060075934', ma_kien: '26VVU83401', ma_kho: '20335000', kho: 'Kho Trung Chuyển Bình Định', phan_loai: 'Đang luân chuyển đến KTC', nhom: 'Đang luân chuyển đến KTC', tinh_tp: 'Hồ Chí Minh', vao_trang_thai_luc: 'September 16, 2026, 00:45:00', so_gio_da_nam: 9.0, checked: false },
+        { ma_don: 'VNGH8078262901', ma_kien: '', ma_kho: '20335000', kho: 'Kho Trung Chuyển Bình Định', phan_loai: 'Chờ phân loại', nhom: 'Đang ở KTC', tinh_tp: 'Phú Yên', vao_trang_thai_luc: 'September 16, 2026, 09:15:00', so_gio_da_nam: 0.5, checked: false },
+        { ma_don: 'GYYA3BYV', ma_kien: '26JFA59686', ma_kho: '20335000', kho: 'Kho Trung Chuyển Bình Định', phan_loai: 'Đang luân chuyển đến KTC', nhom: 'Đang luân chuyển đến KTC', tinh_tp: 'Hồ Chí Minh', vao_trang_thai_luc: 'September 16, 2026, 00:45:00', so_gio_da_nam: 9.0, checked: false },
+        { ma_don: 'GYYA3GT8', ma_kien: '26JFA59686', ma_kho: '20335000', kho: 'Kho Trung Chuyển Bình Định', phan_loai: 'Đang luân chuyển đến KTC', nhom: 'Đang luân chuyển đến KTC', tinh_tp: 'Long An', vao_trang_thai_luc: 'September 16, 2026, 00:45:00', so_gio_da_nam: 9.0, checked: false },
+        { ma_don: 'GYYA48AC', ma_kien: '26VVU83401', ma_kho: '20335000', kho: 'Kho Trung Chuyển Bình Định', phan_loai: 'Đang luân chuyển đến KTC', nhom: 'Đang luân chuyển đến KTC', tinh_tp: 'Hồ Chí Minh', vao_trang_thai_luc: 'September 16, 2026, 00:45:00', so_gio_da_nam: 9.0, checked: false },
+        { ma_don: 'GYYA7GY3', ma_kien: '26GUQ31245', ma_kho: '20335000', kho: 'Kho Trung Chuyển Bình Định', phan_loai: 'Đang luân chuyển đến KTC', nhom: 'Đang luân chuyển đến KTC', tinh_tp: 'Hà Nội', vao_trang_thai_luc: 'September 15, 2026, 16:20:00', so_gio_da_nam: 17.4, checked: false },
+        { ma_don: 'GYYA9WUE', ma_kien: '26ULD64931', ma_kho: '20335000', kho: 'Kho Trung Chuyển Bình Định', phan_loai: 'Đang luân chuyển đến KTC', nhom: 'Đang luân chuyển đến KTC', tinh_tp: 'Hồ Chí Minh', vao_trang_thai_luc: 'September 16, 2026, 04:50:00', so_gio_da_nam: 5.0, checked: false },
+        { ma_don: 'GYYADA9E', ma_kien: '26QGK75520', ma_kho: '20335000', kho: 'Kho Trung Chuyển Bình Định', phan_loai: 'Đang luân chuyển đến KTC', nhom: 'Đang luân chuyển đến KTC', tinh_tp: 'Hà Nội', vao_trang_thai_luc: 'September 15, 2026, 23:20:00', so_gio_da_nam: 10.5, checked: false },
+        { ma_don: 'GYYAFHNA', ma_kien: '26PHH75588', ma_kho: '20335000', kho: 'Kho Trung Chuyển Bình Định', phan_loai: 'Đang luân chuyển đến KTC', nhom: 'Đang luân chuyển đến KTC', tinh_tp: 'Quảng Ninh', vao_trang_thai_luc: 'September 16, 2026, 00:45:00', so_gio_da_nam: 9.0, checked: false },
+        { ma_don: 'GYYAG3TL', ma_kien: '26HJC79686', ma_kho: '20335000', kho: 'Kho Trung Chuyển Bình Định', phan_loai: 'Đang luân chuyển đến KTC', nhom: 'Đang luân chuyển đến KTC', tinh_tp: 'Hồ Chí Minh', vao_trang_thai_luc: 'September 16, 2026, 04:50:00', so_gio_da_nam: 5.0, checked: false }
       ];
-      let orders = [];
-      let ordSeq = 10001;
-      let pkgSeq = 2001;
-      const now = new Date();
-      stages.forEach(s => {
-        for (let i = 0; i < s.sample; i++) {
-          const hoursAgo = (Math.random() * 32 + 1).toFixed(1);
-          const inTime = new Date(now.getTime() - hoursAgo * 3600000).toLocaleString('vi-VN');
-          const weight = (Math.random() * 15 + 0.5).toFixed(2);
-          const dest = s.dests[Math.floor(Math.random() * s.dests.length)];
-          let priority = 'Bình thường';
-          if (hoursAgo > 24) priority = 'Ưu tiên cao (>24h)';
-          else if (hoursAgo > 12) priority = 'Cần xử lý (12-24h)';
-
-          orders.push({
-            stt: orders.length + 1,
-            warehouse_id: '20335000',
-            warehouse_name: 'Kho Trung Chuyển Bình Định',
-            package_code: `PKBDI20335-${String(pkgSeq + Math.floor(i / 3)).padStart(4, '0')}`,
-            order_code: `GHNBDI${20335000 + ordSeq + i}`,
-            stage: s.stage,
-            status_desc: s.status_desc,
-            weight_kg: parseFloat(weight),
-            in_time: inTime,
-            hours_in_warehouse: parseFloat(hoursAgo),
-            destination: dest,
-            priority: priority,
-            checked: false,
-            note: ''
-          });
-          ordSeq++;
-        }
-        pkgSeq += 40;
-      });
-      return orders;
+      return realScreenshot;
     }
 
     function filterOrdersByStage(stage) {
@@ -1442,13 +1425,19 @@
       }
 
       filteredOrders = rawOrders.filter(ord => {
+        const ordCode = ord.ma_don || ord.order_code || '';
+        const pkgCode = ord.ma_kien || ord.package_code || '';
+        const pl = ord.phan_loai || ord.stage || '';
+        const tinh = ord.tinh_tp || ord.destination || '';
+        const hours = parseFloat(ord.so_gio_da_nam !== undefined ? ord.so_gio_da_nam : (ord.hours_in_warehouse || 0));
+
         // Stage filter
-        if (stage !== 'all' && ord.stage !== stage) return false;
+        if (stage !== 'all' && pl !== stage) return false;
 
         // Priority / Hour filter
-        if (pri === 'high' && ord.hours_in_warehouse <= 24) return false;
-        if (pri === 'med' && (ord.hours_in_warehouse <= 12 || ord.hours_in_warehouse > 24)) return false;
-        if (pri === 'normal' && ord.hours_in_warehouse > 12) return false;
+        if (pri === 'high' && hours <= 24) return false;
+        if (pri === 'med' && (hours <= 12 || hours > 24)) return false;
+        if (pri === 'normal' && hours > 12) return false;
 
         // Checkbox status filter
         if (chk === 'checked' && !ord.checked) return false;
@@ -1456,10 +1445,10 @@
 
         // Search Query filter
         if (q) {
-          const matchPkg = ord.package_code && ord.package_code.toLowerCase().includes(q);
-          const matchOrd = ord.order_code && ord.order_code.toLowerCase().includes(q);
-          const matchDest = ord.destination && ord.destination.toLowerCase().includes(q);
-          const matchStage = ord.stage && ord.stage.toLowerCase().includes(q);
+          const matchPkg = pkgCode.toLowerCase().includes(q);
+          const matchOrd = ordCode.toLowerCase().includes(q);
+          const matchDest = tinh.toLowerCase().includes(q);
+          const matchStage = pl.toLowerCase().includes(q);
           if (!matchPkg && !matchOrd && !matchDest && !matchStage) return false;
         }
 
@@ -1508,65 +1497,64 @@
       const pageItems = filteredOrders.slice(startIdx, startIdx + ordersPerPageCount);
 
       if (pageItems.length === 0) {
-        tb.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-slate-500 font-sans">Không tìm thấy mã đơn hàng hoặc mã kiện phù hợp với bộ lọc.</td></tr>`;
+        tb.innerHTML = `<tr><td colspan="11" class="p-8 text-center text-slate-500 font-sans">Không tìm thấy mã đơn hàng hoặc mã kiện phù hợp với bộ lọc.</td></tr>`;
         renderOrdersPagination(0, 1);
         return;
       }
 
       let html = '';
       pageItems.forEach((ord, index) => {
-        const itemIdx = startIdx + index + 1;
-        const stageColor = ord.stage.includes('Chờ xuất') ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 
-                           ord.stage.includes('luân chuyển') ? 'text-sky-400 bg-sky-500/10 border-sky-500/20' :
-                           ord.stage.includes('phân loại') ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' :
-                           'text-purple-400 bg-purple-500/10 border-purple-500/20';
+        const ordCode = ord.ma_don || ord.order_code || '';
+        const pkgCode = ord.ma_kien || ord.package_code || '';
+        const mk = ord.ma_kho || ord.warehouse_id || '20335000';
+        const khoName = ord.kho || ord.warehouse_name || 'Kho Trung Chuyển Bình Định';
+        const pl = ord.phan_loai || ord.stage || 'Đang luân chuyển đến KTC';
+        const nhom = ord.nhom || (pl.includes('luân chuyển') ? 'Đang luân chuyển đến KTC' : 'Đang ở KTC');
+        const tinh = ord.tinh_tp || ord.destination || 'Bình Định';
+        const vaoLuc = ord.vao_trang_thai_luc || ord.in_time || 'September 16, 2026';
+        const soGio = parseFloat(ord.so_gio_da_nam !== undefined ? ord.so_gio_da_nam : (ord.hours_in_warehouse || 0));
 
-        const priBadge = ord.hours_in_warehouse > 24 ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">🔴 >24h Cấp bách</span>' :
-                         ord.hours_in_warehouse > 12 ? '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">🟡 12-24h Cần xử lý</span>' :
-                         '<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">🟢 <12h Bình thường</span>';
+        const plColor = pl.includes('Chờ xuất') ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 
+                        pl.includes('luân chuyển') ? 'text-sky-400 bg-sky-500/10 border-sky-500/20' :
+                        pl.includes('phân loại') ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' :
+                        'text-purple-400 bg-purple-500/10 border-purple-500/20';
+
+        const hoursClass = soGio > 24 ? 'text-rose-400 font-bold bg-rose-500/10 px-2 py-0.5 rounded' :
+                           soGio > 12 ? 'text-amber-300 font-semibold' : 'text-slate-200';
 
         const rowBg = ord.checked ? 'bg-emerald-950/20 hover:bg-emerald-950/30' : 'hover:bg-slate-900/60';
 
         html += `
           <tr class="${rowBg} transition">
             <td class="p-3 text-center border-r border-slate-800">
-              <input type="checkbox" onchange="toggleOrderCheck('${ord.order_code}', this.checked)" ${ord.checked ? 'checked' : ''} class="rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-0 cursor-pointer">
+              <input type="checkbox" onchange="toggleOrderCheck('${ordCode}', this.checked)" ${ord.checked ? 'checked' : ''} class="rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-0 cursor-pointer">
             </td>
-            <td class="p-3 text-center border-r border-slate-800 text-slate-500 font-mono">${itemIdx}</td>
             <td class="p-3 border-r border-slate-800">
               <div class="flex items-center justify-between gap-1.5">
-                <span class="font-bold text-amber-300 tracking-wider">${ord.package_code}</span>
-                <button onclick="copyToClipboard('${ord.package_code}', this)" class="text-slate-500 hover:text-slate-200 p-1 rounded hover:bg-slate-800 transition" title="Copy mã kiện">
+                <span class="font-bold text-sky-400 tracking-wider">${ordCode}</span>
+                <button onclick="copyToClipboard('${ordCode}', this)" class="text-slate-500 hover:text-slate-200 p-1 rounded hover:bg-slate-800 transition" title="Copy mã đơn">
                   <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
             </td>
             <td class="p-3 border-r border-slate-800">
               <div class="flex items-center justify-between gap-1.5">
-                <span class="font-bold text-sky-400 tracking-wider">${ord.order_code}</span>
-                <button onclick="copyToClipboard('${ord.order_code}', this)" class="text-slate-500 hover:text-slate-200 p-1 rounded hover:bg-slate-800 transition" title="Copy mã vận đơn">
-                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                </button>
+                <span class="font-bold text-amber-300 tracking-wider">${pkgCode || '<span class=\"text-slate-600 font-normal\">-</span>'}</span>
+                ${pkgCode ? `<button onclick="copyToClipboard('${pkgCode}', this)" class="text-slate-500 hover:text-slate-200 p-1 rounded hover:bg-slate-800 transition" title="Copy mã kiện"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>` : ''}
               </div>
             </td>
+            <td class="p-3 border-r border-slate-800 text-slate-400 font-mono">${mk}</td>
+            <td class="p-3 border-r border-slate-800 font-sans text-slate-200">${khoName}</td>
             <td class="p-3 border-r border-slate-800 font-sans">
-              <span class="px-2 py-0.5 rounded text-[11px] font-semibold border ${stageColor}">${ord.stage}</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-semibold border ${plColor}">${pl}</span>
             </td>
-            <td class="p-3 text-right border-r border-slate-800 text-emerald-400 font-bold">${ord.weight_kg.toFixed(2)} kg</td>
-            <td class="p-3 border-r border-slate-800 font-sans">
-              <div class="text-slate-200">${ord.in_time}</div>
-              <div class="text-[10px] text-slate-400">Tồn: <b class="${ord.hours_in_warehouse > 24 ? 'text-rose-400' : 'text-amber-400'}">${ord.hours_in_warehouse}h</b></div>
-            </td>
-            <td class="p-3 border-r border-slate-800 font-sans text-slate-300">
-              <div class="flex items-center gap-1.5">
-                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-orange-400 shrink-0"></i>
-                <span>${ord.destination || 'Kho KTC Bình Định'}</span>
-              </div>
-            </td>
-            <td class="p-3 text-center border-r border-slate-800 font-sans">${priBadge}</td>
+            <td class="p-3 border-r border-slate-800 font-sans text-slate-400">${nhom}</td>
+            <td class="p-3 border-r border-slate-800 font-sans font-semibold text-emerald-400">${tinh}</td>
+            <td class="p-3 border-r border-slate-800 font-sans text-slate-300">${vaoLuc}</td>
+            <td class="p-3 text-right border-r border-slate-800 font-sans font-mono ${hoursClass}">${soGio.toFixed(1)}</td>
             <td class="p-3 text-center font-sans">
-              <button onclick="toggleOrderCheck('${ord.order_code}', ${!ord.checked})" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition ${ord.checked ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'}">
-                ${ord.checked ? '✓ Đã kiểm' : 'Kiểm tra'}
+              <button onclick="toggleOrderCheck('${ordCode}', ${!ord.checked})" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition ${ord.checked ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'}">
+                ${ord.checked ? '✓ Đã check' : 'Check đơn'}
               </button>
             </td>
           </tr>
@@ -1613,7 +1601,7 @@
     }
 
     async function toggleOrderCheck(orderCode, isChecked) {
-      const ord = rawOrders.find(o => o.order_code === orderCode);
+      const ord = rawOrders.find(o => (o.ma_don === orderCode || o.order_code === orderCode));
       if (ord) {
         ord.checked = isChecked;
         applyOrderFilters();
@@ -1655,75 +1643,65 @@
       });
     }
 
-    // ==================== EXCEL EXPORT FUNCTIONS ====================
+    // ==================== EXCEL EXPORT FUNCTIONS (METABASE SCHEMA) ====================
     function exportFilteredOrdersExcel() {
       if (!filteredOrders.length) return alert('Không có dữ liệu đơn hàng để xuất!');
       const exportRows = filteredOrders.map((o, idx) => ({
-        "STT": idx + 1,
-        "Mã Kho": o.warehouse_id,
-        "Tên Kho": o.warehouse_name,
-        "Mã Kiện / Mã Bao": o.package_code,
-        "Mã Vận Đơn GHN": o.order_code,
-        "Khâu Xử Lý": o.stage,
-        "Trạng Thái Vận Hành": o.status_desc,
-        "Khối Lượng (kg)": o.weight_kg,
-        "Thời Gian Nhập Kho": o.in_time,
-        "Thời Gian Tồn (Giờ)": o.hours_in_warehouse,
-        "Điểm Đến Kế Tiếp": o.destination,
-        "Mức Độ Ưu Tiên": o.priority,
-        "Đã Kiểm Tra": o.checked ? "Đã kiểm" : "Chưa kiểm"
+        "Mã đơn": o.ma_don || o.order_code,
+        "Mã kiện": o.ma_kien || o.package_code || "",
+        "Mã kho": o.ma_kho || o.warehouse_id || "20335000",
+        "Kho": o.kho || o.warehouse_name || "Kho Trung Chuyển Bình Định",
+        "Phân loại": o.phan_loai || o.stage,
+        "Nhóm": o.nhom || "Đang ở KTC",
+        "Tỉnh/TP": o.tinh_tp || o.destination,
+        "Vào trạng thái lúc": o.vao_trang_thai_luc || o.in_time,
+        "Số giờ đã nằm": o.so_gio_da_nam !== undefined ? o.so_gio_da_nam : o.hours_in_warehouse,
+        "Đã kiểm tra": o.checked ? "Đã kiểm" : "Chưa kiểm"
       }));
 
       const ws = XLSX.utils.json_to_sheet(exportRows);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "DanhSach_MaDon_Loc");
-      XLSX.writeFile(wb, `GHN_MaDon_KTC_BinhDinh_${new Date().toISOString().slice(0,10)}.xlsx`);
+      XLSX.utils.book_append_sheet(wb, ws, "Chi_tiet_muc_ma_don");
+      XLSX.writeFile(wb, `GHN_ChiTiet_MaDon_KTC_BinhDinh_${new Date().toISOString().slice(0,10)}.xlsx`);
       showToast('📥 Đã tải file Excel danh sách mã đơn thành công!');
     }
 
     function exportAllOrdersExcel() {
-      // Build full dataset formatted
-      const allRows = rawOrders.map((o, idx) => ({
-        "STT": idx + 1,
-        "Mã Kho": o.warehouse_id || "20335000",
-        "Tên Kho": o.warehouse_name || "Kho Trung Chuyển Bình Định",
-        "Mã Kiện / Mã Bao": o.package_code,
-        "Mã Vận Đơn GHN": o.order_code,
-        "Khâu Xử Lý": o.stage,
-        "Trạng Thái Vận Hành": o.status_desc,
-        "Khối Lượng (kg)": o.weight_kg,
-        "Thời Gian Nhập Kho": o.in_time,
-        "Thời Gian Tồn (Giờ)": o.hours_in_warehouse,
-        "Điểm Đến Kế Tiếp": o.destination,
-        "Mức Độ Ưu Tiên": o.priority,
-        "Đã Kiểm Tra": o.checked ? "Đã kiểm" : "Chưa kiểm"
+      const allRows = rawOrders.map(o => ({
+        "Mã đơn": o.ma_don || o.order_code,
+        "Mã kiện": o.ma_kien || o.package_code || "",
+        "Mã kho": o.ma_kho || o.warehouse_id || "20335000",
+        "Kho": o.kho || o.warehouse_name || "Kho Trung Chuyển Bình Định",
+        "Phân loại": o.phan_loai || o.stage,
+        "Nhóm": o.nhom || "Đang ở KTC",
+        "Tỉnh/TP": o.tinh_tp || o.destination,
+        "Vào trạng thái lúc": o.vao_trang_thai_luc || o.in_time,
+        "Số giờ đã nằm": o.so_gio_da_nam !== undefined ? o.so_gio_da_nam : o.hours_in_warehouse,
+        "Đã kiểm tra": o.checked ? "Đã kiểm" : "Chưa kiểm"
       }));
 
       const ws = XLSX.utils.json_to_sheet(allRows);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "ToanBo_10271_MaDon_TonKho");
+      XLSX.utils.book_append_sheet(wb, ws, "ToanBo_MaDon_Metabase");
       XLSX.writeFile(wb, `GHN_Full_MaDon_KTC_BinhDinh_20335000_${new Date().toISOString().slice(0,10)}.xlsx`);
       showToast('📥 Đã xuất file Excel toàn bộ 10.271 mã đơn KTC Bình Định!');
     }
 
     function exportStageOrdersExcel(stageName) {
-      const stageRows = rawOrders.filter(o => o.stage === stageName);
+      const stageRows = rawOrders.filter(o => (o.phan_loai === stageName || o.stage === stageName));
       const rowsToExport = stageRows.length > 0 ? stageRows : rawOrders;
 
-      const exportRows = rowsToExport.map((o, idx) => ({
-        "STT": idx + 1,
-        "Mã Kho": o.warehouse_id || "20335000",
-        "Tên Kho": o.warehouse_name || "Kho Trung Chuyển Bình Định",
-        "Mã Kiện / Bao": o.package_code,
-        "Mã Vận Đơn GHN": o.order_code,
-        "Khâu Xử Lý": o.stage,
-        "Trạng Thái Vận Hành": o.status_desc,
-        "Khối Lượng (kg)": o.weight_kg,
-        "Thời Gian Nhập Kho": o.in_time,
-        "Thời Gian Tồn (Giờ)": o.hours_in_warehouse,
-        "Điểm Đến Kế Tiếp": o.destination,
-        "Mức Độ Ưu Tiên": o.priority,
-        "Đã Kiểm Tra": o.checked ? "Đã kiểm" : "Chưa kiểm"
+      const exportRows = rowsToExport.map(o => ({
+        "Mã đơn": o.ma_don || o.order_code,
+        "Mã kiện": o.ma_kien || o.package_code || "",
+        "Mã kho": o.ma_kho || o.warehouse_id || "20335000",
+        "Kho": o.kho || o.warehouse_name || "Kho Trung Chuyển Bình Định",
+        "Phân loại": o.phan_loai || o.stage,
+        "Nhóm": o.nhom || "Đang ở KTC",
+        "Tỉnh/TP": o.tinh_tp || o.destination,
+        "Vào trạng thái lúc": o.vao_trang_thai_luc || o.in_time,
+        "Số giờ đã nằm": o.so_gio_da_nam !== undefined ? o.so_gio_da_nam : o.hours_in_warehouse,
+        "Đã kiểm tra": o.checked ? "Đã kiểm" : "Chưa kiểm"
       }));
 
       const safeStageName = stageName.replace(/[^a-zA-Z0-9]/g, '_');
@@ -1737,38 +1715,45 @@
     function downloadExcelTemplate() {
       const templateData = [
         {
-          "STT": 1,
-          "Mã Kho": "20335000",
-          "Tên Kho": "Kho Trung Chuyển Bình Định",
-          "Mã Kiện": "PKBDI20335-001",
-          "Mã Vận Đơn": "GHNBDI20335001",
-          "Khâu Xử Lý": "Chờ xuất",
-          "Trạng Thái": "Chờ xe bốc hàng",
-          "Khối Lượng (kg)": 2.5,
-          "Thời Gian Nhập": new Date().toLocaleString('vi-VN'),
-          "Điểm Đến": "SOC Đà Nẵng",
-          "Mức Độ Ưu Tiên": "Bình thường"
+          "Mã đơn": "VNGH8054858912",
+          "Mã kiện": "26YTZ40124",
+          "Mã kho": "20335000",
+          "Kho": "Kho Trung Chuyển Bình Định",
+          "Phân loại": "Đang luân chuyển đến KTC",
+          "Nhóm": "Đang luân chuyển đến KTC",
+          "Tỉnh/TP": "Quảng Ninh",
+          "Vào trạng thái lúc": "September 16, 2026, 04:15:00",
+          "Số giờ đã nằm": 5.5
         },
         {
-          "STT": 2,
-          "Mã Kho": "20335000",
-          "Tên Kho": "Kho Trung Chuyển Bình Định",
-          "Mã Kiện": "PKBDI20335-002",
-          "Mã Vận Đơn": "GHNBDI20335002",
-          "Khâu Xử Lý": "Chờ phân loại",
-          "Trạng Thái": "Chờ tại line chia chọn",
-          "Khối Lượng (kg)": 1.2,
-          "Thời Gian Nhập": new Date().toLocaleString('vi-VN'),
-          "Điểm Đến": "Bưu Cục Quy Nhơn",
-          "Mức Độ Ưu Tiên": "Ưu tiên cao (>24h)"
+          "Mã đơn": "GYYA3BYV",
+          "Mã kiện": "26JFA59686",
+          "Mã kho": "20335000",
+          "Kho": "Kho Trung Chuyển Bình Định",
+          "Phân loại": "Chờ xuất",
+          "Nhóm": "Đang ở KTC",
+          "Tỉnh/TP": "Hồ Chí Minh",
+          "Vào trạng thái lúc": "September 16, 2026, 00:45:00",
+          "Số giờ đã nằm": 9.0
+        },
+        {
+          "Mã đơn": "VNGH8078262901",
+          "Mã kiện": "",
+          "Mã kho": "20335000",
+          "Kho": "Kho Trung Chuyển Bình Định",
+          "Phân loại": "Chờ phân loại",
+          "Nhóm": "Đang ở KTC",
+          "Tỉnh/TP": "Phú Yên",
+          "Vào trạng thái lúc": "September 16, 2026, 09:15:00",
+          "Số giờ đã nằm": 0.5
         }
       ];
 
       const ws = XLSX.utils.json_to_sheet(templateData);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Mau_Nhap_MaDon_GHN");
-      XLSX.writeFile(wb, "GHN_Mau_Nhap_MaDon_KTC_BinhDinh.xlsx");
-      showToast('📋 Đã tải file Excel mẫu chuẩn!');
+      XLSX.utils.book_append_sheet(wb, ws, "Mau_Metabase_GHN");
+      XLSX.writeFile(wb, "GHN_Mau_Metabase_KTC_BinhDinh.xlsx");
+      showToast('📋 Đã tải file Excel mẫu chuẩn Metabase!');
     }
 
     // ==================== MODAL & IMPORT LOGIC ====================
@@ -1798,26 +1783,23 @@
 
           const parsedOrders = jsonData.map((row, idx) => ({
             stt: idx + 1,
-            warehouse_id: row["Mã Kho"] || row["warehouse_id"] || "20335000",
-            warehouse_name: row["Tên Kho"] || row["warehouse_name"] || "Kho Trung Chuyển Bình Định",
-            package_code: row["Mã Kiện"] || row["Mã Kiện / Mã Bao"] || row["package_code"] || `PKBDI20335-${String(idx+1).padStart(4,'0')}`,
-            order_code: row["Mã Vận Đơn"] || row["Mã Vận Đơn GHN"] || row["order_code"] || `GHNBDI${20335000 + idx + 1}`,
-            stage: row["Khâu Xử Lý"] || row["stage"] || "Chờ xuất",
-            status_desc: row["Trạng Thái"] || row["Trạng Thái Vận Hành"] || row["status_desc"] || "Chờ xe bốc hàng",
-            weight_kg: parseFloat(row["Khối Lượng (kg)"] || row["weight_kg"] || 1.0),
-            in_time: row["Thời Gian Nhập"] || row["Thời Gian Nhập Kho"] || new Date().toLocaleString('vi-VN'),
-            hours_in_warehouse: parseFloat(row["Thời Gian Tồn (Giờ)"] || row["hours_in_warehouse"] || 2.0),
-            destination: row["Điểm Đến"] || row["Điểm Đến Kế Tiếp"] || "Kho KTC Bình Định",
-            priority: row["Mức Độ Ưu Tiên"] || "Bình thường",
-            checked: false,
-            note: ''
+            ma_don: row["Mã đơn"] || row["Mã Vận Đơn"] || row["order_code"] || row["ma_don"] || `GHN${idx+1}`,
+            ma_kien: row["Mã kiện"] || row["Mã Kiện"] || row["package_code"] || row["ma_kien"] || "",
+            ma_kho: row["Mã kho"] || row["Mã Kho"] || row["ma_kho"] || "20335000",
+            kho: row["Kho"] || row["Tên Kho"] || row["kho"] || "Kho Trung Chuyển Bình Định",
+            phan_loai: row["Phân loại"] || row["Khâu Xử Lý"] || row["phan_loai"] || "Đang luân chuyển đến KTC",
+            nhom: row["Nhóm"] || row["nhom"] || "Đang ở KTC",
+            tinh_tp: row["Tỉnh/TP"] || row["Điểm Đến"] || row["tinh_tp"] || "Bình Định",
+            vao_trang_thai_luc: row["Vào trạng thái lúc"] || row["Thời Gian Nhập"] || row["vao_trang_thai_luc"] || new Date().toLocaleString('vi-VN'),
+            so_gio_da_nam: parseFloat(row["Số giờ đã nằm"] || row["Thời Gian Tồn (Giờ)"] || row["so_gio_da_nam"] || 1.0),
+            checked: false
           }));
 
           rawOrders = parsedOrders;
           applyOrderFilters();
           saveOrdersToBackend(parsedOrders);
           closeOrderImportModal();
-          showToast(`🎉 Đã nạp thành công ${parsedOrders.length} mã đơn từ file Excel!`);
+          showToast(`🎉 Đã nạp thành công ${parsedOrders.length} mã đơn từ file Excel Metabase!`);
         } catch(err) {
           alert('Lỗi đọc file Excel: ' + err.message);
         }
@@ -1839,19 +1821,16 @@
           const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
           newOrders = lines.map((code, idx) => ({
             stt: rawOrders.length + idx + 1,
-            warehouse_id: "20335000",
-            warehouse_name: "Kho Trung Chuyển Bình Định",
-            package_code: `PKBDI20335-${String(idx + 1).padStart(4, '0')}`,
-            order_code: code,
-            stage: "Chờ xuất",
-            status_desc: "Chờ xe bốc hàng",
-            weight_kg: 1.5,
-            in_time: new Date().toLocaleString('vi-VN'),
-            hours_in_warehouse: 1.0,
-            destination: "Kho KTC Bình Định",
-            priority: "Bình thường",
-            checked: false,
-            note: ''
+            ma_don: code,
+            ma_kien: '',
+            ma_kho: "20335000",
+            kho: "Kho Trung Chuyển Bình Định",
+            phan_loai: "Chờ xuất",
+            nhom: "Đang ở KTC",
+            tinh_tp: "Bình Định",
+            vao_trang_thai_luc: new Date().toLocaleString('vi-VN'),
+            so_gio_da_nam: 1.0,
+            checked: false
           }));
         }
 
