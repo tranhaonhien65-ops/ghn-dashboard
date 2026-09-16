@@ -1161,15 +1161,18 @@
 
         <div class="relative">
           <pre id="userscriptCodeBox" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-[11px] text-slate-300 font-mono overflow-x-auto max-h-48 custom-scrollbar">// ==UserScript==
-// @name         GHN Dashboard Auto-Sync Master
+// @name         GHN Dashboard Auto-Sync Master 5.0
 // @namespace    http://tampermonkey.net/
-// @version      4.0
-// @description  Tự động bắt gói tin và đồng bộ số liệu Metabase từ baocao.ghn.vn về GHN Dashboard
+// @version      5.0
+// @description  Tự động bắt gói tin và đồng bộ 100% số liệu Metabase từ baocao.ghn.vn về GHN Dashboard
 // @author       Hao Nhien
 // @match        https://baocao.ghn.vn/*
 // @match        https://data-bi.ghn.vn/*
+// @allFrames    true
 // @run-at       document-start
 // @grant        GM_xmlhttpRequest
+// @connect      baocao-v2-api.ghn.vn
+// @connect      data-bi.ghn.vn
 // @connect      ghn-dashboard.onrender.com
 // @connect      localhost
 // @connect      127.0.0.1
@@ -1205,7 +1208,11 @@
                     try {
                         const res = JSON.parse(r.responseText);
                         const count = res.total_orders || payload.rows?.length || 0;
-                        showFloatingBadge(`🎉 Đã đồng bộ ${count.toLocaleString('vi-VN')} đơn về Dashboard!`, '#059669');
+                        if (count > 0) {
+                            showFloatingBadge(`🎉 Đã đồng bộ ${count.toLocaleString('vi-VN')} đơn về Dashboard!`, '#059669');
+                        } else {
+                            showFloatingBadge(`🔑 Đã cập nhật Token! Đang tải danh sách đơn...`, '#0068a7');
+                        }
                     } catch(e) {
                         showFloatingBadge(`🎉 Đã đẩy dữ liệu thành công!`, '#059669');
                     }
@@ -1214,6 +1221,42 @@
                     console.warn('[GHN Sync] Gửi thất bại tới ' + url, e);
                 }
             });
+        });
+    }
+
+    function fetchDirectCard4885(jwt, tk) {
+        if (!jwt || window.__is_fetching_card_4885) return;
+        window.__is_fetching_card_4885 = true;
+        showFloatingBadge(`⏳ Đang tải toàn bộ dữ liệu đơn từ Metabase...`, '#0068a7');
+        
+        const cardUrl = `https://data-bi.ghn.vn/api/embed/dashboard/${jwt}/dashcard/6243/card/4885?parameters=%7B%22kho%22%3Anull%2C%22ma_kho%22%3A%5B%2220335000%22%5D%2C%22phan_loai%22%3Anull%7D`;
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url: cardUrl,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'x-metabase-client': 'embedding-simple',
+                'x-metabase-embed-referrer': 'https://baocao.ghn.vn/dashboards/6a71852ca20df68be00411c2',
+                'x-metabase-locale': 'en'
+            },
+            onload: function(r) {
+                window.__is_fetching_card_4885 = false;
+                try {
+                    const data = JSON.parse(r.responseText);
+                    const rows = data?.data?.rows || [];
+                    if (rows.length > 0) {
+                        showFloatingBadge(`📦 Đang đồng bộ ${rows.length.toLocaleString('vi-VN')} đơn về Dashboard...`, '#0068a7');
+                        sendToDashboard({ rows: rows, jwt_token: jwt, token: tk });
+                    }
+                } catch(e) {
+                    console.error('Error parsing card 4885:', e);
+                }
+            },
+            onerror: function(e) {
+                window.__is_fetching_card_4885 = false;
+                console.error('Error fetching card 4885:', e);
+            }
         });
     }
 
@@ -1243,6 +1286,7 @@
                     if (jwt) {
                         window.__GHN_JWT = jwt;
                         sendToDashboard({ token: window.__GHN_TOKEN, remote_ip: window.__GHN_REMOTE_IP, jwt_token: jwt });
+                        fetchDirectCard4885(jwt, window.__GHN_TOKEN);
                     }
                 }).catch(() => {});
             } else if (url.includes('card/4885') || url.includes('card/4884')) {
@@ -1285,6 +1329,7 @@
                     if (jwt) {
                         window.__GHN_JWT = jwt;
                         sendToDashboard({ token: window.__GHN_TOKEN, remote_ip: window.__GHN_REMOTE_IP, jwt_token: jwt });
+                        fetchDirectCard4885(jwt, window.__GHN_TOKEN);
                     }
                 } else if (url.includes('card/4885') || url.includes('card/4884')) {
                     const data = JSON.parse(this.responseText);
@@ -1322,23 +1367,21 @@
                     if (m && m[1].length > 40) { jwt = m[1]; break; }
                 }
             }
+            if (!jwt && location.hostname === 'data-bi.ghn.vn') {
+                const m = location.pathname.match(/dashboard\/([a-zA-Z0-9_\-\.]+)/);
+                if (m && m[1].length > 40) jwt = m[1];
+            }
 
             if (jwt) {
-                const qR = await fetch(`https://data-bi.ghn.vn/api/embed/dashboard/${jwt}/dashcard/6243/card/4885?parameters=%7B%22kho%22%3Anull%2C%22ma_kho%22%3A%5B%2220335000%22%5D%2C%22phan_loai%22%3Anull%7D`);
-                if (qR.ok) {
-                    const qJ = await qR.json();
-                    const rows = qJ?.data?.rows || [];
-                    if (rows.length > 0) {
-                        sendToDashboard({ rows: rows, jwt_token: jwt, token: tk });
-                    }
-                }
+                window.__GHN_JWT = jwt;
+                fetchDirectCard4885(jwt, tk);
             }
         } catch(e) {}
     }
 
-    setTimeout(activeScanner, 2000);
-    setTimeout(activeScanner, 5000);
-    setInterval(activeScanner, 300000);
+    setTimeout(activeScanner, 1500);
+    setTimeout(activeScanner, 4000);
+    setInterval(activeScanner, 180000); // Mỗi 3 phút tự động quét và sync
 })();</pre>
           <button onclick="copyUserscriptCode()" class="absolute top-2 right-2 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow transition flex items-center gap-1.5">
             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
