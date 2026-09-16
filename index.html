@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GHN Operations & Real-time Backlog Portal - KTC Bình Định (20335000)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ApexCharts -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- SheetJS for Excel export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ghn: {
+              orange: '#f26522',
+              'orange-hover': '#d9531e',
+              blue: '#003b64',
+              'blue-light': '#006699',
+              dark: '#0f172a',
+              card: '#1e293b',
+              border: '#334155'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(150,150,150,0.3); border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(150,150,150,0.5); }
+    .tab-active {
+      background: linear-gradient(to right, #f26522, #ea580c);
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 4px 14px 0 rgba(242, 101, 34, 0.35);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastNotification" class="fixed bottom-5 right-5 z-50 bg-slate-900 border border-emerald-500/40 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none">
+    <div class="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+      <i data-lucide="check-circle" class="w-4 h-4"></i>
+    </div>
+    <div>
+      <div class="text-xs font-bold text-slate-100">Đã cập nhật dữ liệu tự động</div>
+      <div id="toastMessage" class="text-[11px] text-slate-400">Số liệu mới nhất từ hệ thống GHN</div>
+    </div>
+  </div>
+
+  <!-- TOP HEADER & MAIN NAVIGATION -->
+  <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 px-4 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-ghn-orange to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20">
+          <i data-lucide="layout-dashboard" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded border border-orange-500/20">GHN Express Analytics</span>
+            <span id="liveStatus" class="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Auto-Sync Bật
+            </span>
+          </div>
+          <h1 class="text-lg font-bold text-white tracking-tight">
+            TRUNG TÂM BÁO CÁO VẬN HÀNH KHO KTC BÌNH ĐỊNH (20335000)
+          </h1>
+        </div>
+      </div>
+
+      <!-- Report Switcher Tabs -->
+      <div class="flex items-center bg-slate-950 p-1.5 rounded-xl border border-slate-800 text-xs">
+        <button onclick="switchReport('export')" id="tabBtnExport" class="tab-active flex items-center gap-2 px-4 py-2 rounded-lg transition">
+          <i data-lucide="boxes" class="w-4 h-4"></i>
+          <span>1. Báo Cáo Xuất Kiện</span>
+        </button>
+        <button onclick="switchReport('backlog')" id="tabBtnBacklog" class="text-slate-400 hover:text-slate-200 flex items-center gap-2 px-4 py-2 rounded-lg transition">
+          <i data-lucide="clock-alert" class="w-4 h-4 text-amber-400"></i>
+          <span>2. Tồn Đọng KTC Bình Định (20335000)</span>
+        </button>
+      </div>
+
+      <!-- Auto-Sync & Action Controls -->
+      <div class="flex items-center flex-wrap gap-2.5">
+        <!-- Auto-Refresh Selector & Countdown -->
+        <div class="flex items-center gap-2 bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 text-xs">
+          <i data-lucide="timer" class="w-3.5 h-3.5 text-orange-400"></i>
+          <select id="autoRefreshInterval" onchange="changeRefreshInterval()" class="bg-transparent text-slate-200 text-xs outline-none cursor-pointer">
+            <option value="1800" selected>Tự làm mới: Mỗi 30 phút (Chuẩn GHN)</option>
+            <option value="900">Tự làm mới: Mỗi 15 phút</option>
+            <option value="300">Tự làm mới: Mỗi 5 phút</option>
+            <option value="60">Tự làm mới: Mỗi 1 phút</option>
+            <option value="0">Tắt tự động</option>
+          </select>
+          <span id="countdownTimer" class="font-mono text-emerald-400 font-bold text-[11px] bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">29:59</span>
+        </div>
+
+        <button onclick="manualSyncNow()" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-orange-600 to-ghn-orange hover:from-orange-500 hover:to-orange-600 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-lg shadow-orange-600/20 transition" title="Làm mới số liệu ngay">
+          <i data-lucide="refresh-cw" id="syncIcon" class="w-3.5 h-3.5"></i>
+          <span>Làm mới</span>
+        </button>
+
+        <button onclick="exportCurrentReport()" class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3 py-2 rounded-lg border border-slate-700 transition" title="Xuất Excel">
+          <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-400"></i>
+          <span>Excel</span>
+        </button>
+
+        <button onclick="window.print()" class="inline-flex items-center justify-center w-8 h-8 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition" title="In báo cáo">
+          <i data-lucide="printer" class="w-4 h-4 text-sky-400"></i>
+        </button>
+
+        <button onclick="toggleTheme()" class="inline-flex items-center justify-center w-8 h-8 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition" title="Đổi giao diện Sáng/Tối">
+          <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== REPORT 1: BÁO CÁO XUẤT KIỆN (LOOKER STUDIO) ==================== -->
+  <section id="sectionExportReport" class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8 space-y-6">
+
+    <!-- FILTER BAR -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm space-y-4">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        
+        <!-- Date Quick Range Filters -->
+        <div class="flex items-center flex-wrap gap-2">
+          <span class="text-xs font-semibold text-slate-400 uppercase mr-1 flex items-center gap-1.5">
+            <i data-lucide="calendar" class="w-4 h-4 text-orange-400"></i> Thời gian:
+          </span>
+          <button onclick="setDatePreset('all')" id="btnPresetAll" class="preset-btn text-xs font-medium px-3 py-1.5 rounded-lg bg-orange-600 text-white transition">Tất cả (28 ngày)</button>
+          <button onclick="setDatePreset('last7')" id="btnPreset7" class="preset-btn text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition">7 ngày gần nhất</button>
+          <button onclick="setDatePreset('last14')" id="btnPreset14" class="preset-btn text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition">14 ngày gần nhất</button>
+          <button onclick="setDatePreset('last3')" id="btnPreset3" class="preset-btn text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition">3 ngày gần nhất</button>
+        </div>
+
+        <!-- Custom Date Range & Region Picker -->
+        <div class="flex items-center flex-wrap gap-3">
+          <div class="flex items-center gap-2 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg">
+            <span class="text-xs text-slate-400">Từ:</span>
+            <input type="date" id="startDate" class="bg-transparent text-xs text-slate-200 outline-none cursor-pointer" onchange="applyFilters()">
+            <span class="text-xs text-slate-400">Đến:</span>
+            <input type="date" id="endDate" class="bg-transparent text-xs text-slate-200 outline-none cursor-pointer" onchange="applyFilters()">
+          </div>
+
+          <div class="flex items-center gap-2 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg">
+            <span class="text-xs text-slate-400">Khu vực:</span>
+            <select id="regionFilter" class="bg-transparent text-xs text-slate-200 font-medium outline-none cursor-pointer" onchange="applyFilters()">
+              <option value="ALL">Tất cả khu vực</option>
+              <option value="2.Miền Trung" selected>2. Miền Trung (Bình Định)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeslot Checkboxes -->
+      <div class="flex items-center flex-wrap gap-3 pt-3 border-t border-slate-800/80 text-xs">
+        <span class="text-slate-400 font-medium flex items-center gap-1">
+          <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i> Mốc giờ:
+        </span>
+        <label class="flex items-center gap-1.5 cursor-pointer bg-slate-950/70 border border-emerald-500/30 px-2.5 py-1 rounded-md text-emerald-400 font-medium hover:bg-emerald-500/10 transition">
+          <input type="checkbox" value="1.0 - 6h" checked class="accent-emerald-500 timeslot-cb" onchange="applyFilters()"> 1. 0 - 6h (Giờ vàng)
+        </label>
+        <label class="flex items-center gap-1.5 cursor-pointer bg-slate-950/70 border border-sky-500/30 px-2.5 py-1 rounded-md text-sky-400 font-medium hover:bg-sky-500/10 transition">
+          <input type="checkbox" value="2.6 - 12h" checked class="accent-sky-500 timeslot-cb" onchange="applyFilters()"> 2. 6 - 12h
+        </label>
+        <label class="flex items-center gap-1.5 cursor-pointer bg-slate-950/70 border border-amber-500/30 px-2.5 py-1 rounded-md text-amber-400 font-medium hover:bg-amber-500/10 transition">
+          <input type="checkbox" value="3.12 - 24h" checked class="accent-amber-500 timeslot-cb" onchange="applyFilters()"> 3. 12 - 24h
+        </label>
+        <label class="flex items-center gap-1.5 cursor-pointer bg-slate-950/70 border border-rose-500/30 px-2.5 py-1 rounded-md text-rose-400 font-medium hover:bg-rose-500/10 transition">
+          <input type="checkbox" value="4.>24h" checked class="accent-rose-500 timeslot-cb" onchange="applyFilters()"> 4. >24h (Cảnh báo trễ)
+        </label>
+      </div>
+    </div>
+
+    <!-- SUMMARY METRIC CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider">Tổng Volume Xuất</span>
+          <i data-lucide="boxes" class="w-4 h-4 text-orange-400"></i>
+        </div>
+        <div>
+          <div id="kpiTotalVolume" class="text-2xl font-black text-white">0</div>
+          <div class="text-xs text-slate-400 mt-1">TB: <span id="kpiAvgDailyVolume" class="font-semibold text-slate-200">0</span></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400">Giờ Vàng (0-6h)</span>
+          <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
+        </div>
+        <div>
+          <div id="kpiPct06" class="text-2xl font-black text-emerald-400">0%</div>
+          <div class="text-xs text-slate-400 mt-1"><span id="kpiVol06" class="font-semibold text-slate-200">0</span> kiện</div>
+        </div>
+        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+          <div id="barPct06" class="bg-emerald-500 h-full rounded-full" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-sky-400">Xử Lý Nhanh (<12h)</span>
+          <i data-lucide="gauge" class="w-4 h-4 text-sky-400"></i>
+        </div>
+        <div>
+          <div id="kpiPctUnder12" class="text-2xl font-black text-sky-400">0%</div>
+          <div class="text-xs text-slate-400 mt-1"><span id="kpiVolUnder12" class="font-semibold text-slate-200">0</span> kiện</div>
+        </div>
+        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+          <div id="barPctUnder12" class="bg-sky-500 h-full rounded-full" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-rose-400">Trễ Hạn (>24h)</span>
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i>
+        </div>
+        <div>
+          <div id="kpiPctOver24" class="text-2xl font-black text-rose-400">0%</div>
+          <div class="text-xs text-slate-400 mt-1"><span id="kpiVolOver24" class="font-semibold text-rose-300">0</span> kiện</div>
+        </div>
+        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+          <div id="barPctOver24" class="bg-rose-500 h-full rounded-full" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-amber-400">LeadTime TB</span>
+          <i data-lucide="timer" class="w-4 h-4 text-amber-400"></i>
+        </div>
+        <div>
+          <div id="kpiAvgLeadTime" class="text-2xl font-black text-amber-400">0h</div>
+          <div class="text-xs text-slate-400 mt-1">Chuẩn SLA: <span class="text-emerald-400 font-semibold">< 5.0h</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS SECTION -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="bar-chart-3" class="w-5 h-5 text-orange-400"></i>
+          Diễn Biến Sản Lượng Theo Mốc Giờ & LeadTime
+        </h3>
+        <div id="chartDailyVolume" class="w-full h-80"></div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="pie-chart" class="w-5 h-5 text-emerald-400"></i>
+          Tỷ Trọng Mốc Giờ Xuất Kiện
+        </h3>
+        <div id="chartDonutTimeslot" class="w-full h-64 flex items-center justify-center"></div>
+        <div class="grid grid-cols-2 gap-2 text-xs pt-3 border-t border-slate-800">
+          <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 0 - 6h</div>
+          <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span> 6 - 12h</div>
+          <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> 12 - 24h</div>
+          <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> > 24h</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECONDARY CHARTS -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="calendar-days" class="w-5 h-5 text-sky-400"></i>
+          Sản Lượng & LeadTime Theo Thứ Trong Tuần
+        </h3>
+        <div id="chartDayOfWeek" class="w-full h-72"></div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="trending-up" class="w-5 h-5 text-amber-400"></i>
+          Biến Động LeadTime Chi Tiết Từng Khung Giờ
+        </h3>
+        <div id="chartLeadTimeTrend" class="w-full h-72"></div>
+      </div>
+    </div>
+
+    <!-- DATA TABLE SECTION -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="table" class="w-5 h-5 text-orange-400"></i>
+          Bảng Số Liệu Chi Tiết (Matrix & Data Grid)
+        </h3>
+        <div class="bg-slate-950 p-1 rounded-lg border border-slate-800 flex items-center text-xs">
+          <button onclick="setTableMode('matrix')" id="btnTabMatrix" class="px-3 py-1 rounded font-medium bg-orange-600 text-white">Dạng Ma Trận (GHN Pivot)</button>
+          <button onclick="setTableMode('grid')" id="btnTabGrid" class="px-3 py-1 rounded font-medium text-slate-400 hover:text-slate-200">Dạng Danh Sách</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto custom-scrollbar border border-slate-800 rounded-xl bg-slate-950/60">
+        <table id="dataTable" class="w-full text-xs text-left border-collapse"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== REPORT 2: BÁO CÁO TỒN ĐỘNG KTC BÌNH ĐỊNH (20335000) ==================== -->
+  <section id="sectionBacklogReport" class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8 space-y-6 hidden">
+    
+    <!-- HEADER INTRO FOR BINH DINH -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">MÃ KHO: 20335000</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">KHO TRUNG CHUYỂN BÌNH ĐỊNH</span>
+          <span class="text-xs text-slate-400 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Tự động đồng bộ mỗi 30 phút</span>
+        </div>
+        <h2 class="text-xl font-black text-white mt-1.5 flex items-center gap-2">
+          <i data-lucide="map-pin" class="w-5 h-5 text-orange-500"></i>
+          BÁO CÁO TỒN ĐỘNG KHO TRUNG CHUYỂN BÌNH ĐỊNH
+        </h2>
+        <p class="text-xs text-slate-400 mt-0.5">Số lượng kiện tồn, số đơn và khối lượng phân theo 4 khâu xử lý tại KTC Bình Định (Dữ liệu Metabase Card #4846).</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="text-right">
+          <div class="text-[11px] text-slate-400">Lần cập nhật gần nhất:</div>
+          <div id="backlogLastSync" class="text-xs font-mono font-bold text-emerald-400">Vừa xong (09:12:00)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 HERO KPI CARDS (DỮ LIỆU THẬT 100% TỪ METABASE) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      
+      <!-- Card 1: Tổng số kiện tồn -->
+      <div class="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden group hover:border-slate-700 transition">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Tổng Số Kiện Tồn</span>
+          <div class="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-400">
+            <i data-lucide="boxes" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="text-3xl font-black text-white">4.794</div>
+        <div class="text-xs text-slate-400 mt-2">Khớp 100% số liệu tab "Theo kiện" GHN</div>
+      </div>
+
+      <!-- Card 2: Tổng số đơn tồn -->
+      <div class="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden group hover:border-slate-700 transition">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Tổng Số Đơn Hàng</span>
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+            <i data-lucide="package-check" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="text-3xl font-black text-emerald-400">10.271</div>
+        <div class="text-xs text-slate-400 mt-2">Tổng số đơn hàng thực tế lưu kho</div>
+      </div>
+
+      <!-- Card 3: Khối lượng đang tồn -->
+      <div class="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden group hover:border-slate-700 transition">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Khối Lượng Đang Tồn</span>
+          <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400">
+            <i data-lucide="weight" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="text-3xl font-black text-amber-400">59.34 tấn</div>
+        <div class="text-xs text-slate-400 mt-2">Chính xác: 59,339.37 kg hàng hóa</div>
+      </div>
+
+      <!-- Card 4: Tồn Chờ Xuất Kho (Cần giải tỏa) -->
+      <div class="bg-gradient-to-br from-slate-900 to-orange-950/20 border border-orange-900/40 rounded-2xl p-5 relative overflow-hidden group hover:border-orange-800 transition">
+        <div class="flex items-center justify-between text-slate-400 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-orange-400">Chờ Xuất Kho (Tại KTC)</span>
+          <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400">
+            <i data-lucide="truck" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="text-3xl font-black text-orange-400">949 <span class="text-lg text-slate-400 font-normal">kiện</span></div>
+        <div class="text-xs text-orange-300/80 mt-2">Tương đương <b>1.483</b> đơn (~16.21 tấn)</div>
+      </div>
+    </div>
+
+    <!-- BẢNG CHI TIẾT 4 KHÂU TỒN ĐỌNG THỰC TẾ CỦA KTC BÌNH ĐỊNH -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="table" class="w-5 h-5 text-orange-400"></i>
+            BẢNG CHI TIẾT TIẾN TRÌNH TỒN ĐỌNG TẠI KTC BÌNH ĐỊNH (20335000)
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">Số liệu thực tế trích xuất trực tiếp từ hệ thống Metabase của GHN</p>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto custom-scrollbar border border-slate-800 rounded-xl bg-slate-950/70">
+        <table class="w-full text-xs text-left border-collapse font-mono">
+          <thead>
+            <tr class="bg-slate-900 border-b border-slate-800 text-slate-300 uppercase font-semibold font-sans">
+              <th class="p-3 border-r border-slate-800">Mã Kho</th>
+              <th class="p-3 border-r border-slate-800">Tên Kho</th>
+              <th class="p-3 border-r border-slate-800">Phân Loại Khâu Xử Lý</th>
+              <th class="p-3 text-right border-r border-slate-800 text-sky-400">Số Kiện</th>
+              <th class="p-3 text-right border-r border-slate-800 text-emerald-400">Số Đơn</th>
+              <th class="p-3 text-right border-r border-slate-800 text-amber-400">Khối Lượng (kg)</th>
+              <th class="p-3 text-right border-r border-slate-800">Tỷ Lệ Kiện (%)</th>
+              <th class="p-3 text-center">Trạng Thái Vận Hành</th>
+            </tr>
+          </thead>
+          <tbody id="realBacklogTableBody" class="divide-y divide-slate-800/60">
+            <!-- Populated via Javascript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CHARTS SECTION FOR BINH DINH -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Chart 1: So sánh Số kiện & Số đơn theo khâu -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="bar-chart-2" class="w-5 h-5 text-sky-400"></i>
+            Phân Bổ Số Kiện vs Số Đơn Theo Khâu (KTC Bình Định)
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">So sánh tương quan giữa số kiện đóng và số lượng đơn hàng</p>
+        </div>
+        <div id="chartRealBacklogBars" class="w-full h-72"></div>
+      </div>
+
+      <!-- Chart 2: Donut Tỷ trọng Khối lượng kg -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="pie-chart" class="w-5 h-5 text-amber-400"></i>
+            Tỷ Trọng Khối Lượng Hàng Hóa Lưu Kho (kg)
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">Phân bổ trọng lượng hàng đang lưu kho theo từng khâu xử lý</p>
+        </div>
+        <div id="chartRealWeightDonut" class="w-full h-72 flex items-center justify-center"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 border-t border-slate-800 py-3.5 px-4 text-center text-xs text-slate-500">
+    <span>GHN Operations & Real-time Backlog Portal &bull; Tự động đồng bộ Looker Studio & Metabase (KTC Bình Định 20335000)</span>
+  </footer>
+
+  <!-- UPDATE MODAL -->
+  <div id="updateModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400">
+            <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Nạp / Cập Nhật Dữ Liệu</h3>
+            <p class="text-xs text-slate-400">Hỗ trợ dán dữ liệu từ cả Looker Studio (`batchedDataV2`) và Metabase</p>
+          </div>
+        </div>
+        <button onclick="closeUpdateModal()" class="text-slate-400 hover:text-slate-200 p-1.5 rounded-lg bg-slate-800 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <label class="block text-xs font-semibold text-slate-300">Dán chuỗi JSON vào đây:</label>
+        <textarea id="rawJsonInput" rows="8" placeholder='Dán JSON từ Looker Studio hoặc Metabase vào đây...' class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:border-orange-500 focus:outline-none custom-scrollbar resize-none"></textarea>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button onclick="closeUpdateModal()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition">Hủy bỏ</button>
+        <button onclick="submitUpdateData()" id="btnSubmitData" class="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-gradient-to-r from-orange-600 to-ghn-orange text-white text-xs font-bold transition">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>Cập nhật ngay</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    let activeReport = 'export';
+
+    const EMBEDDED_DATA = [{"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-19 - Thứ 4", "iso_date": "2026-08-19", "day_name": "Thứ 4", "volume": 15604, "pct_volume": 62.47, "lead_time": 2.47}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-19 - Thứ 4", "iso_date": "2026-08-19", "day_name": "Thứ 4", "volume": 4956, "pct_volume": 19.84, "lead_time": 8.35}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-19 - Thứ 4", "iso_date": "2026-08-19", "day_name": "Thứ 4", "volume": 4412, "pct_volume": 17.66, "lead_time": 14.84}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-19 - Thứ 4", "iso_date": "2026-08-19", "day_name": "Thứ 4", "volume": 7, "pct_volume": 0.03, "lead_time": 56.88}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-20 - Thứ 5", "iso_date": "2026-08-20", "day_name": "Thứ 5", "volume": 17594, "pct_volume": 72.95, "lead_time": 2.41}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-20 - Thứ 5", "iso_date": "2026-08-20", "day_name": "Thứ 5", "volume": 4138, "pct_volume": 17.16, "lead_time": 8.67}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-20 - Thứ 5", "iso_date": "2026-08-20", "day_name": "Thứ 5", "volume": 2372, "pct_volume": 9.83, "lead_time": 14.14}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-20 - Thứ 5", "iso_date": "2026-08-20", "day_name": "Thứ 5", "volume": 14, "pct_volume": 0.06, "lead_time": 35.73}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-21 - Thứ 6", "iso_date": "2026-08-21", "day_name": "Thứ 6", "volume": 13688, "pct_volume": 67.29, "lead_time": 2.64}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-21 - Thứ 6", "iso_date": "2026-08-21", "day_name": "Thứ 6", "volume": 5216, "pct_volume": 25.64, "lead_time": 8.2}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-21 - Thứ 6", "iso_date": "2026-08-21", "day_name": "Thứ 6", "volume": 1427, "pct_volume": 7.02, "lead_time": 14.09}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-21 - Thứ 6", "iso_date": "2026-08-21", "day_name": "Thứ 6", "volume": 10, "pct_volume": 0.05, "lead_time": 31.09}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-22 - Thứ 7", "iso_date": "2026-08-22", "day_name": "Thứ 7", "volume": 17533, "pct_volume": 65.48, "lead_time": 2.7}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-22 - Thứ 7", "iso_date": "2026-08-22", "day_name": "Thứ 7", "volume": 5542, "pct_volume": 20.7, "lead_time": 8.14}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-22 - Thứ 7", "iso_date": "2026-08-22", "day_name": "Thứ 7", "volume": 3697, "pct_volume": 13.81, "lead_time": 15.12}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-22 - Thứ 7", "iso_date": "2026-08-22", "day_name": "Thứ 7", "volume": 3, "pct_volume": 0.01, "lead_time": 33.23}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-23 - Chủ Nhật", "iso_date": "2026-08-23", "day_name": "Chủ Nhật", "volume": 16440, "pct_volume": 67.82, "lead_time": 2.75}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-23 - Chủ Nhật", "iso_date": "2026-08-23", "day_name": "Chủ Nhật", "volume": 4661, "pct_volume": 19.23, "lead_time": 8.21}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-23 - Chủ Nhật", "iso_date": "2026-08-23", "day_name": "Chủ Nhật", "volume": 3123, "pct_volume": 12.88, "lead_time": 13.78}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-23 - Chủ Nhật", "iso_date": "2026-08-23", "day_name": "Chủ Nhật", "volume": 16, "pct_volume": 0.07, "lead_time": 36.4}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-24 - Thứ 2", "iso_date": "2026-08-24", "day_name": "Thứ 2", "volume": 13915, "pct_volume": 72.01, "lead_time": 2.64}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-24 - Thứ 2", "iso_date": "2026-08-24", "day_name": "Thứ 2", "volume": 3661, "pct_volume": 18.94, "lead_time": 8.35}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-24 - Thứ 2", "iso_date": "2026-08-24", "day_name": "Thứ 2", "volume": 1683, "pct_volume": 8.71, "lead_time": 14.76}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-24 - Thứ 2", "iso_date": "2026-08-24", "day_name": "Thứ 2", "volume": 66, "pct_volume": 0.34, "lead_time": 30.0}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-25 - Thứ 3", "iso_date": "2026-08-25", "day_name": "Thứ 3", "volume": 19412, "pct_volume": 72.95, "lead_time": 2.46}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-25 - Thứ 3", "iso_date": "2026-08-25", "day_name": "Thứ 3", "volume": 4660, "pct_volume": 17.51, "lead_time": 8.41}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-25 - Thứ 3", "iso_date": "2026-08-25", "day_name": "Thứ 3", "volume": 2532, "pct_volume": 9.52, "lead_time": 14.34}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-25 - Thứ 3", "iso_date": "2026-08-25", "day_name": "Thứ 3", "volume": 6, "pct_volume": 0.02, "lead_time": 60.09}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-26 - Thứ 4", "iso_date": "2026-08-26", "day_name": "Thứ 4", "volume": 15528, "pct_volume": 64.23, "lead_time": 2.49}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-26 - Thứ 4", "iso_date": "2026-08-26", "day_name": "Thứ 4", "volume": 5119, "pct_volume": 21.17, "lead_time": 8.67}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-26 - Thứ 4", "iso_date": "2026-08-26", "day_name": "Thứ 4", "volume": 3501, "pct_volume": 14.48, "lead_time": 14.7}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-26 - Thứ 4", "iso_date": "2026-08-26", "day_name": "Thứ 4", "volume": 27, "pct_volume": 0.11, "lead_time": 36.11}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-27 - Thứ 5", "iso_date": "2026-08-27", "day_name": "Thứ 5", "volume": 15022, "pct_volume": 66.73, "lead_time": 2.68}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-27 - Thứ 5", "iso_date": "2026-08-27", "day_name": "Thứ 5", "volume": 5611, "pct_volume": 24.93, "lead_time": 7.81}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-27 - Thứ 5", "iso_date": "2026-08-27", "day_name": "Thứ 5", "volume": 1863, "pct_volume": 8.28, "lead_time": 14.77}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-27 - Thứ 5", "iso_date": "2026-08-27", "day_name": "Thứ 5", "volume": 14, "pct_volume": 0.06, "lead_time": 27.6}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-28 - Thứ 6", "iso_date": "2026-08-28", "day_name": "Thứ 6", "volume": 16004, "pct_volume": 64.46, "lead_time": 2.87}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-28 - Thứ 6", "iso_date": "2026-08-28", "day_name": "Thứ 6", "volume": 5915, "pct_volume": 23.82, "lead_time": 8.09}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-28 - Thứ 6", "iso_date": "2026-08-28", "day_name": "Thứ 6", "volume": 2895, "pct_volume": 11.66, "lead_time": 14.56}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-28 - Thứ 6", "iso_date": "2026-08-28", "day_name": "Thứ 6", "volume": 13, "pct_volume": 0.05, "lead_time": 33.19}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-29 - Thứ 7", "iso_date": "2026-08-29", "day_name": "Thứ 7", "volume": 16161, "pct_volume": 74.84, "lead_time": 2.75}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-29 - Thứ 7", "iso_date": "2026-08-29", "day_name": "Thứ 7", "volume": 2665, "pct_volume": 12.34, "lead_time": 7.45}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-29 - Thứ 7", "iso_date": "2026-08-29", "day_name": "Thứ 7", "volume": 2752, "pct_volume": 12.74, "lead_time": 15.3}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-29 - Thứ 7", "iso_date": "2026-08-29", "day_name": "Thứ 7", "volume": 16, "pct_volume": 0.07, "lead_time": 30.26}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-30 - Chủ Nhật", "iso_date": "2026-08-30", "day_name": "Chủ Nhật", "volume": 16139, "pct_volume": 69.47, "lead_time": 2.62}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-30 - Chủ Nhật", "iso_date": "2026-08-30", "day_name": "Chủ Nhật", "volume": 5328, "pct_volume": 22.94, "lead_time": 8.57}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-30 - Chủ Nhật", "iso_date": "2026-08-30", "day_name": "Chủ Nhật", "volume": 1751, "pct_volume": 7.54, "lead_time": 14.54}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-30 - Chủ Nhật", "iso_date": "2026-08-30", "day_name": "Chủ Nhật", "volume": 12, "pct_volume": 0.05, "lead_time": 47.68}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-08-31 - Thứ 2", "iso_date": "2026-08-31", "day_name": "Thứ 2", "volume": 11898, "pct_volume": 68.7, "lead_time": 2.78}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-08-31 - Thứ 2", "iso_date": "2026-08-31", "day_name": "Thứ 2", "volume": 2565, "pct_volume": 14.81, "lead_time": 8.08}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-08-31 - Thứ 2", "iso_date": "2026-08-31", "day_name": "Thứ 2", "volume": 2834, "pct_volume": 16.36, "lead_time": 14.16}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-08-31 - Thứ 2", "iso_date": "2026-08-31", "day_name": "Thứ 2", "volume": 21, "pct_volume": 0.12, "lead_time": 38.89}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-01 - Thứ 3", "iso_date": "2026-09-01", "day_name": "Thứ 3", "volume": 17111, "pct_volume": 70.47, "lead_time": 2.28}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-01 - Thứ 3", "iso_date": "2026-09-01", "day_name": "Thứ 3", "volume": 5522, "pct_volume": 22.74, "lead_time": 8.61}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-01 - Thứ 3", "iso_date": "2026-09-01", "day_name": "Thứ 3", "volume": 1642, "pct_volume": 6.76, "lead_time": 13.91}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-01 - Thứ 3", "iso_date": "2026-09-01", "day_name": "Thứ 3", "volume": 6, "pct_volume": 0.02, "lead_time": 47.69}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-02 - Thứ 4", "iso_date": "2026-09-02", "day_name": "Thứ 4", "volume": 11197, "pct_volume": 66.64, "lead_time": 2.93}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-02 - Thứ 4", "iso_date": "2026-09-02", "day_name": "Thứ 4", "volume": 4143, "pct_volume": 24.66, "lead_time": 8.4}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-02 - Thứ 4", "iso_date": "2026-09-02", "day_name": "Thứ 4", "volume": 1427, "pct_volume": 8.49, "lead_time": 15.99}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-02 - Thứ 4", "iso_date": "2026-09-02", "day_name": "Thứ 4", "volume": 35, "pct_volume": 0.21, "lead_time": 29.42}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-03 - Thứ 5", "iso_date": "2026-09-03", "day_name": "Thứ 5", "volume": 5020, "pct_volume": 56.82, "lead_time": 1.48}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-03 - Thứ 5", "iso_date": "2026-09-03", "day_name": "Thứ 5", "volume": 2222, "pct_volume": 25.15, "lead_time": 8.07}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-03 - Thứ 5", "iso_date": "2026-09-03", "day_name": "Thứ 5", "volume": 1566, "pct_volume": 17.72, "lead_time": 14.28}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-03 - Thứ 5", "iso_date": "2026-09-03", "day_name": "Thứ 5", "volume": 27, "pct_volume": 0.31, "lead_time": 26.05}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-04 - Thứ 6", "iso_date": "2026-09-04", "day_name": "Thứ 6", "volume": 16153, "pct_volume": 51.93, "lead_time": 2.36}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-04 - Thứ 6", "iso_date": "2026-09-04", "day_name": "Thứ 6", "volume": 7885, "pct_volume": 25.35, "lead_time": 9.25}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-04 - Thứ 6", "iso_date": "2026-09-04", "day_name": "Thứ 6", "volume": 7037, "pct_volume": 22.62, "lead_time": 17.41}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-04 - Thứ 6", "iso_date": "2026-09-04", "day_name": "Thứ 6", "volume": 30, "pct_volume": 0.1, "lead_time": 33.34}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-05 - Thứ 7", "iso_date": "2026-09-05", "day_name": "Thứ 7", "volume": 19131, "pct_volume": 63.7, "lead_time": 2.31}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-05 - Thứ 7", "iso_date": "2026-09-05", "day_name": "Thứ 7", "volume": 6709, "pct_volume": 22.34, "lead_time": 8.63}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-05 - Thứ 7", "iso_date": "2026-09-05", "day_name": "Thứ 7", "volume": 4099, "pct_volume": 13.65, "lead_time": 14.68}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-05 - Thứ 7", "iso_date": "2026-09-05", "day_name": "Thứ 7", "volume": 93, "pct_volume": 0.31, "lead_time": 29.68}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-06 - Chủ Nhật", "iso_date": "2026-09-06", "day_name": "Chủ Nhật", "volume": 17721, "pct_volume": 70.07, "lead_time": 2.34}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-06 - Chủ Nhật", "iso_date": "2026-09-06", "day_name": "Chủ Nhật", "volume": 3956, "pct_volume": 15.64, "lead_time": 8.51}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-06 - Chủ Nhật", "iso_date": "2026-09-06", "day_name": "Chủ Nhật", "volume": 3569, "pct_volume": 14.11, "lead_time": 13.77}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-06 - Chủ Nhật", "iso_date": "2026-09-06", "day_name": "Chủ Nhật", "volume": 45, "pct_volume": 0.18, "lead_time": 33.89}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-07 - Thứ 2", "iso_date": "2026-09-07", "day_name": "Thứ 2", "volume": 12838, "pct_volume": 67.7, "lead_time": 2.81}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-07 - Thứ 2", "iso_date": "2026-09-07", "day_name": "Thứ 2", "volume": 3211, "pct_volume": 16.93, "lead_time": 7.69}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-07 - Thứ 2", "iso_date": "2026-09-07", "day_name": "Thứ 2", "volume": 2879, "pct_volume": 15.18, "lead_time": 14.03}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-07 - Thứ 2", "iso_date": "2026-09-07", "day_name": "Thứ 2", "volume": 36, "pct_volume": 0.19, "lead_time": 28.91}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-08 - Thứ 3", "iso_date": "2026-09-08", "day_name": "Thứ 3", "volume": 13678, "pct_volume": 64.18, "lead_time": 2.59}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-08 - Thứ 3", "iso_date": "2026-09-08", "day_name": "Thứ 3", "volume": 4703, "pct_volume": 22.07, "lead_time": 8.27}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-08 - Thứ 3", "iso_date": "2026-09-08", "day_name": "Thứ 3", "volume": 2925, "pct_volume": 13.73, "lead_time": 14.07}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-08 - Thứ 3", "iso_date": "2026-09-08", "day_name": "Thứ 3", "volume": 5, "pct_volume": 0.02, "lead_time": 41.14}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-09 - Thứ 4", "iso_date": "2026-09-09", "day_name": "Thứ 4", "volume": 16814, "pct_volume": 64.2, "lead_time": 2.33}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-09 - Thứ 4", "iso_date": "2026-09-09", "day_name": "Thứ 4", "volume": 4921, "pct_volume": 18.79, "lead_time": 8.59}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-09 - Thứ 4", "iso_date": "2026-09-09", "day_name": "Thứ 4", "volume": 4433, "pct_volume": 16.93, "lead_time": 15.27}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-09 - Thứ 4", "iso_date": "2026-09-09", "day_name": "Thứ 4", "volume": 20, "pct_volume": 0.08, "lead_time": 29.95}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-10 - Thứ 5", "iso_date": "2026-09-10", "day_name": "Thứ 5", "volume": 22960, "pct_volume": 70.87, "lead_time": 2.54}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-10 - Thứ 5", "iso_date": "2026-09-10", "day_name": "Thứ 5", "volume": 5103, "pct_volume": 15.75, "lead_time": 8.98}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-10 - Thứ 5", "iso_date": "2026-09-10", "day_name": "Thứ 5", "volume": 4325, "pct_volume": 13.35, "lead_time": 14.6}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-10 - Thứ 5", "iso_date": "2026-09-10", "day_name": "Thứ 5", "volume": 8, "pct_volume": 0.02, "lead_time": 55.54}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-11 - Thứ 6", "iso_date": "2026-09-11", "day_name": "Thứ 6", "volume": 15817, "pct_volume": 60.81, "lead_time": 2.65}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-11 - Thứ 6", "iso_date": "2026-09-11", "day_name": "Thứ 6", "volume": 7027, "pct_volume": 27.01, "lead_time": 8.64}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-11 - Thứ 6", "iso_date": "2026-09-11", "day_name": "Thứ 6", "volume": 3141, "pct_volume": 12.08, "lead_time": 14.67}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-11 - Thứ 6", "iso_date": "2026-09-11", "day_name": "Thứ 6", "volume": 27, "pct_volume": 0.1, "lead_time": 26.94}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-12 - Thứ 7", "iso_date": "2026-09-12", "day_name": "Thứ 7", "volume": 15671, "pct_volume": 60.32, "lead_time": 2.57}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-12 - Thứ 7", "iso_date": "2026-09-12", "day_name": "Thứ 7", "volume": 5866, "pct_volume": 22.58, "lead_time": 9.13}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-12 - Thứ 7", "iso_date": "2026-09-12", "day_name": "Thứ 7", "volume": 4413, "pct_volume": 16.99, "lead_time": 14.49}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-12 - Thứ 7", "iso_date": "2026-09-12", "day_name": "Thứ 7", "volume": 29, "pct_volume": 0.11, "lead_time": 29.47}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-13 - Chủ Nhật", "iso_date": "2026-09-13", "day_name": "Chủ Nhật", "volume": 12669, "pct_volume": 55.47, "lead_time": 3.14}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-13 - Chủ Nhật", "iso_date": "2026-09-13", "day_name": "Chủ Nhật", "volume": 5258, "pct_volume": 23.02, "lead_time": 7.74}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-13 - Chủ Nhật", "iso_date": "2026-09-13", "day_name": "Chủ Nhật", "volume": 4876, "pct_volume": 21.35, "lead_time": 15.52}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-13 - Chủ Nhật", "iso_date": "2026-09-13", "day_name": "Chủ Nhật", "volume": 37, "pct_volume": 0.16, "lead_time": 44.49}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-14 - Thứ 2", "iso_date": "2026-09-14", "day_name": "Thứ 2", "volume": 17112, "pct_volume": 74.54, "lead_time": 2.82}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-14 - Thứ 2", "iso_date": "2026-09-14", "day_name": "Thứ 2", "volume": 3774, "pct_volume": 16.44, "lead_time": 8.13}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-14 - Thứ 2", "iso_date": "2026-09-14", "day_name": "Thứ 2", "volume": 2062, "pct_volume": 8.98, "lead_time": 14.82}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-14 - Thứ 2", "iso_date": "2026-09-14", "day_name": "Thứ 2", "volume": 8, "pct_volume": 0.03, "lead_time": 39.47}, {"region": "2.Miền Trung", "timeslot": "1.0 - 6h", "raw_date": "2026-09-15 - Thứ 3", "iso_date": "2026-09-15", "day_name": "Thứ 3", "volume": 15010, "pct_volume": 60.53, "lead_time": 2.91}, {"region": "2.Miền Trung", "timeslot": "2.6 - 12h", "raw_date": "2026-09-15 - Thứ 3", "iso_date": "2026-09-15", "day_name": "Thứ 3", "volume": 7445, "pct_volume": 30.02, "lead_time": 8.54}, {"region": "2.Miền Trung", "timeslot": "3.12 - 24h", "raw_date": "2026-09-15 - Thứ 3", "iso_date": "2026-09-15", "day_name": "Thứ 3", "volume": 2333, "pct_volume": 9.41, "lead_time": 14.95}, {"region": "2.Miền Trung", "timeslot": "4.>24h", "raw_date": "2026-09-15 - Thứ 3", "iso_date": "2026-09-15", "day_name": "Thứ 3", "volume": 9, "pct_volume": 0.04, "lead_time": 35.65}];
+    let rawDataset = [...EMBEDDED_DATA];
+    let filteredDataset = [];
+    let tableMode = 'matrix';
+
+    const realBinhDinhBacklog = {
+      warehouse_code: "20335000",
+      warehouse_name: "Kho Trung Chuyển Bình Định",
+      total_packages: 4794,
+      total_orders: 10271,
+      total_weight_kg: 59339.37,
+      total_weight_ton: 59.34,
+      rows: [
+        {
+          stage: "Đang luân chuyển đến KTC",
+          packages: 3783,
+          orders: 7805,
+          weight_kg: 42018.12,
+          weight_ton: 42.02,
+          pct_packages: 78.91,
+          status_badge: '<span class="px-2 py-0.5 rounded text-[10px] font-sans font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20">Trên đường vận chuyển</span>'
+        },
+        {
+          stage: "Chờ xuất",
+          packages: 949,
+          orders: 1483,
+          weight_kg: 16205.86,
+          weight_ton: 16.21,
+          pct_packages: 19.79,
+          status_badge: '<span class="px-2 py-0.5 rounded text-[10px] font-sans font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">Chờ xe bốc hàng</span>'
+        },
+        {
+          stage: "Chờ phân loại",
+          packages: 36,
+          orders: 899,
+          weight_kg: 842.36,
+          weight_ton: 0.84,
+          pct_packages: 0.75,
+          status_badge: '<span class="px-2 py-0.5 rounded text-[10px] font-sans font-medium bg-orange-500/20 text-orange-400 border border-orange-500/30">Chờ tại line chia chọn</span>'
+        },
+        {
+          stage: "Chờ xuất kiện chuyển tiếp",
+          packages: 26,
+          orders: 84,
+          weight_kg: 273.03,
+          weight_ton: 0.27,
+          pct_packages: 0.54,
+          status_badge: '<span class="px-2 py-0.5 rounded text-[10px] font-sans font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">Luân chuyển liên vùng</span>'
+        }
+      ]
+    };
+
+    let dailyChart = null, donutChart = null, dayOfWeekChart = null, leadTimeTrendChart = null;
+    let realBacklogBarChart = null, realBacklogDonutChart = null;
+
+    // Auto-refresh interval state
+    let refreshSecondsRemaining = 1800;
+    let refreshIntervalTimer = null;
+    let countdownIntervalTimer = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      fetchDashboardData();
+      startAutoRefresh(1800);
+    });
+
+    // Auto-Refresh & Countdown Mechanism
+    function startAutoRefresh(seconds) {
+      if (refreshIntervalTimer) clearInterval(refreshIntervalTimer);
+      if (countdownIntervalTimer) clearInterval(countdownIntervalTimer);
+
+      if (seconds <= 0) {
+        document.getElementById('countdownTimer').textContent = 'Tắt';
+        return;
+      }
+
+      refreshSecondsRemaining = seconds;
+      updateCountdownDisplay();
+
+      countdownIntervalTimer = setInterval(() => {
+        refreshSecondsRemaining--;
+        if (refreshSecondsRemaining <= 0) {
+          refreshSecondsRemaining = seconds;
+          triggerAutoSync();
+        }
+        updateCountdownDisplay();
+      }, 1000);
+    }
+
+    function updateCountdownDisplay() {
+      const min = Math.floor(refreshSecondsRemaining / 60);
+      const sec = refreshSecondsRemaining % 60;
+      document.getElementById('countdownTimer').textContent = 
+        `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    function changeRefreshInterval() {
+      const sec = parseInt(document.getElementById('autoRefreshInterval').value);
+      startAutoRefresh(sec);
+    }
+
+    async function triggerAutoSync() {
+      const syncIcon = document.getElementById('syncIcon');
+      if (syncIcon) syncIcon.classList.add('animate-spin');
+
+      try {
+        await fetchDashboardData();
+        showToast('Đã tự động đồng bộ số liệu mới nhất!');
+      } catch (e) {
+        console.log('Auto sync error:', e);
+      } finally {
+        if (syncIcon) syncIcon.classList.remove('animate-spin');
+      }
+    }
+
+    async function manualSyncNow() {
+      await triggerAutoSync();
+      const sec = parseInt(document.getElementById('autoRefreshInterval').value);
+      if (sec > 0) startAutoRefresh(sec);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastMessage').textContent = msg + ` (${new Date().toLocaleTimeString('vi-VN')})`;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 4000);
+    }
+
+    function switchReport(tab) {
+      activeReport = tab;
+      const secExport = document.getElementById('sectionExportReport');
+      const secBacklog = document.getElementById('sectionBacklogReport');
+      const btnExp = document.getElementById('tabBtnExport');
+      const btnBck = document.getElementById('tabBtnBacklog');
+
+      if (tab === 'export') {
+        secExport.classList.remove('hidden');
+        secBacklog.classList.add('hidden');
+        btnExp.className = 'tab-active flex items-center gap-2 px-4 py-2 rounded-lg transition';
+        btnBck.className = 'text-slate-400 hover:text-slate-200 flex items-center gap-2 px-4 py-2 rounded-lg transition';
+        renderCharts();
+      } else {
+        secExport.classList.add('hidden');
+        secBacklog.classList.remove('hidden');
+        btnBck.className = 'tab-active flex items-center gap-2 px-4 py-2 rounded-lg transition';
+        btnExp.className = 'text-slate-400 hover:text-slate-200 flex items-center gap-2 px-4 py-2 rounded-lg transition';
+        renderRealBacklogSection();
+      }
+      lucide.createIcons();
+    }
+
+    async function fetchDashboardData() {
+      try {
+        const res = await fetch('/api/data');
+        if (res.ok) {
+          const json = await res.json();
+          if (json.status === 'success' && json.data && json.data.length > 0) {
+            rawDataset = json.data;
+          }
+        }
+      } catch (err) {
+        console.log('Using local embedded dataset:', err);
+      }
+      initDateFilters();
+      applyFilters();
+    }
+
+    function initDateFilters() {
+      if (!rawDataset.length) return;
+      const dates = [...new Set(rawDataset.map(d => d.iso_date))].sort();
+      document.getElementById('startDate').min = dates[0];
+      document.getElementById('startDate').max = dates[dates.length - 1];
+      document.getElementById('startDate').value = dates[0];
+      document.getElementById('endDate').min = dates[0];
+      document.getElementById('endDate').max = dates[dates.length - 1];
+      document.getElementById('endDate').value = dates[dates.length - 1];
+    }
+
+    function setDatePreset(type) {
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.classList.remove('bg-orange-600', 'text-white');
+        btn.classList.add('bg-slate-800', 'text-slate-300');
+      });
+
+      const dates = [...new Set(rawDataset.map(d => d.iso_date))].sort();
+      if (!dates.length) return;
+      const maxDate = dates[dates.length - 1];
+      let minDate = dates[0];
+
+      if (type === 'all') {
+        document.getElementById('btnPresetAll').classList.add('bg-orange-600', 'text-white');
+      } else if (type === 'last7') {
+        document.getElementById('btnPreset7').classList.add('bg-orange-600', 'text-white');
+        minDate = dates[Math.max(0, dates.length - 7)];
+      } else if (type === 'last14') {
+        document.getElementById('btnPreset14').classList.add('bg-orange-600', 'text-white');
+        minDate = dates[Math.max(0, dates.length - 14)];
+      } else if (type === 'last3') {
+        document.getElementById('btnPreset3').classList.add('bg-orange-600', 'text-white');
+        minDate = dates[Math.max(0, dates.length - 3)];
+      }
+      document.getElementById('startDate').value = minDate;
+      document.getElementById('endDate').value = maxDate;
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+      const region = document.getElementById('regionFilter').value;
+      const selectedTimeslots = Array.from(document.querySelectorAll('.timeslot-cb:checked')).map(cb => cb.value);
+
+      filteredDataset = rawDataset.filter(row => {
+        const matchDate = (!startDate || row.iso_date >= startDate) && (!endDate || row.iso_date <= endDate);
+        const matchRegion = region === 'ALL' || row.region === region;
+        const matchTimeslot = selectedTimeslots.includes(row.timeslot);
+        return matchDate && matchRegion && matchTimeslot;
+      });
+
+      updateKPIs();
+      renderCharts();
+      renderTable();
+      lucide.createIcons();
+    }
+
+    function updateKPIs() {
+      const totalVol = filteredDataset.reduce((sum, r) => sum + r.volume, 0);
+      const uniqueDays = new Set(filteredDataset.map(r => r.iso_date)).size || 1;
+      const avgDaily = Math.round(totalVol / uniqueDays);
+
+      const vol06 = filteredDataset.filter(r => r.timeslot === '1.0 - 6h').reduce((s, r) => s + r.volume, 0);
+      const vol612 = filteredDataset.filter(r => r.timeslot === '2.6 - 12h').reduce((s, r) => s + r.volume, 0);
+      const volUnder12 = vol06 + vol612;
+      const volOver24 = filteredDataset.filter(r => r.timeslot === '4.>24h').reduce((s, r) => s + r.volume, 0);
+
+      const pct06 = totalVol > 0 ? ((vol06 / totalVol) * 100).toFixed(1) : 0;
+      const pctUnder12 = totalVol > 0 ? ((volUnder12 / totalVol) * 100).toFixed(1) : 0;
+      const pctOver24 = totalVol > 0 ? ((volOver24 / totalVol) * 100).toFixed(2) : 0;
+
+      let weightedSum = 0;
+      filteredDataset.forEach(r => weightedSum += r.lead_time * r.volume);
+      const avgLeadTime = totalVol > 0 ? (weightedSum / totalVol).toFixed(2) : 0;
+
+      document.getElementById('kpiTotalVolume').textContent = totalVol.toLocaleString('vi-VN');
+      document.getElementById('kpiAvgDailyVolume').textContent = avgDaily.toLocaleString('vi-VN') + ' kiện';
+      document.getElementById('kpiPct06').textContent = pct06 + '%';
+      document.getElementById('kpiVol06').textContent = vol06.toLocaleString('vi-VN');
+      document.getElementById('barPct06').style.width = Math.min(100, pct06) + '%';
+      document.getElementById('kpiPctUnder12').textContent = pctUnder12 + '%';
+      document.getElementById('kpiVolUnder12').textContent = volUnder12.toLocaleString('vi-VN');
+      document.getElementById('barPctUnder12').style.width = Math.min(100, pctUnder12) + '%';
+      document.getElementById('kpiPctOver24').textContent = pctOver24 + '%';
+      document.getElementById('kpiVolOver24').textContent = volOver24.toLocaleString('vi-VN');
+      document.getElementById('barPctOver24').style.width = Math.min(100, pctOver24 * 10) + '%';
+      document.getElementById('kpiAvgLeadTime').textContent = avgLeadTime + 'h';
+    }
+
+    function renderCharts() {
+      renderDailyVolumeChart();
+      renderDonutChart();
+      renderDayOfWeekChart();
+      renderLeadTimeTrendChart();
+    }
+
+    function renderDailyVolumeChart() {
+      const dates = [...new Set(filteredDataset.map(d => d.iso_date))].sort();
+      const series06 = [], series612 = [], series1224 = [], seriesOver24 = [], seriesAvgLead = [];
+
+      dates.forEach(d => {
+        const dayRows = filteredDataset.filter(r => r.iso_date === d);
+        const getV = (slot) => {
+          const row = dayRows.find(r => r.timeslot === slot);
+          return row ? row.volume : 0;
+        };
+        series06.push(getV('1.0 - 6h'));
+        series612.push(getV('2.6 - 12h'));
+        series1224.push(getV('3.12 - 24h'));
+        seriesOver24.push(getV('4.>24h'));
+
+        const dayVol = dayRows.reduce((s, r) => s + r.volume, 0);
+        const dayLT = dayRows.reduce((s, r) => s + r.lead_time * r.volume, 0);
+        seriesAvgLead.push(dayVol > 0 ? parseFloat((dayLT / dayVol).toFixed(2)) : 0);
+      });
+
+      const options = {
+        series: [
+          { name: '1. 0 - 6h (Giờ vàng)', type: 'column', data: series06 },
+          { name: '2. 6 - 12h', type: 'column', data: series612 },
+          { name: '3. 12 - 24h', type: 'column', data: series1224 },
+          { name: '4. >24h (Trễ)', type: 'column', data: seriesOver24 },
+          { name: 'LeadTime TB (giờ)', type: 'line', data: seriesAvgLead }
+        ],
+        chart: { height: 320, type: 'line', stacked: true, background: 'transparent', toolbar: { show: false } },
+        colors: ['#10b981', '#0ea5e9', '#f59e0b', '#f43f5e', '#fb923c'],
+        stroke: { width: [0, 0, 0, 0, 3], curve: 'smooth' },
+        plotOptions: { bar: { columnWidth: '55%', borderRadius: 3 } },
+        xaxis: { categories: dates.map(d => d.slice(5)), labels: { style: { colors: '#94a3b8', fontSize: '11px' } } },
+        yaxis: [
+          { title: { text: 'Volume', style: { color: '#94a3b8' } }, labels: { formatter: val => (val/1000).toFixed(0) + 'k', style: { colors: '#94a3b8' } } },
+          { opposite: true, title: { text: 'LeadTime (h)', style: { color: '#fb923c' } }, labels: { formatter: val => val + 'h', style: { colors: '#fb923c' } }, min: 0 }
+        ],
+        legend: { labels: { colors: '#cbd5e1' }, position: 'top' },
+        theme: { mode: 'dark' },
+        grid: { borderColor: '#334155', strokeDashArray: 3 }
+      };
+
+      if (dailyChart) dailyChart.destroy();
+      dailyChart = new ApexCharts(document.querySelector("#chartDailyVolume"), options);
+      dailyChart.render();
+    }
+
+    function renderDonutChart() {
+      const vol06 = filteredDataset.filter(r => r.timeslot === '1.0 - 6h').reduce((s, r) => s + r.volume, 0);
+      const vol612 = filteredDataset.filter(r => r.timeslot === '2.6 - 12h').reduce((s, r) => s + r.volume, 0);
+      const vol1224 = filteredDataset.filter(r => r.timeslot === '3.12 - 24h').reduce((s, r) => s + r.volume, 0);
+      const volOver24 = filteredDataset.filter(r => r.timeslot === '4.>24h').reduce((s, r) => s + r.volume, 0);
+
+      const options = {
+        series: [vol06, vol612, vol1224, volOver24],
+        labels: ['1. 0 - 6h', '2. 6 - 12h', '3. 12 - 24h', '4. >24h'],
+        chart: { type: 'donut', height: 260, background: 'transparent' },
+        colors: ['#10b981', '#0ea5e9', '#f59e0b', '#f43f5e'],
+        legend: { show: false },
+        plotOptions: { pie: { donut: { size: '70%' } } },
+        theme: { mode: 'dark' }
+      };
+
+      if (donutChart) donutChart.destroy();
+      donutChart = new ApexCharts(document.querySelector("#chartDonutTimeslot"), options);
+      donutChart.render();
+    }
+
+    function renderDayOfWeekChart() {
+      const dayNames = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
+      const volumeByDay = [0, 0, 0, 0, 0, 0, 0];
+      const leadTimeByDay = [0, 0, 0, 0, 0, 0, 0];
+
+      filteredDataset.forEach(r => {
+        const idx = dayNames.indexOf(r.day_name);
+        if (idx !== -1) {
+          volumeByDay[idx] += r.volume;
+          leadTimeByDay[idx] += (r.lead_time * r.volume);
+        }
+      });
+
+      const avgLt = volumeByDay.map((vol, i) => vol > 0 ? parseFloat((leadTimeByDay[i] / vol).toFixed(2)) : 0);
+
+      const options = {
+        series: [
+          { name: 'Sản lượng Kiện', type: 'column', data: volumeByDay },
+          { name: 'LeadTime TB (h)', type: 'line', data: avgLt }
+        ],
+        chart: { height: 280, type: 'line', background: 'transparent', toolbar: { show: false } },
+        colors: ['#38bdf8', '#f59e0b'],
+        stroke: { width: [0, 3], curve: 'smooth' },
+        plotOptions: { bar: { columnWidth: '45%', borderRadius: 4 } },
+        xaxis: { categories: dayNames, labels: { style: { colors: '#94a3b8' } } },
+        yaxis: [
+          { labels: { formatter: val => (val / 1000).toFixed(0) + 'k', style: { colors: '#94a3b8' } } },
+          { opposite: true, labels: { formatter: val => val + 'h', style: { colors: '#f59e0b' } }, min: 0 }
+        ],
+        theme: { mode: 'dark' },
+        grid: { borderColor: '#334155', strokeDashArray: 3 }
+      };
+
+      if (dayOfWeekChart) dayOfWeekChart.destroy();
+      dayOfWeekChart = new ApexCharts(document.querySelector("#chartDayOfWeek"), options);
+      dayOfWeekChart.render();
+    }
+
+    function renderLeadTimeTrendChart() {
+      const dates = [...new Set(filteredDataset.map(d => d.iso_date))].sort();
+      const slots = ['1.0 - 6h', '2.6 - 12h', '3.12 - 24h', '4.>24h'];
+
+      const series = slots.map(slot => ({
+        name: slot,
+        data: dates.map(d => {
+          const row = filteredDataset.find(r => r.iso_date === d && r.timeslot === slot);
+          return row ? row.lead_time : null;
+        })
+      }));
+
+      const options = {
+        series: series,
+        chart: { height: 280, type: 'line', background: 'transparent', toolbar: { show: false } },
+        colors: ['#10b981', '#0ea5e9', '#f59e0b', '#f43f5e'],
+        stroke: { width: 2.5, curve: 'smooth' },
+        xaxis: { categories: dates.map(d => d.slice(5)), labels: { style: { colors: '#94a3b8' } } },
+        yaxis: { labels: { formatter: val => val ? val.toFixed(1) + 'h' : '', style: { colors: '#94a3b8' } } },
+        theme: { mode: 'dark' },
+        grid: { borderColor: '#334155', strokeDashArray: 3 }
+      };
+
+      if (leadTimeTrendChart) leadTimeTrendChart.destroy();
+      leadTimeTrendChart = new ApexCharts(document.querySelector("#chartLeadTimeTrend"), options);
+      leadTimeTrendChart.render();
+    }
+
+    function setTableMode(mode) {
+      tableMode = mode;
+      document.getElementById('btnTabMatrix').className = mode === 'matrix' ? 'px-3 py-1 rounded font-medium bg-orange-600 text-white' : 'px-3 py-1 rounded font-medium text-slate-400';
+      document.getElementById('btnTabGrid').className = mode === 'grid' ? 'px-3 py-1 rounded font-medium bg-orange-600 text-white' : 'px-3 py-1 rounded font-medium text-slate-400';
+      renderTable();
+    }
+
+    function renderTable() {
+      const table = document.getElementById('dataTable');
+      if (tableMode === 'matrix') {
+        const dates = [...new Set(filteredDataset.map(d => d.iso_date))].sort().reverse();
+        const slots = ['1.0 - 6h', '2.6 - 12h', '3.12 - 24h', '4.>24h'];
+
+        let html = `<thead><tr class="bg-slate-900 border-b border-slate-800 text-slate-300 uppercase font-semibold"><th class="p-3 border-r border-slate-800 w-28 sticky left-0 bg-slate-900 z-10">Quản lý</th><th class="p-3 border-r border-slate-800 w-36">Chi tiết</th><th class="p-3 border-r border-slate-800 w-32">Mốc giờ</th>`;
+        dates.forEach(d => {
+          const dObj = filteredDataset.find(r => r.iso_date === d);
+          html += `<th colspan="3" class="p-2 border-r border-slate-800 text-center bg-slate-900/90 text-orange-400 font-bold">${dObj ? dObj.raw_date : d}</th>`;
+        });
+        html += `</tr><tr class="bg-slate-950 border-b border-slate-800 text-slate-400 text-[11px]"><th class="p-2 border-r border-slate-800 sticky left-0 bg-slate-950 z-10"></th><th class="p-2 border-r border-slate-800"></th><th class="p-2 border-r border-slate-800"></th>`;
+        dates.forEach(() => {
+          html += `<th class="p-2 text-right border-r border-slate-800">Volume</th><th class="p-2 text-right border-r border-slate-800">%Volume</th><th class="p-2 text-right border-r border-slate-800">LeadTime</th>`;
+        });
+        html += `</tr></thead><tbody class="divide-y divide-slate-800/60 font-mono">`;
+
+        slots.forEach((slot, idx) => {
+          const slotColor = slot.includes('0 - 6h') ? 'text-emerald-400' : slot.includes('6 - 12h') ? 'text-sky-400' : slot.includes('12 - 24h') ? 'text-amber-400' : 'text-rose-400 font-semibold';
+          html += `<tr class="hover:bg-slate-900/40">${idx === 0 ? '<td rowspan="5" class="p-3 border-r border-slate-800 font-sans font-medium text-slate-300 align-top sticky left-0 bg-slate-950 z-10">Kho KTC</td>' : ''}${idx === 0 ? '<td rowspan="5" class="p-3 border-r border-slate-800 font-sans font-medium text-slate-300 align-top">2. Miền Trung (Bình Định)</td>' : ''}<td class="p-2.5 border-r border-slate-800 font-sans ${slotColor}">${slot}</td>`;
+          dates.forEach(d => {
+            const row = filteredDataset.find(r => r.iso_date === d && r.timeslot === slot);
+            if (row) {
+              html += `<td class="p-2 text-right border-r border-slate-800/60 text-slate-200">${row.volume.toLocaleString('vi-VN')}</td><td class="p-2 text-right border-r border-slate-800/60 text-slate-300">${row.pct_volume.toFixed(2)}%</td><td class="p-2 text-right border-r border-slate-800/60 ${row.lead_time > 24 ? 'text-rose-400 font-bold bg-rose-500/10' : 'text-slate-300'}">${row.lead_time.toFixed(2)}</td>`;
+            } else {
+              html += `<td colspan="3" class="p-2 text-center border-r border-slate-800/60 text-slate-600">-</td>`;
+            }
+          });
+          html += `</tr>`;
+        });
+
+        html += `<tr class="bg-slate-900/80 font-bold border-t-2 border-slate-700 text-white"><td class="p-2.5 border-r border-slate-800 font-sans">Total</td>`;
+        dates.forEach(d => {
+          const dayRows = filteredDataset.filter(r => r.iso_date === d);
+          const dayVol = dayRows.reduce((s, r) => s + r.volume, 0);
+          const dayLT = dayRows.reduce((s, r) => s + r.lead_time * r.volume, 0);
+          html += `<td class="p-2 text-right border-r border-slate-800 text-orange-400">${dayVol.toLocaleString('vi-VN')}</td><td class="p-2 text-right border-r border-slate-800">100%</td><td class="p-2 text-right border-r border-slate-800 text-amber-300">${dayVol > 0 ? (dayLT / dayVol).toFixed(2) : '0.00'}</td>`;
+        });
+        html += `</tr></tbody>`;
+        table.innerHTML = html;
+      } else {
+        let html = `<thead><tr class="bg-slate-900 border-b border-slate-800 text-slate-300 uppercase font-semibold"><th class="p-3 border-r border-slate-800">Ngày xuất</th><th class="p-3 border-r border-slate-800">Thứ</th><th class="p-3 border-r border-slate-800">Mốc giờ</th><th class="p-3 text-right border-r border-slate-800">Volume</th><th class="p-3 text-right border-r border-slate-800">%Volume</th><th class="p-3 text-right">LeadTime (h)</th></tr></thead><tbody class="divide-y divide-slate-800/60 font-mono">`;
+        filteredDataset.forEach(row => {
+          html += `<tr class="hover:bg-slate-900/40"><td class="p-3 border-r border-slate-800 font-sans">${row.iso_date}</td><td class="p-3 border-r border-slate-800 font-sans text-slate-400">${row.day_name}</td><td class="p-3 border-r border-slate-800 font-sans">${row.timeslot}</td><td class="p-3 text-right border-r border-slate-800 font-bold">${row.volume.toLocaleString('vi-VN')}</td><td class="p-3 text-right border-r border-slate-800">${row.pct_volume.toFixed(2)}%</td><td class="p-3 text-right ${row.lead_time > 24 ? 'text-rose-400 font-bold' : 'text-amber-300'}">${row.lead_time.toFixed(2)}h</td></tr>`;
+        });
+        html += `</tbody>`;
+        table.innerHTML = html;
+      }
+    }
+
+    // ==================== REPORT 2: BACKLOG REAL METABASE DATA (CARD 4846) ====================
+    function renderRealBacklogSection() {
+      // 1. Render Table
+      const tb = document.getElementById('realBacklogTableBody');
+      let html = '';
+      realBinhDinhBacklog.rows.forEach(r => {
+        html += `
+          <tr class="hover:bg-slate-900/60 transition">
+            <td class="p-3 border-r border-slate-800 text-slate-400">${realBinhDinhBacklog.warehouse_code}</td>
+            <td class="p-3 border-r border-slate-800 font-sans font-bold text-slate-100">${realBinhDinhBacklog.warehouse_name}</td>
+            <td class="p-3 border-r border-slate-800 font-sans font-semibold text-orange-400">${r.stage}</td>
+            <td class="p-3 text-right border-r border-slate-800 font-bold text-sky-400">${r.packages.toLocaleString('vi-VN')}</td>
+            <td class="p-3 text-right border-r border-slate-800 font-bold text-emerald-400">${r.orders.toLocaleString('vi-VN')}</td>
+            <td class="p-3 text-right border-r border-slate-800 text-amber-300 font-semibold">${r.weight_kg.toLocaleString('vi-VN')} kg <span class="text-[10px] text-slate-400 font-normal">(${r.weight_ton}t)</span></td>
+            <td class="p-3 text-right border-r border-slate-800 text-slate-200">${r.pct_packages}%</td>
+            <td class="p-3 text-center">${r.status_badge}</td>
+          </tr>
+        `;
+      });
+
+      // Add Total Summary Row
+      html += `
+        <tr class="bg-slate-900 font-bold border-t-2 border-slate-700 text-white font-sans">
+          <td colspan="3" class="p-3 border-r border-slate-800 text-right uppercase text-slate-300">Tổng Cộng KTC Bình Định:</td>
+          <td class="p-3 text-right border-r border-slate-800 font-mono text-sky-400 text-sm">${realBinhDinhBacklog.total_packages.toLocaleString('vi-VN')}</td>
+          <td class="p-3 text-right border-r border-slate-800 font-mono text-emerald-400 text-sm">${realBinhDinhBacklog.total_orders.toLocaleString('vi-VN')}</td>
+          <td class="p-3 text-right border-r border-slate-800 font-mono text-amber-300 text-sm">${realBinhDinhBacklog.total_weight_kg.toLocaleString('vi-VN')} kg</td>
+          <td class="p-3 text-right border-r border-slate-800 font-mono">100%</td>
+          <td class="p-3 text-center text-xs text-emerald-400 font-semibold">Hoạt động bình thường</td>
+        </tr>
+      `;
+      tb.innerHTML = html;
+
+      // 2. Render Bar Chart (Số kiện vs Số đơn)
+      const stageCategories = realBinhDinhBacklog.rows.map(r => r.stage);
+      const stagePackages = realBinhDinhBacklog.rows.map(r => r.packages);
+      const stageOrders = realBinhDinhBacklog.rows.map(r => r.orders);
+
+      const barOptions = {
+        series: [
+          { name: 'Số kiện (Packages)', data: stagePackages },
+          { name: 'Số đơn (Orders)', data: stageOrders }
+        ],
+        chart: { type: 'bar', height: 280, background: 'transparent', toolbar: { show: false } },
+        colors: ['#38bdf8', '#10b981'],
+        plotOptions: { bar: { horizontal: false, columnWidth: '45%', borderRadius: 4 } },
+        xaxis: { categories: stageCategories, labels: { style: { colors: '#94a3b8', fontSize: '10px' } } },
+        yaxis: { labels: { style: { colors: '#94a3b8' }, formatter: val => val.toLocaleString('vi-VN') } },
+        legend: { labels: { colors: '#cbd5e1' }, position: 'top' },
+        theme: { mode: 'dark' },
+        grid: { borderColor: '#334155', strokeDashArray: 3 }
+      };
+
+      if (realBacklogBarChart) realBacklogBarChart.destroy();
+      realBacklogBarChart = new ApexCharts(document.querySelector("#chartRealBacklogBars"), barOptions);
+      realBacklogBarChart.render();
+
+      // 3. Render Weight Donut Chart
+      const stageWeights = realBinhDinhBacklog.rows.map(r => r.weight_kg);
+      const donutOptions = {
+        series: stageWeights,
+        labels: stageCategories,
+        chart: { type: 'donut', height: 280, background: 'transparent' },
+        colors: ['#38bdf8', '#f59e0b', '#fb923c', '#a855f7'],
+        legend: { labels: { colors: '#cbd5e1' }, position: 'bottom' },
+        plotOptions: {
+          pie: {
+            donut: {
+              size: '65%',
+              labels: {
+                show: true,
+                total: {
+                  show: true,
+                  label: 'Tổng Khối Lượng',
+                  color: '#94a3b8',
+                  formatter: () => realBinhDinhBacklog.total_weight_ton + ' tấn'
+                }
+              }
+            }
+          }
+        },
+        theme: { mode: 'dark' },
+        tooltip: { y: { formatter: val => val.toLocaleString('vi-VN') + ' kg' } }
+      };
+
+      if (realBacklogDonutChart) realBacklogDonutChart.destroy();
+      realBacklogDonutChart = new ApexCharts(document.querySelector("#chartRealWeightDonut"), donutOptions);
+      realBacklogDonutChart.render();
+    }
+
+    function openUpdateModal() {
+      document.getElementById('updateModal').classList.remove('hidden');
+    }
+    function closeUpdateModal() {
+      document.getElementById('updateModal').classList.add('hidden');
+      document.getElementById('rawJsonInput').value = '';
+    }
+
+    async function submitUpdateData() {
+      const raw = document.getElementById('rawJsonInput').value.trim();
+      if (!raw) return alert('Vui lòng dán dữ liệu JSON!');
+      try {
+        const res = await fetch('/api/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: raw })
+        });
+        const resJson = await res.json();
+        if (resJson.status === 'success') {
+          rawDataset = resJson.data;
+          initDateFilters();
+          applyFilters();
+          closeUpdateModal();
+          showToast('🎉 Đã cập nhật thành công!');
+        } else {
+          alert('❌ Lỗi: ' + resJson.message);
+        }
+      } catch (err) {
+        alert('❌ Lỗi kết nối máy chủ: ' + err.message);
+      }
+    }
+
+    function exportCurrentReport() {
+      if (activeReport === 'export') {
+        const ws = XLSX.utils.json_to_sheet(filteredDataset);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "BaoCao_XuatKien");
+        XLSX.writeFile(wb, `GHN_XuatKien_${new Date().toISOString().slice(0,10)}.xlsx`);
+      } else {
+        const ws = XLSX.utils.json_to_sheet(realBinhDinhBacklog.rows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "TonDong_BinhDinh_20335000");
+        XLSX.writeFile(wb, `GHN_TonDong_BinhDinh_20335000_${new Date().toISOString().slice(0,10)}.xlsx`);
+      }
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+    }
+  </script>
+</body>
+</html>

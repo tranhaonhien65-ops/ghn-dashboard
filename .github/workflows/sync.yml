@@ -1,0 +1,23 @@
+name: GHN 24/7 Automated Sync
+
+on:
+  schedule:
+    # Runs every 30 minutes 24/7
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Run Auto Sync Worker
+        run: |
+          python3 cron_sync.py || true

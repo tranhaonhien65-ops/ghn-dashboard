@@ -1,0 +1,56 @@
+{
+  "selected_warehouse": {
+    "code": "20335000",
+    "name": "Kho Trung Chuyển Bình Định",
+    "region": "Miền Trung"
+  },
+  "summary": {
+    "total_packages": 4794,
+    "total_orders": 10271,
+    "total_weight_kg": 59339.37,
+    "total_weight_ton": 59.34,
+    "last_updated": "2026-09-16 09:12:00"
+  },
+  "stages": [
+    {
+      "stage": "Đang luân chuyển đến KTC",
+      "packages": 3783,
+      "orders": 7805,
+      "weight_kg": 42018.12,
+      "weight_ton": 42.02,
+      "pct_packages": 78.91,
+      "pct_orders": 75.99,
+      "status": "info"
+    },
+    {
+      "stage": "Chờ xuất",
+      "packages": 949,
+      "orders": 1483,
+      "weight_kg": 16205.86,
+      "weight_ton": 16.21,
+      "pct_packages": 19.79,
+      "pct_orders": 14.44,
+      "status": "warning"
+    },
+    {
+      "stage": "Chờ phân loại",
+      "packages": 36,
+      "orders": 899,
+      "weight_kg": 842.36,
+      "weight_ton": 0.84,
+      "pct_packages": 0.75,
+      "pct_orders": 8.75,
+      "status": "warning"
+    },
+    {
+      "stage": "Chờ xuất kiện chuyển tiếp",
+      "packages": 26,
+      "orders": 84,
+      "weight_kg": 273.03,
+      "weight_ton": 0.27,
+      "pct_packages": 0.54,
+      "pct_orders": 0.82,
+      "status": "warning"
+    }
+  ]
+}
