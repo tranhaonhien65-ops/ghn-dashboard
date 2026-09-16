@@ -1163,15 +1163,41 @@
           <pre id="userscriptCodeBox" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-[11px] text-slate-300 font-mono overflow-x-auto max-h-48 custom-scrollbar">// ==UserScript==
 // @name         GHN Dashboard Auto-Sync Bridge
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      2.0
 // @description  Tự động đồng bộ số liệu Metabase từ baocao.ghn.vn về GHN Dashboard
 // @author       Hao Nhien
 // @match        https://baocao.ghn.vn/*
-// @grant        none
+// @grant        GM_xmlhttpRequest
+// @connect      ghn-dashboard.onrender.com
+// @connect      localhost
+// @connect      127.0.0.1
 // ==/UserScript==
 
 (function() {
     'use strict';
+    console.log('[GHN Bridge v2.0] Khởi động cầu nối tự động...');
+
+    function sendToDashboard(payload) {
+        const endpoints = [
+            'https://ghn-dashboard.onrender.com/api/token/update',
+            'http://localhost:8080/api/token/update'
+        ];
+        endpoints.forEach(url => {
+            GM_xmlhttpRequest({
+                method: 'POST',
+                url: url,
+                headers: { 'Content-Type': 'application/json' },
+                data: JSON.stringify(payload),
+                onload: function(r) {
+                    console.log('[GHN Bridge] Đã gửi thành công tới ' + url);
+                },
+                onerror: function(e) {
+                    console.warn('[GHN Bridge] Gửi thất bại tới ' + url, e);
+                }
+            });
+        });
+    }
+
     async function syncToDashboard() {
         try {
             let k = localStorage.getItem('token') || localStorage.getItem('accessToken') || '';
@@ -1183,24 +1209,40 @@
                     }
                 }
             }
+
             const h = { 'accept': 'application/json, text/plain, */*', 'content-type': 'application/json' };
             if (k) h['token'] = k;
-            const rT = await fetch('https://baocao-v2-api.ghn.vn/baocao-service/report/dashboard/metabase-token', { method: 'POST', headers: h, body: JSON.stringify({ user_id: 3007413, dashboard_id: 317 }) });
+
+            const rT = await fetch('https://baocao-v2-api.ghn.vn/baocao-service/report/dashboard/metabase-token', {
+                method: 'POST',
+                headers: h,
+                body: JSON.stringify({ user_id: 3007413, dashboard_id: 317 })
+            });
+
             let jT = '';
-            if (rT.ok) { const d = await rT.json(); jT = d?.data?.token || ''; }
+            if (rT.ok) {
+                const d = await rT.json();
+                jT = d?.data?.token || '';
+            }
+
             let payload = { token: k, jwt_token: jT, timestamp: new Date().toISOString() };
+
             if (jT) {
                 const qR = await fetch(`https://data-bi.ghn.vn/api/embed/dashboard/${jT}/dashcard/6243/card/4885?parameters=%7B%22kho%22%3Anull%2C%22ma_kho%22%3A%5B%2220335000%22%5D%2C%22phan_loai%22%3Anull%7D`);
-                if (qR.ok) { const qJ = await qR.json(); payload.rows = qJ?.data?.rows || []; }
+                if (qR.ok) {
+                    const qJ = await qR.json();
+                    payload.rows = qJ?.data?.rows || [];
+                }
             }
-            for (const ep of ['https://ghn-dashboard.onrender.com/api/token/update', 'http://localhost:8080/api/token/update']) {
-                try { await fetch(ep, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) }); } catch(e) {}
-            }
-            console.log('[GHN Bridge] Synced orders to Dashboard successfully!');
-        } catch(e) {}
+
+            sendToDashboard(payload);
+        } catch(e) {
+            console.warn('[GHN Bridge] Lỗi:', e);
+        }
     }
-    setTimeout(syncToDashboard, 3000);
-    setInterval(syncToDashboard, 600000);
+
+    setTimeout(syncToDashboard, 2000);
+    setInterval(syncToDashboard, 300000); // 5 phút / lần
 })();</pre>
           <button onclick="copyUserscriptCode()" class="absolute top-2 right-2 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow transition flex items-center gap-1.5">
             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
