@@ -121,5 +121,11 @@ def run_server(port=PORT):
         httpd.serve_forever()
 
 if __name__ == "__main__":
-    p = int(sys.argv[1]) if len(sys.argv) > 1 else PORT
+    if len(sys.argv) > 1:
+        try:
+            p = int(sys.argv[1])
+        except ValueError:
+            p = PORT
+    else:
+        p = PORT
     run_server(p)

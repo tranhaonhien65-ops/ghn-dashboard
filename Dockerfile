@@ -3,4 +3,4 @@ WORKDIR /app
 COPY . /app
 ENV PORT=8080
 EXPOSE 8080
-CMD ["python3", "server.py", "8080"]
+CMD ["sh", "-c", "python3 server.py $PORT"]
