@@ -743,8 +743,8 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
       <button onclick="filterOrdersByStage('all')" id="cardFilterAll" class="order-filter-card bg-slate-900 border-2 border-emerald-500 rounded-xl p-3.5 text-left transition hover:border-emerald-400">
         <div class="text-[11px] text-slate-400 font-semibold uppercase">Tất Cả Khâu</div>
-        <div id="statTotalOrders" class="text-xl font-black text-white mt-1">10.271 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
-        <div class="text-[10px] text-slate-400 mt-1">4.794 kiện &bull; 59.34t</div>
+        <div id="statTotalOrdersCount" class="text-xl font-black text-white mt-1">371 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
+        <div id="statTotalOrdersSub" class="text-[10px] text-slate-400 mt-1">Kho Bình Định &bull; 20335000</div>
       </button>
 
       <button onclick="filterOrdersByStage('Chờ xuất')" id="cardFilterChoXuat" class="order-filter-card bg-slate-900 border border-slate-800 rounded-xl p-3.5 text-left transition hover:border-amber-500">
@@ -752,8 +752,8 @@
           <span>Chờ Xuất Kho</span>
           <i data-lucide="truck" class="w-3.5 h-3.5"></i>
         </div>
-        <div class="text-xl font-black text-amber-400 mt-1">1.483 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
-        <div class="text-[10px] text-slate-400 mt-1">949 kiện &bull; 16.21t</div>
+        <div id="statChoXuatCount" class="text-xl font-black text-amber-400 mt-1">98 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
+        <div class="text-[10px] text-slate-400 mt-1">Đang chờ xe xuất</div>
       </button>
 
       <button onclick="filterOrdersByStage('Đang luân chuyển đến KTC')" id="cardFilterLuanChuyen" class="order-filter-card bg-slate-900 border border-slate-800 rounded-xl p-3.5 text-left transition hover:border-sky-500">
@@ -761,8 +761,8 @@
           <span>Đang Đến KTC</span>
           <i data-lucide="arrow-right-left" class="w-3.5 h-3.5"></i>
         </div>
-        <div class="text-xl font-black text-sky-400 mt-1">7.805 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
-        <div class="text-[10px] text-slate-400 mt-1">3.783 kiện &bull; 42.02t</div>
+        <div id="statLuanChuyenCount" class="text-xl font-black text-sky-400 mt-1">262 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
+        <div class="text-[10px] text-slate-400 mt-1">Đang trên đường đến</div>
       </button>
 
       <button onclick="filterOrdersByStage('Chờ phân loại')" id="cardFilterPhanLoai" class="order-filter-card bg-slate-900 border border-slate-800 rounded-xl p-3.5 text-left transition hover:border-orange-500">
@@ -770,8 +770,8 @@
           <span>Chờ Phân Loại</span>
           <i data-lucide="layers" class="w-3.5 h-3.5"></i>
         </div>
-        <div class="text-xl font-black text-orange-400 mt-1">899 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
-        <div class="text-[10px] text-slate-400 mt-1">36 kiện &bull; 0.84t</div>
+        <div id="statPhanLoaiCount" class="text-xl font-black text-orange-400 mt-1">5 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
+        <div class="text-[10px] text-slate-400 mt-1">Đang tại bãi phân loại</div>
       </button>
 
       <button onclick="filterOrdersByStage('Chờ xuất kiện chuyển tiếp')" id="cardFilterChuyenTiep" class="order-filter-card bg-slate-900 border border-slate-800 rounded-xl p-3.5 text-left transition hover:border-purple-500">
@@ -779,8 +779,8 @@
           <span>Xuất Chuyển Tiếp</span>
           <i data-lucide="corner-up-right" class="w-3.5 h-3.5"></i>
         </div>
-        <div class="text-xl font-black text-purple-400 mt-1">84 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
-        <div class="text-[10px] text-slate-400 mt-1">26 kiện &bull; 0.27t</div>
+        <div id="statChuyenTiepCount" class="text-xl font-black text-purple-400 mt-1">2 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
+        <div class="text-[10px] text-slate-400 mt-1">Chuyển tiếp bưu cục</div>
       </button>
     </div>
 
@@ -801,10 +801,10 @@
         <div class="md:col-span-3">
           <select id="selectOrderStage" onchange="applyOrderFilters()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
             <option value="all">Tất cả khâu xử lý</option>
-            <option value="Chờ xuất">Chờ xuất (1.483 đơn)</option>
-            <option value="Đang luân chuyển đến KTC">Đang luân chuyển đến KTC (7.805 đơn)</option>
-            <option value="Chờ phân loại">Chờ phân loại (899 đơn)</option>
-            <option value="Chờ xuất kiện chuyển tiếp">Chờ xuất kiện chuyển tiếp (84 đơn)</option>
+            <option id="optChoXuat" value="Chờ xuất">Chờ xuất</option>
+            <option id="optLuanChuyen" value="Đang luân chuyển đến KTC">Đang luân chuyển đến KTC</option>
+            <option id="optPhanLoai" value="Chờ phân loại">Chờ phân loại</option>
+            <option id="optChuyenTiep" value="Chờ xuất kiện chuyển tiếp">Chờ xuất kiện chuyển tiếp</option>
           </select>
         </div>
 
@@ -1994,6 +1994,39 @@
 
         return true;
       });
+
+      // Update 5 top summary cards dynamically
+      const totalAll = rawOrders.length;
+      const countChoXuat = rawOrders.filter(o => (o.phan_loai || '').includes('Chờ xuất') && !(o.phan_loai || '').includes('chuyển tiếp')).length;
+      const countLuanChuyen = rawOrders.filter(o => (o.phan_loai || '').includes('luân chuyển')).length;
+      const countPhanLoai = rawOrders.filter(o => (o.phan_loai || '').includes('phân loại')).length;
+      const countChuyenTiep = rawOrders.filter(o => (o.phan_loai || '').includes('chuyển tiếp')).length;
+
+      if (document.getElementById('statTotalOrdersCount')) {
+        document.getElementById('statTotalOrdersCount').innerHTML = `${totalAll.toLocaleString('vi-VN')} <span class="text-xs text-slate-400 font-normal">đơn</span>`;
+      }
+      if (document.getElementById('statChoXuatCount')) {
+        document.getElementById('statChoXuatCount').innerHTML = `${countChoXuat.toLocaleString('vi-VN')} <span class="text-xs text-slate-400 font-normal">đơn</span>`;
+      }
+      if (document.getElementById('statLuanChuyenCount')) {
+        document.getElementById('statLuanChuyenCount').innerHTML = `${countLuanChuyen.toLocaleString('vi-VN')} <span class="text-xs text-slate-400 font-normal">đơn</span>`;
+      }
+      if (document.getElementById('statPhanLoaiCount')) {
+        document.getElementById('statPhanLoaiCount').innerHTML = `${countPhanLoai.toLocaleString('vi-VN')} <span class="text-xs text-slate-400 font-normal">đơn</span>`;
+      }
+      if (document.getElementById('statChuyenTiepCount')) {
+        document.getElementById('statChuyenTiepCount').innerHTML = `${countChuyenTiep.toLocaleString('vi-VN')} <span class="text-xs text-slate-400 font-normal">đơn</span>`;
+      }
+
+      // Update select dropdown option texts
+      const optChoXuat = document.getElementById('optChoXuat');
+      const optLuanChuyen = document.getElementById('optLuanChuyen');
+      const optPhanLoai = document.getElementById('optPhanLoai');
+      const optChuyenTiep = document.getElementById('optChuyenTiep');
+      if (optChoXuat) optChoXuat.textContent = `Chờ xuất (${countChoXuat.toLocaleString('vi-VN')} đơn)`;
+      if (optLuanChuyen) optLuanChuyen.textContent = `Đang luân chuyển đến KTC (${countLuanChuyen.toLocaleString('vi-VN')} đơn)`;
+      if (optPhanLoai) optPhanLoai.textContent = `Chờ phân loại (${countPhanLoai.toLocaleString('vi-VN')} đơn)`;
+      if (optChuyenTiep) optChuyenTiep.textContent = `Chờ xuất kiện chuyển tiếp (${countChuyenTiep.toLocaleString('vi-VN')} đơn)`;
 
       // Update counters
       const totalFiltered = filteredOrders.length;
