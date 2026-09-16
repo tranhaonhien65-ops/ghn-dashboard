@@ -1077,8 +1077,13 @@
       if (syncIcon) syncIcon.classList.add('animate-spin');
 
       try {
+        try {
+          await fetch('/api/sync-metabase');
+        } catch (e) {
+          console.log('Metabase live sync notice:', e);
+        }
         await fetchDashboardData();
-        showToast('Đã tự động đồng bộ số liệu mới nhất!');
+        showToast('🎉 Đã tự động đồng bộ số liệu mới nhất từ GHN Metabase!');
       } catch (e) {
         console.log('Auto sync error:', e);
       } finally {

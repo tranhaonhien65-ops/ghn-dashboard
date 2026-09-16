@@ -3,7 +3,9 @@ import socketserver
 import json
 import os
 import sys
-from updater import parse_looker_response, parse_metabase_rows, save_and_merge, DATA_FILE
+import threading
+import time
+from updater import parse_looker_response, parse_metabase_rows, save_and_merge, sync_metabase_live, DATA_FILE
 
 PORT = int(os.environ.get("PORT", 8080))
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
@@ -72,6 +74,23 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-Type", "text/plain")
             self.end_headers()
             self.wfile.write(b"OK")
+            return
+        elif url_path == "/api/sync-metabase":
+            try:
+                count = sync_metabase_live()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                res = {"status": "success", "message": f"Đã tự động đồng bộ thành công {count} mã đơn thật từ GHN Metabase!", "total_orders": count}
+                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+            except Exception as e:
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                res = {"status": "error", "message": f"Lỗi đồng bộ Metabase: {str(e)}"}
+                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
             return
         else:
             return super().do_GET()
@@ -224,7 +243,25 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 
+def auto_sync_metabase_worker():
+    """Background worker that periodically syncs data from GHN Metabase every 15 minutes."""
+    # First sleep 5 seconds on startup
+    time.sleep(5)
+    while True:
+        try:
+            print("[Auto-Sync Worker] Periodic sync from GHN Metabase...")
+            count = sync_metabase_live()
+            print(f"[Auto-Sync Worker] Successfully synced {count} live orders!")
+        except Exception as e:
+            print(f"[Auto-Sync Worker] Sync warning: {e}")
+        time.sleep(900) # 15 minutes
+
 def run_server(port=PORT):
+    # Launch auto-sync daemon in background
+    sync_thread = threading.Thread(target=auto_sync_metabase_worker, daemon=True)
+    sync_thread.start()
+    print(f"GHN Auto-Sync Worker started (every 15 mins).")
+
     with socketserver.TCPServer(("", port), DashboardHandler) as httpd:
         print(f"GHN Dashboard Server running at http://0.0.0.0:{port}")
         httpd.serve_forever()
