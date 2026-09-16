@@ -21,11 +21,19 @@
             ghn: {
               orange: '#f26522',
               'orange-hover': '#d9531e',
-              blue: '#003b64',
-              'blue-light': '#006699',
-              dark: '#0f172a',
-              card: '#1e293b',
-              border: '#334155'
+              'orange-light': '#ff7a3d',
+              'orange-50': '#fff7ed',
+              'orange-100': '#ffedd5',
+              blue: '#0068a7',
+              'blue-hover': '#00558f',
+              'blue-dark': '#003b64',
+              'blue-light': '#0284c7',
+              'blue-50': '#f0f9ff',
+              'blue-100': '#e0f2fe',
+              navy: '#0b131e',
+              'navy-card': '#111c2d',
+              'navy-card-hover': '#18273e',
+              'navy-border': '#22354f'
             }
           }
         }
@@ -33,103 +41,120 @@
     }
   </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    body { font-family: 'Inter', sans-serif; }
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(150,150,150,0.3); border-radius: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(150,150,150,0.5); }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,104,167,0.3); border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(242,101,34,0.6); }
     .tab-active {
-      background: linear-gradient(to right, #f26522, #ea580c);
-      color: #ffffff;
+      background: linear-gradient(135deg, #f26522 0%, #ea580c 100%) !important;
+      color: #ffffff !important;
       font-weight: 700;
-      box-shadow: 0 4px 14px 0 rgba(242, 101, 34, 0.35);
+      box-shadow: 0 4px 14px 0 rgba(242, 101, 34, 0.4);
+    }
+    .ghn-gradient-orange {
+      background: linear-gradient(135deg, #f26522 0%, #ea580c 100%);
+    }
+    .ghn-gradient-blue {
+      background: linear-gradient(135deg, #0068a7 0%, #0284c7 100%);
+    }
+    .ghn-card-shadow {
+      box-shadow: 0 10px 25px -5px rgba(0, 59, 100, 0.05), 0 8px 10px -6px rgba(0, 59, 100, 0.05);
+    }
+    .dark .ghn-card-shadow {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+<body class="bg-slate-50 dark:bg-[#0b131e] text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
 
   <!-- TOAST NOTIFICATION CONTAINER -->
-  <div id="toastNotification" class="fixed bottom-5 right-5 z-50 bg-slate-900 border border-emerald-500/40 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none">
-    <div class="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-      <i data-lucide="check-circle" class="w-4 h-4"></i>
+  <div id="toastNotification" class="fixed bottom-5 right-5 z-50 bg-white dark:bg-slate-900 border border-emerald-500/40 text-slate-900 dark:text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none">
+    <div class="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-500">
+      <i data-lucide="check-circle" class="w-5 h-5"></i>
     </div>
     <div>
-      <div class="text-xs font-bold text-slate-100">Đã cập nhật dữ liệu tự động</div>
-      <div id="toastMessage" class="text-[11px] text-slate-400">Số liệu mới nhất từ hệ thống GHN</div>
+      <div class="text-xs font-bold text-slate-900 dark:text-slate-100">Đã cập nhật dữ liệu tự động</div>
+      <div id="toastMessage" class="text-[11px] text-slate-500 dark:text-slate-400">Số liệu mới nhất từ hệ thống GHN</div>
     </div>
   </div>
 
   <!-- TOP HEADER & MAIN NAVIGATION -->
-  <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 px-4 lg:px-8 py-3">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <header class="bg-white/90 dark:bg-[#0b131e]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 sticky top-0 z-40 px-4 lg:px-8 py-2.5 transition-colors">
+    <div class="max-w-7xl mx-auto flex flex-col xl:flex-row xl:items-center justify-between gap-3.5">
       
       <!-- Brand & Title -->
-      <div class="flex items-center gap-3.5">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-ghn-orange to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20">
-          <i data-lucide="layout-dashboard" class="w-6 h-6 text-white"></i>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded border border-orange-500/20">GHN Express Analytics</span>
-            <span id="liveStatus" class="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              Auto-Sync Bật
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-2 group flex-shrink-0">
+          <div class="bg-white dark:bg-white/95 rounded-xl p-1.5 shadow-md shadow-orange-500/10 border border-slate-200/80 dark:border-slate-700 flex items-center justify-center">
+            <img src="/ghn_logo.png" alt="GHN Express Logo" class="h-8 w-auto object-contain">
+          </div>
+        </a>
+        <div class="border-l border-slate-200 dark:border-slate-800 pl-3">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-[10px] font-black uppercase tracking-wider text-ghn-orange bg-orange-50 dark:bg-orange-500/10 px-2.5 py-0.5 rounded-full border border-orange-200 dark:border-orange-500/30">
+              KTC BÌNH ĐỊNH &bull; 20335000
+            </span>
+            <span id="liveStatus" class="inline-flex items-center gap-1.5 text-[10px] text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/30">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              Metabase Live Sync
             </span>
           </div>
-          <h1 class="text-lg font-bold text-white tracking-tight">
-            TRUNG TÂM BÁO CÁO VẬN HÀNH KHO KTC BÌNH ĐỊNH (20335000)
+          <h1 class="text-sm md:text-base font-black text-slate-900 dark:text-white tracking-tight mt-0.5 flex items-center gap-1.5">
+            <span class="text-ghn-blue dark:text-sky-400 font-extrabold">HỆ THỐNG QUẢN TRỊ & BÁO CÁO VẬN HÀNH LOGISTICS</span>
           </h1>
         </div>
       </div>
 
       <!-- Report Switcher Tabs -->
-      <div class="flex items-center bg-slate-950 p-1.5 rounded-xl border border-slate-800 text-xs">
-        <button onclick="switchReport('export')" id="tabBtnExport" class="tab-active flex items-center gap-2 px-4 py-2 rounded-lg transition">
+      <div class="flex items-center bg-slate-100 dark:bg-slate-950/80 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs flex-wrap gap-1">
+        <button onclick="switchReport('export')" id="tabBtnExport" class="tab-active flex items-center gap-2 px-3.5 py-2 rounded-xl transition">
           <i data-lucide="boxes" class="w-4 h-4"></i>
           <span>1. Báo Cáo Xuất Kiện</span>
         </button>
-        <button onclick="switchReport('backlog')" id="tabBtnBacklog" class="text-slate-400 hover:text-slate-200 flex items-center gap-2 px-4 py-2 rounded-lg transition">
-          <i data-lucide="clock-alert" class="w-4 h-4 text-amber-400"></i>
-          <span>2. Tồn Đọng KTC Bình Định (20335000)</span>
+        <button onclick="switchReport('backlog')" id="tabBtnBacklog" class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-900/60 flex items-center gap-2 px-3.5 py-2 rounded-xl transition font-semibold">
+          <i data-lucide="clock-alert" class="w-4 h-4 text-orange-500"></i>
+          <span>2. Tồn Đọng KTC Bình Định</span>
         </button>
-        <button onclick="switchReport('orders')" id="tabBtnOrders" class="text-slate-400 hover:text-slate-200 flex items-center gap-2 px-4 py-2 rounded-lg transition">
-          <i data-lucide="barcode" class="w-4 h-4 text-emerald-400"></i>
-          <span>3. Tra Cứu & Tải Mã Đơn / Kiện</span>
+        <button onclick="switchReport('orders')" id="tabBtnOrders" class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-900/60 flex items-center gap-2 px-3.5 py-2 rounded-xl transition font-semibold">
+          <i data-lucide="barcode" class="w-4 h-4 text-ghn-blue dark:text-sky-400"></i>
+          <span>3. Tra Cứu & Tải Mã Đơn</span>
         </button>
       </div>
 
       <!-- Auto-Sync & Action Controls -->
-      <div class="flex items-center flex-wrap gap-2.5">
+      <div class="flex items-center flex-wrap gap-2">
         <!-- Auto-Refresh Selector & Countdown -->
-        <div class="flex items-center gap-2 bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 text-xs">
-          <i data-lucide="timer" class="w-3.5 h-3.5 text-orange-400"></i>
-          <select id="autoRefreshInterval" onchange="changeRefreshInterval()" class="bg-transparent text-slate-200 text-xs outline-none cursor-pointer">
-            <option value="1800" selected>Tự làm mới: Mỗi 30 phút (Chuẩn GHN)</option>
-            <option value="900">Tự làm mới: Mỗi 15 phút</option>
-            <option value="300">Tự làm mới: Mỗi 5 phút</option>
-            <option value="60">Tự làm mới: Mỗi 1 phút</option>
+        <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-950/80 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
+          <i data-lucide="timer" class="w-3.5 h-3.5 text-ghn-orange"></i>
+          <select id="autoRefreshInterval" onchange="changeRefreshInterval()" class="bg-transparent text-slate-700 dark:text-slate-300 text-xs font-semibold outline-none cursor-pointer">
+            <option value="1800" selected>Tự làm mới: 30 phút (GHN)</option>
+            <option value="900">Tự làm mới: 15 phút</option>
+            <option value="300">Tự làm mới: 5 phút</option>
+            <option value="60">Tự làm mới: 1 phút</option>
             <option value="0">Tắt tự động</option>
           </select>
-          <span id="countdownTimer" class="font-mono text-emerald-400 font-bold text-[11px] bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">29:59</span>
+          <span id="countdownTimer" class="font-mono text-ghn-blue dark:text-sky-400 font-bold text-[11px] bg-white dark:bg-slate-900 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800">29:59</span>
         </div>
 
-        <button onclick="manualSyncNow()" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-orange-600 to-ghn-orange hover:from-orange-500 hover:to-orange-600 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-lg shadow-orange-600/20 transition" title="Làm mới số liệu ngay">
+        <button onclick="manualSyncNow()" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-ghn-orange to-orange-600 hover:from-ghn-orange-hover hover:to-orange-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition" title="Làm mới số liệu ngay">
           <i data-lucide="refresh-cw" id="syncIcon" class="w-3.5 h-3.5"></i>
           <span>Làm mới</span>
         </button>
 
-        <button onclick="exportCurrentReport()" class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3 py-2 rounded-lg border border-slate-700 transition" title="Xuất Excel">
-          <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <button onclick="exportCurrentReport()" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-ghn-blue to-[#0284c7] hover:from-ghn-blue-hover hover:to-sky-600 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-md shadow-blue-500/20 active:scale-95 transition" title="Xuất file Excel báo cáo">
+          <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
           <span>Excel</span>
         </button>
 
-        <button onclick="window.print()" class="inline-flex items-center justify-center w-8 h-8 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition" title="In báo cáo">
-          <i data-lucide="printer" class="w-4 h-4 text-sky-400"></i>
+        <button onclick="window.print()" class="inline-flex items-center justify-center w-8 h-8 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl border border-slate-200 dark:border-slate-700 transition" title="In báo cáo">
+          <i data-lucide="printer" class="w-4 h-4 text-ghn-blue dark:text-sky-400"></i>
         </button>
 
-        <button onclick="toggleTheme()" class="inline-flex items-center justify-center w-8 h-8 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition" title="Đổi giao diện Sáng/Tối">
-          <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
+        <button onclick="toggleTheme()" class="inline-flex items-center justify-center w-8 h-8 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl border border-slate-200 dark:border-slate-700 transition" title="Đổi giao diện Sáng/Tối">
+          <i data-lucide="moon" id="themeIcon" class="w-4 h-4 text-amber-500"></i>
         </button>
       </div>
     </div>
@@ -139,32 +164,32 @@
   <section id="sectionExportReport" class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8 space-y-6">
 
     <!-- FILTER BAR -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm space-y-4">
+    <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 shadow-sm ghn-card-shadow space-y-4 transition-colors">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         
         <!-- Date Quick Range Filters -->
         <div class="flex items-center flex-wrap gap-2">
-          <span class="text-xs font-semibold text-slate-400 uppercase mr-1 flex items-center gap-1.5">
-            <i data-lucide="calendar" class="w-4 h-4 text-orange-400"></i> Thời gian:
+          <span class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mr-1 flex items-center gap-1.5">
+            <i data-lucide="calendar" class="w-4 h-4 text-ghn-orange"></i> Thời gian:
           </span>
-          <button onclick="setDatePreset('all')" id="btnPresetAll" class="preset-btn text-xs font-medium px-3 py-1.5 rounded-lg bg-orange-600 text-white transition">Tất cả (28 ngày)</button>
-          <button onclick="setDatePreset('last7')" id="btnPreset7" class="preset-btn text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition">7 ngày gần nhất</button>
-          <button onclick="setDatePreset('last14')" id="btnPreset14" class="preset-btn text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition">14 ngày gần nhất</button>
-          <button onclick="setDatePreset('last3')" id="btnPreset3" class="preset-btn text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition">3 ngày gần nhất</button>
+          <button onclick="setDatePreset('all')" id="btnPresetAll" class="preset-btn text-xs font-bold px-3.5 py-1.5 rounded-xl bg-ghn-orange text-white shadow-md shadow-orange-500/20 transition">Tất cả (28 ngày)</button>
+          <button onclick="setDatePreset('last7')" id="btnPreset7" class="preset-btn text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">7 ngày gần nhất</button>
+          <button onclick="setDatePreset('last14')" id="btnPreset14" class="preset-btn text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">14 ngày gần nhất</button>
+          <button onclick="setDatePreset('last3')" id="btnPreset3" class="preset-btn text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">3 ngày gần nhất</button>
         </div>
 
         <!-- Custom Date Range & Region Picker -->
         <div class="flex items-center flex-wrap gap-3">
-          <div class="flex items-center gap-2 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg">
-            <span class="text-xs text-slate-400">Từ:</span>
-            <input type="date" id="startDate" class="bg-transparent text-xs text-slate-200 outline-none cursor-pointer" onchange="applyFilters()">
-            <span class="text-xs text-slate-400">Đến:</span>
-            <input type="date" id="endDate" class="bg-transparent text-xs text-slate-200 outline-none cursor-pointer" onchange="applyFilters()">
+          <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl">
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Từ:</span>
+            <input type="date" id="startDate" class="bg-transparent text-xs text-slate-800 dark:text-slate-200 font-semibold outline-none cursor-pointer" onchange="applyFilters()">
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Đến:</span>
+            <input type="date" id="endDate" class="bg-transparent text-xs text-slate-800 dark:text-slate-200 font-semibold outline-none cursor-pointer" onchange="applyFilters()">
           </div>
 
-          <div class="flex items-center gap-2 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg">
-            <span class="text-xs text-slate-400">Khu vực:</span>
-            <select id="regionFilter" class="bg-transparent text-xs text-slate-200 font-medium outline-none cursor-pointer" onchange="applyFilters()">
+          <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl">
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Khu vực:</span>
+            <select id="regionFilter" class="bg-transparent text-xs text-slate-800 dark:text-slate-200 font-bold outline-none cursor-pointer" onchange="applyFilters()">
               <option value="ALL">Tất cả khu vực</option>
               <option value="2.Miền Trung" selected>2. Miền Trung (Bình Định)</option>
             </select>
@@ -173,20 +198,20 @@
       </div>
 
       <!-- Timeslot Checkboxes -->
-      <div class="flex items-center flex-wrap gap-3 pt-3 border-t border-slate-800/80 text-xs">
-        <span class="text-slate-400 font-medium flex items-center gap-1">
-          <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i> Mốc giờ:
+      <div class="flex items-center flex-wrap gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+        <span class="text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
+          <i data-lucide="clock" class="w-3.5 h-3.5 text-ghn-blue dark:text-sky-400"></i> Mốc giờ:
         </span>
-        <label class="flex items-center gap-1.5 cursor-pointer bg-slate-950/70 border border-emerald-500/30 px-2.5 py-1 rounded-md text-emerald-400 font-medium hover:bg-emerald-500/10 transition">
-          <input type="checkbox" value="1.0 - 6h" checked class="accent-emerald-500 timeslot-cb" onchange="applyFilters()"> 1. 0 - 6h (Giờ vàng)
+        <label class="flex items-center gap-1.5 cursor-pointer bg-blue-50/60 dark:bg-sky-950/40 border border-blue-200 dark:border-sky-800/60 px-3 py-1.5 rounded-xl text-ghn-blue dark:text-sky-400 font-bold hover:bg-blue-100/60 dark:hover:bg-sky-900/40 transition">
+          <input type="checkbox" value="1.0 - 6h" checked class="accent-ghn-blue timeslot-cb" onchange="applyFilters()"> 1. 0 - 6h (Giờ vàng)
         </label>
-        <label class="flex items-center gap-1.5 cursor-pointer bg-slate-950/70 border border-sky-500/30 px-2.5 py-1 rounded-md text-sky-400 font-medium hover:bg-sky-500/10 transition">
+        <label class="flex items-center gap-1.5 cursor-pointer bg-sky-50/60 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800/40 px-3 py-1.5 rounded-xl text-sky-700 dark:text-sky-400 font-semibold hover:bg-sky-100/60 dark:hover:bg-sky-900/30 transition">
           <input type="checkbox" value="2.6 - 12h" checked class="accent-sky-500 timeslot-cb" onchange="applyFilters()"> 2. 6 - 12h
         </label>
-        <label class="flex items-center gap-1.5 cursor-pointer bg-slate-950/70 border border-amber-500/30 px-2.5 py-1 rounded-md text-amber-400 font-medium hover:bg-amber-500/10 transition">
+        <label class="flex items-center gap-1.5 cursor-pointer bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 px-3 py-1.5 rounded-xl text-amber-700 dark:text-amber-400 font-semibold hover:bg-amber-100/60 dark:hover:bg-amber-900/30 transition">
           <input type="checkbox" value="3.12 - 24h" checked class="accent-amber-500 timeslot-cb" onchange="applyFilters()"> 3. 12 - 24h
         </label>
-        <label class="flex items-center gap-1.5 cursor-pointer bg-slate-950/70 border border-rose-500/30 px-2.5 py-1 rounded-md text-rose-400 font-medium hover:bg-rose-500/10 transition">
+        <label class="flex items-center gap-1.5 cursor-pointer bg-rose-50/60 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/40 px-3 py-1.5 rounded-xl text-rose-700 dark:text-rose-400 font-bold hover:bg-rose-100/60 dark:hover:bg-rose-900/30 transition">
           <input type="checkbox" value="4.>24h" checked class="accent-rose-500 timeslot-cb" onchange="applyFilters()"> 4. >24h (Cảnh báo trễ)
         </label>
       </div>
@@ -194,109 +219,119 @@
 
     <!-- SUMMARY METRIC CARDS -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
-        <div class="flex items-center justify-between text-slate-400 mb-2">
-          <span class="text-xs font-semibold uppercase tracking-wider">Tổng Volume Xuất</span>
-          <i data-lucide="boxes" class="w-4 h-4 text-orange-400"></i>
+      <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 border-t-4 border-t-ghn-orange rounded-2xl p-4.5 flex flex-col justify-between ghn-card-shadow transition hover:scale-[1.02]">
+        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-ghn-orange">Tổng Volume Xuất</span>
+          <div class="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-ghn-orange">
+            <i data-lucide="boxes" class="w-4 h-4"></i>
+          </div>
         </div>
         <div>
-          <div id="kpiTotalVolume" class="text-2xl font-black text-white">0</div>
-          <div class="text-xs text-slate-400 mt-1">TB: <span id="kpiAvgDailyVolume" class="font-semibold text-slate-200">0</span></div>
+          <div id="kpiTotalVolume" class="text-2xl font-black text-slate-900 dark:text-white font-mono">0</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">TB ngày: <span id="kpiAvgDailyVolume" class="font-bold text-slate-700 dark:text-slate-200">0</span></div>
         </div>
       </div>
 
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
-        <div class="flex items-center justify-between text-slate-400 mb-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400">Giờ Vàng (0-6h)</span>
-          <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
+      <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 border-t-4 border-t-ghn-blue rounded-2xl p-4.5 flex flex-col justify-between ghn-card-shadow transition hover:scale-[1.02]">
+        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-ghn-blue dark:text-sky-400">Giờ Vàng (0-6h)</span>
+          <div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-ghn-blue dark:text-sky-400">
+            <i data-lucide="zap" class="w-4 h-4"></i>
+          </div>
         </div>
         <div>
-          <div id="kpiPct06" class="text-2xl font-black text-emerald-400">0%</div>
-          <div class="text-xs text-slate-400 mt-1"><span id="kpiVol06" class="font-semibold text-slate-200">0</span> kiện</div>
+          <div id="kpiPct06" class="text-2xl font-black text-ghn-blue dark:text-sky-400 font-mono">0%</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1"><span id="kpiVol06" class="font-bold text-slate-700 dark:text-slate-200">0</span> kiện</div>
         </div>
-        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-          <div id="barPct06" class="bg-emerald-500 h-full rounded-full" style="width: 0%"></div>
+        <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2.5 overflow-hidden">
+          <div id="barPct06" class="bg-gradient-to-r from-ghn-blue to-[#0284c7] h-full rounded-full" style="width: 0%"></div>
         </div>
       </div>
 
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
-        <div class="flex items-center justify-between text-slate-400 mb-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-sky-400">Xử Lý Nhanh (<12h)</span>
-          <i data-lucide="gauge" class="w-4 h-4 text-sky-400"></i>
+      <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 border-t-4 border-t-sky-500 rounded-2xl p-4.5 flex flex-col justify-between ghn-card-shadow transition hover:scale-[1.02]">
+        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">Xử Lý Nhanh (&lt;12h)</span>
+          <div class="w-7 h-7 rounded-lg bg-sky-50 dark:bg-sky-500/10 flex items-center justify-center text-sky-500">
+            <i data-lucide="gauge" class="w-4 h-4"></i>
+          </div>
         </div>
         <div>
-          <div id="kpiPctUnder12" class="text-2xl font-black text-sky-400">0%</div>
-          <div class="text-xs text-slate-400 mt-1"><span id="kpiVolUnder12" class="font-semibold text-slate-200">0</span> kiện</div>
+          <div id="kpiPctUnder12" class="text-2xl font-black text-sky-600 dark:text-sky-400 font-mono">0%</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1"><span id="kpiVolUnder12" class="font-bold text-slate-700 dark:text-slate-200">0</span> kiện</div>
         </div>
-        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+        <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2.5 overflow-hidden">
           <div id="barPctUnder12" class="bg-sky-500 h-full rounded-full" style="width: 0%"></div>
         </div>
       </div>
 
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
-        <div class="flex items-center justify-between text-slate-400 mb-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-rose-400">Trễ Hạn (>24h)</span>
-          <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i>
+      <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 border-t-4 border-t-rose-500 rounded-2xl p-4.5 flex flex-col justify-between ghn-card-shadow transition hover:scale-[1.02]">
+        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">Trễ Hạn (&gt;24h)</span>
+          <div class="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-500">
+            <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+          </div>
         </div>
         <div>
-          <div id="kpiPctOver24" class="text-2xl font-black text-rose-400">0%</div>
-          <div class="text-xs text-slate-400 mt-1"><span id="kpiVolOver24" class="font-semibold text-rose-300">0</span> kiện</div>
+          <div id="kpiPctOver24" class="text-2xl font-black text-rose-600 dark:text-rose-400 font-mono">0%</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1"><span id="kpiVolOver24" class="font-bold text-rose-600 dark:text-rose-300">0</span> kiện</div>
         </div>
-        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+        <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2.5 overflow-hidden">
           <div id="barPctOver24" class="bg-rose-500 h-full rounded-full" style="width: 0%"></div>
         </div>
       </div>
 
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
-        <div class="flex items-center justify-between text-slate-400 mb-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-amber-400">LeadTime TB</span>
-          <i data-lucide="timer" class="w-4 h-4 text-amber-400"></i>
+      <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 border-t-4 border-t-amber-500 rounded-2xl p-4.5 flex flex-col justify-between ghn-card-shadow transition hover:scale-[1.02]">
+        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">LeadTime TB</span>
+          <div class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-500">
+            <i data-lucide="timer" class="w-4 h-4"></i>
+          </div>
         </div>
         <div>
-          <div id="kpiAvgLeadTime" class="text-2xl font-black text-amber-400">0h</div>
-          <div class="text-xs text-slate-400 mt-1">Chuẩn SLA: <span class="text-emerald-400 font-semibold">< 5.0h</span></div>
+          <div id="kpiAvgLeadTime" class="text-2xl font-black text-amber-600 dark:text-amber-400 font-mono">0h</div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Chuẩn SLA: <span class="text-emerald-600 dark:text-emerald-400 font-bold">&lt; 5.0h</span></div>
         </div>
       </div>
     </div>
 
     <!-- CHARTS SECTION -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i data-lucide="bar-chart-3" class="w-5 h-5 text-orange-400"></i>
+      <div class="lg:col-span-2 bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 space-y-4 ghn-card-shadow transition-colors">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="bar-chart-3" class="w-5 h-5 text-ghn-orange"></i>
           Diễn Biến Sản Lượng Theo Mốc Giờ & LeadTime
         </h3>
         <div id="chartDailyVolume" class="w-full h-80"></div>
       </div>
 
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 flex flex-col justify-between">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i data-lucide="pie-chart" class="w-5 h-5 text-emerald-400"></i>
+      <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 space-y-4 flex flex-col justify-between ghn-card-shadow transition-colors">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="pie-chart" class="w-5 h-5 text-ghn-blue dark:text-sky-400"></i>
           Tỷ Trọng Mốc Giờ Xuất Kiện
         </h3>
         <div id="chartDonutTimeslot" class="w-full h-64 flex items-center justify-center"></div>
-        <div class="grid grid-cols-2 gap-2 text-xs pt-3 border-t border-slate-800">
-          <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 0 - 6h</div>
-          <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span> 6 - 12h</div>
-          <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> 12 - 24h</div>
-          <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> > 24h</div>
+        <div class="grid grid-cols-2 gap-2 text-xs pt-3 border-t border-slate-100 dark:border-slate-800 font-medium">
+          <div class="flex items-center gap-2 text-slate-700 dark:text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-ghn-blue"></span> 0 - 6h</div>
+          <div class="flex items-center gap-2 text-slate-700 dark:text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span> 6 - 12h</div>
+          <div class="flex items-center gap-2 text-slate-700 dark:text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> 12 - 24h</div>
+          <div class="flex items-center gap-2 text-slate-700 dark:text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> &gt; 24h</div>
         </div>
       </div>
     </div>
 
     <!-- SECONDARY CHARTS -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i data-lucide="calendar-days" class="w-5 h-5 text-sky-400"></i>
+      <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 space-y-4 ghn-card-shadow transition-colors">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="calendar-days" class="w-5 h-5 text-ghn-blue dark:text-sky-400"></i>
           Sản Lượng & LeadTime Theo Thứ Trong Tuần
         </h3>
         <div id="chartDayOfWeek" class="w-full h-72"></div>
       </div>
 
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i data-lucide="trending-up" class="w-5 h-5 text-amber-400"></i>
+      <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 space-y-4 ghn-card-shadow transition-colors">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="trending-up" class="w-5 h-5 text-ghn-orange"></i>
           Biến Động LeadTime Chi Tiết Từng Khung Giờ
         </h3>
         <div id="chartLeadTimeTrend" class="w-full h-72"></div>
@@ -304,18 +339,18 @@
     </div>
 
     <!-- DATA TABLE SECTION -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+    <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 space-y-4 ghn-card-shadow transition-colors">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i data-lucide="table" class="w-5 h-5 text-orange-400"></i>
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="table" class="w-5 h-5 text-ghn-orange"></i>
           Bảng Số Liệu Chi Tiết (Matrix & Data Grid)
         </h3>
-        <div class="bg-slate-950 p-1 rounded-lg border border-slate-800 flex items-center text-xs">
-          <button onclick="setTableMode('matrix')" id="btnTabMatrix" class="px-3 py-1 rounded font-medium bg-orange-600 text-white">Dạng Ma Trận (GHN Pivot)</button>
-          <button onclick="setTableMode('grid')" id="btnTabGrid" class="px-3 py-1 rounded font-medium text-slate-400 hover:text-slate-200">Dạng Danh Sách</button>
+        <div class="bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center text-xs">
+          <button onclick="setTableMode('matrix')" id="btnTabMatrix" class="px-3.5 py-1.5 rounded-lg font-bold bg-ghn-orange text-white shadow-sm transition">Dạng Ma Trận (GHN Pivot)</button>
+          <button onclick="setTableMode('grid')" id="btnTabGrid" class="px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition">Dạng Danh Sách</button>
         </div>
       </div>
-      <div class="overflow-x-auto custom-scrollbar border border-slate-800 rounded-xl bg-slate-950/60">
+      <div class="overflow-x-auto custom-scrollbar border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-950/60">
         <table id="dataTable" class="w-full text-xs text-left border-collapse"></table>
       </div>
     </div>
@@ -325,32 +360,34 @@
   <section id="sectionBacklogReport" class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8 space-y-6 hidden">
     
     <!-- METABASE REPORT TOP BRANDING & CONTROLS -->
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-[#f26522] flex items-center justify-center font-black text-white text-base shadow-md shadow-orange-500/30">
-          GHN
+    <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 ghn-card-shadow flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors">
+      <div class="flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-white dark:bg-white/95 p-1 border border-slate-200 dark:border-slate-700 shadow-md shadow-orange-500/10 flex items-center justify-center flex-shrink-0">
+          <img src="/ghn_logo.png" alt="GHN Logo" class="h-8 w-auto object-contain">
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">GiaoHangNhanh &bull; Giao Siêu Nhanh, Giá Siêu Tốt</span>
-            <span class="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Metabase Live
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-black uppercase tracking-wider text-ghn-orange bg-orange-50 dark:bg-orange-500/10 px-2.5 py-0.5 rounded-full border border-orange-200 dark:border-orange-500/30">
+              GiaoHangNhanh &bull; KTC Bình Định (20335000)
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-[10px] text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/30">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Metabase Live Sync
             </span>
           </div>
-          <h2 class="text-xl font-black text-slate-800 dark:text-white mt-0.5 flex items-center gap-2">
+          <h2 class="text-lg md:text-xl font-black text-slate-900 dark:text-white mt-1 flex items-center gap-2">
             BÁO CÁO TỒN ĐỘNG THEO MA TRẬN THỜI GIAN & KHÂU XỬ LÝ
           </h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Khớp 100% giao diện Metabase GHN (Kho Trung Chuyển Bình Định - Mã kho 20335000)</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Khớp 100% giao diện Metabase chuẩn GHN &bull; Cập nhật tự động 24/7</p>
         </div>
       </div>
 
       <!-- Quick Action Buttons -->
       <div class="flex items-center flex-wrap gap-2.5">
-        <button onclick="exportAllOrdersExcel()" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-lg shadow-emerald-600/20 transition" title="Tải toàn bộ danh sách mã đơn">
+        <button onclick="exportAllOrdersExcel()" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition" title="Tải toàn bộ danh sách mã đơn">
           <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
           <span id="btnExportAllBacklogText">Tải Excel Toàn Bộ Đơn</span>
         </button>
-        <button onclick="switchReport('orders')" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-orange-600 to-ghn-orange hover:from-orange-500 hover:to-orange-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-lg shadow-orange-600/20 transition">
+        <button onclick="switchReport('orders')" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-ghn-orange to-orange-600 hover:from-ghn-orange-hover hover:to-orange-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition">
           <i data-lucide="search" class="w-4 h-4"></i>
           <span>Tra Cứu / Quét Barcode</span>
         </button>
@@ -358,34 +395,34 @@
     </div>
 
     <!-- METABASE FILTER BAR (KHỚP 100% GIAO DIỆN METABASE) -->
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 transition-colors">
+    <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 ghn-card-shadow flex flex-col md:flex-row md:items-center justify-between gap-3 transition-colors">
       <div class="flex items-center gap-3 flex-wrap">
         
         <!-- Filter 1: Kho -->
-        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs hover:border-slate-400 dark:hover:border-slate-600 transition">
-          <span class="font-bold text-slate-500 dark:text-slate-400 font-serif text-sm">T</span>
-          <span class="text-slate-600 dark:text-slate-400">Kho:</span>
-          <select id="mbFilterKho" class="bg-transparent text-slate-900 dark:text-slate-100 font-semibold outline-none cursor-pointer">
+        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 rounded-xl text-xs hover:border-ghn-orange transition">
+          <span class="font-black text-ghn-orange font-serif text-sm">T</span>
+          <span class="text-slate-500 dark:text-slate-400 font-medium">Kho:</span>
+          <select id="mbFilterKho" class="bg-transparent text-slate-900 dark:text-slate-100 font-bold outline-none cursor-pointer">
             <option value="20335000" selected>Kho Trung Chuyển Bình Định</option>
           </select>
           <span class="text-slate-400 text-[10px]">▾</span>
         </div>
 
         <!-- Filter 2: Mã kho -->
-        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs hover:border-slate-400 dark:hover:border-slate-600 transition">
-          <span class="font-bold text-slate-500 dark:text-slate-400 font-serif text-sm">T</span>
-          <span class="text-slate-600 dark:text-slate-400">Mã kho:</span>
-          <select id="mbFilterMaKho" class="bg-transparent text-slate-900 dark:text-slate-100 font-semibold outline-none cursor-pointer">
+        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 rounded-xl text-xs hover:border-ghn-orange transition">
+          <span class="font-black text-ghn-orange font-serif text-sm">T</span>
+          <span class="text-slate-500 dark:text-slate-400 font-medium">Mã kho:</span>
+          <select id="mbFilterMaKho" class="bg-transparent text-slate-900 dark:text-slate-100 font-mono font-bold outline-none cursor-pointer">
             <option value="20335000" selected>20335000</option>
           </select>
           <span class="text-slate-400 text-[10px]">▾</span>
         </div>
 
         <!-- Filter 3: Phân loại -->
-        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs hover:border-slate-400 dark:hover:border-slate-600 transition">
-          <span class="font-bold text-slate-500 dark:text-slate-400 font-serif text-sm">T</span>
-          <span class="text-slate-600 dark:text-slate-400">Phân loại:</span>
-          <select id="mbFilterPhanLoai" onchange="filterMatrixByDropdown(this.value)" class="bg-transparent text-slate-900 dark:text-slate-100 font-semibold outline-none cursor-pointer">
+        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 rounded-xl text-xs hover:border-ghn-orange transition">
+          <span class="font-black text-ghn-orange font-serif text-sm">T</span>
+          <span class="text-slate-500 dark:text-slate-400 font-medium">Phân loại:</span>
+          <select id="mbFilterPhanLoai" onchange="filterMatrixByDropdown(this.value)" class="bg-transparent text-slate-900 dark:text-slate-100 font-bold outline-none cursor-pointer">
             <option value="all" selected>Tất cả</option>
             <option value="Chờ phân loại">Chờ phân loại</option>
             <option value="Đang phân loại">Đang phân loại</option>
@@ -400,75 +437,78 @@
 
       <div class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>Đã đồng bộ số liệu chuẩn Metabase GHN</span>
+        <span>Đồng bộ 100% Metabase GHN (Bình Định)</span>
       </div>
     </div>
 
-    <!-- CARD 1: TỒN THEO PHÂN LOẠI × SỐ GIỜ ĐÃ NẰM ⓘ (KHỚP 100% METABASE SCREENSHOT) -->
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3 transition-colors">
+    <!-- CARD 1: TỒN THEO PHÂN LOẠI × SỐ GIỜ ĐÃ NẰM ⓘ -->
+    <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 ghn-card-shadow space-y-3 transition-colors">
       
       <!-- Card Header -->
-      <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
-        <div class="flex items-center gap-2">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-ghn-orange">
+            <i data-lucide="layers" class="w-4 h-4"></i>
+          </div>
           <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
             <span>Tồn theo phân loại × số giờ đã nằm</span>
             <span class="text-slate-400 cursor-help" title="Ma trận thể hiện số lượng đơn hàng phân bổ theo khâu xử lý và các mốc thời gian lưu kho">ⓘ</span>
           </h3>
         </div>
         <div class="flex items-center gap-2 text-slate-400">
-          <button onclick="showToast('Tùy chọn hiển thị bảng Metabase')" class="p-1 hover:text-slate-600 dark:hover:text-slate-200 transition" title="Tùy chọn">
+          <button onclick="showToast('Bảng ma trận Metabase GHN')" class="p-1.5 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Tùy chọn">
             <i data-lucide="more-horizontal" class="w-4 h-4"></i>
           </button>
         </div>
       </div>
 
       <!-- Metabase Matrix Table -->
-      <div class="overflow-x-auto custom-scrollbar">
+      <div class="overflow-x-auto custom-scrollbar border border-slate-200 dark:border-slate-800/80 rounded-xl bg-slate-50/50 dark:bg-slate-950/40">
         <table class="w-full text-xs text-left border-collapse font-sans">
           <thead>
-            <tr class="border-b border-slate-200 dark:border-slate-800">
-              <th class="py-2.5 px-3">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+            <tr class="bg-slate-100/80 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
+              <th class="py-3 px-3.5">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-200/80 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs">
                   Phân loại
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/80 text-ghn-blue dark:text-sky-400 font-bold text-xs border border-blue-200/60 dark:border-blue-900/60">
                   0-6h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-sky-50 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 font-bold text-xs border border-sky-200/60 dark:border-sky-900/60">
                   6-12h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 font-bold text-xs border border-indigo-200/60 dark:border-indigo-900/60">
                   12-24h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 font-bold text-xs border border-amber-200/60 dark:border-amber-900/60">
                   24-48h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 font-semibold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-orange-50 dark:bg-orange-950/80 text-ghn-orange dark:text-orange-400 font-bold text-xs border border-orange-200/60 dark:border-orange-900/60">
                   48-72h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 font-semibold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 font-bold text-xs border border-rose-200/60 dark:border-rose-900/60">
                   72-96h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-rose-100 dark:bg-rose-900/80 text-rose-700 dark:text-rose-300 font-bold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 font-extrabold text-xs border border-red-300 dark:border-red-800">
                   trên 96h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+              <th class="py-3 px-3.5 text-right">
+                <span class="inline-flex items-center px-3 py-1 rounded-lg bg-orange-100 dark:bg-orange-950/80 text-ghn-orange dark:text-orange-400 font-black text-xs border border-orange-300 dark:border-orange-800">
                   Tổng
                 </span>
               </th>
@@ -477,88 +517,91 @@
           <tbody id="matrixTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-sans">
             <!-- Populated via Javascript -->
           </tbody>
-          <tfoot id="matrixTableFoot" class="border-t-2 border-slate-200 dark:border-slate-700 font-semibold">
+          <tfoot id="matrixTableFoot" class="border-t-2 border-slate-300 dark:border-slate-700 font-bold">
             <!-- Populated via Javascript -->
           </tfoot>
         </table>
       </div>
 
       <!-- Footer Info -->
-      <div class="flex items-center justify-between pt-2 text-[11px] text-slate-400">
-        <span class="italic text-slate-400 dark:text-slate-500">💡 Mẹo: Nhấp vào số bất kỳ trên bảng để lọc danh sách mã đơn tương ứng bên dưới</span>
-        <span id="matrixRowCount" class="font-mono text-slate-500 dark:text-slate-400 font-medium">6 rows</span>
+      <div class="flex items-center justify-between pt-2 text-[11px] text-slate-500 dark:text-slate-400">
+        <span class="italic">💡 Mẹo: Nhấp vào số bất kỳ trên bảng để xem và tải danh sách mã đơn tương ứng bên dưới</span>
+        <span id="matrixRowCount" class="font-mono text-slate-600 dark:text-slate-400 font-medium">6 rows</span>
       </div>
     </div>
 
-    <!-- CARD 2: TỒN THEO KHO × SỐ GIỜ ĐÃ NẰM (KHỚP 100% METABASE SCREENSHOT) -->
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3 transition-colors">
+    <!-- CARD 2: TỒN THEO KHO × SỐ GIỜ ĐÃ NẰM -->
+    <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 ghn-card-shadow space-y-3 transition-colors">
       
       <!-- Card Header -->
-      <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
-        <div class="flex items-center gap-2">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-ghn-blue dark:text-sky-400">
+            <i data-lucide="building-2" class="w-4 h-4"></i>
+          </div>
           <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
             <span>Tồn theo kho × số giờ đã nằm</span>
           </h3>
         </div>
         <div class="flex items-center gap-2 text-slate-400">
-          <button onclick="showToast('Tùy chọn hiển thị bảng Kho')" class="p-1 hover:text-slate-600 dark:hover:text-slate-200 transition">
+          <button onclick="showToast('Bảng tồn theo kho')" class="p-1.5 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
             <i data-lucide="more-horizontal" class="w-4 h-4"></i>
           </button>
         </div>
       </div>
 
       <!-- Warehouse Matrix Table -->
-      <div class="overflow-x-auto custom-scrollbar">
+      <div class="overflow-x-auto custom-scrollbar border border-slate-200 dark:border-slate-800/80 rounded-xl bg-slate-50/50 dark:bg-slate-950/40">
         <table class="w-full text-xs text-left border-collapse font-sans">
           <thead>
-            <tr class="border-b border-slate-200 dark:border-slate-800">
-              <th class="py-2.5 px-3">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+            <tr class="bg-slate-100/80 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800">
+              <th class="py-3 px-3.5">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-200/80 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs">
                   Mã kho
                 </span>
               </th>
-              <th class="py-2.5 px-3">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+              <th class="py-3 px-3.5">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-200/80 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs">
                   Kho
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/80 text-ghn-blue dark:text-sky-400 font-bold text-xs border border-blue-200/60 dark:border-blue-900/60">
                   0-6h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-sky-50 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 font-bold text-xs border border-sky-200/60 dark:border-sky-900/60">
                   6-12h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 font-bold text-xs border border-indigo-200/60 dark:border-indigo-900/60">
                   12-24h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 font-bold text-xs border border-amber-200/60 dark:border-amber-900/60">
                   24-48h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 font-semibold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-orange-50 dark:bg-orange-950/80 text-ghn-orange dark:text-orange-400 font-bold text-xs border border-orange-200/60 dark:border-orange-900/60">
                   48-72h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 font-semibold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 font-bold text-xs border border-rose-200/60 dark:border-rose-900/60">
                   72-96h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-rose-100 dark:bg-rose-900/80 text-rose-700 dark:text-rose-300 font-bold text-xs">
+              <th class="py-3 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 font-extrabold text-xs border border-red-300 dark:border-red-800">
                   trên 96h
                 </span>
               </th>
-              <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+              <th class="py-3 px-3.5 text-right">
+                <span class="inline-flex items-center px-3 py-1 rounded-lg bg-orange-100 dark:bg-orange-950/80 text-ghn-orange dark:text-orange-400 font-black text-xs border border-orange-300 dark:border-orange-800">
                   Tổng
                 </span>
               </th>
@@ -572,32 +615,34 @@
     </div>
 
     <!-- CARD 3: CHI TIẾT MỨC MÃ ĐƠN (METABASE ORDER LEVEL DRILL-DOWN TABLE) -->
-    <div id="sectionCard3Orders" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4 transition-colors">
+    <div id="sectionCard3Orders" class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 ghn-card-shadow space-y-4 transition-colors">
       
       <!-- Header with Active Drill-down Filter Badge -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
         <div>
-          <div class="flex items-center gap-2 flex-wrap">
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <div class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+              <i data-lucide="list" class="w-4 h-4"></i>
+            </div>
             <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <i data-lucide="list" class="w-4 h-4 text-emerald-500"></i>
               <span>Chi tiết mức mã đơn & mã kiện (Metabase Internal Data)</span>
             </h3>
             
-            <div id="activeDrilldownBadge" class="hidden items-center gap-1.5 bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border border-sky-300 dark:border-sky-800 px-2.5 py-0.5 rounded-full text-xs font-semibold">
+            <div id="activeDrilldownBadge" class="hidden items-center gap-1.5 bg-orange-50 dark:bg-orange-950/80 text-ghn-orange dark:text-orange-400 border border-orange-200 dark:border-orange-800 px-3 py-0.5 rounded-full text-xs font-bold shadow-sm">
               <span id="drilldownFilterText">Đang lọc: Chờ phân loại × trên 48h</span>
-              <button onclick="clearMatrixDrilldown()" class="hover:text-rose-500 transition ml-1 font-bold" title="Bỏ lọc">✕</button>
+              <button onclick="clearMatrixDrilldown()" class="hover:text-rose-500 transition ml-1 font-bold text-sm leading-none" title="Bỏ lọc">✕</button>
             </div>
           </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Nhân viên có thể tra cứu mã đơn/kiện, kiểm hàng trực tiếp hoặc xuất file Excel đối soát</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Hỗ trợ tra cứu nhanh mã đơn/kiện, kiểm hàng thực tế và xuất file Excel đối soát nội bộ</p>
         </div>
 
         <div class="flex items-center gap-2 flex-wrap">
-          <button onclick="exportFilteredOrdersMbExcel()" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition" title="Xuất danh sách mã đơn đang hiển thị theo bộ lọc">
-            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+          <button onclick="exportFilteredOrdersMbExcel()" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition" title="Xuất danh sách mã đơn đang hiển thị theo bộ lọc">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
             <span>Tải Excel Danh Sách Này</span>
           </button>
-          <button onclick="openOrderImportModal()" class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 transition">
-            <i data-lucide="upload" class="w-3.5 h-3.5 text-sky-500"></i>
+          <button onclick="openOrderImportModal()" class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 transition">
+            <i data-lucide="upload" class="w-4 h-4 text-ghn-blue dark:text-sky-400"></i>
             <span>Nạp File Mới</span>
           </button>
         </div>
@@ -608,7 +653,7 @@
         <!-- Live Search Input -->
         <div class="md:col-span-6 relative">
           <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 transform -translate-y-1/2"></i>
-          <input type="text" id="orderSearchInputMb" oninput="applyOrderFiltersFromMb()" placeholder="Nhập hoặc quét Barcode mã đơn (VNGH..., GYYA...), mã kiện (26YTZ...), tỉnh thành..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl pl-10 pr-10 py-2 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-orange-500 transition font-mono">
+          <input type="text" id="orderSearchInputMb" oninput="applyOrderFiltersFromMb()" placeholder="Nhập hoặc quét Barcode mã đơn (VNGH..., GYYA...), mã kiện (26YTZ...), tỉnh thành..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-ghn-orange transition font-mono">
           <button onclick="clearOrderSearchMb()" id="btnClearOrderSearchMb" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hidden">
             <i data-lucide="x" class="w-4 h-4"></i>
           </button>
@@ -616,7 +661,7 @@
 
         <!-- Filter by Check Status -->
         <div class="md:col-span-3">
-          <select id="selectOrderCheckStatusMb" onchange="applyOrderFiltersFromMb()" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-orange-500 transition">
+          <select id="selectOrderCheckStatusMb" onchange="applyOrderFiltersFromMb()" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:border-ghn-orange transition cursor-pointer">
             <option value="all">Tất cả trạng thái check</option>
             <option value="unchecked">⏳ Chưa kiểm hàng</option>
             <option value="checked">✅ Đã kiểm hàng</option>
@@ -625,7 +670,7 @@
 
         <!-- Filter by Priority -->
         <div class="md:col-span-3">
-          <select id="selectOrderPriorityMb" onchange="applyOrderFiltersFromMb()" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-orange-500 transition">
+          <select id="selectOrderPriorityMb" onchange="applyOrderFiltersFromMb()" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:border-ghn-orange transition cursor-pointer">
             <option value="all">Tất cả thời gian tồn</option>
             <option value="over96">🚨 Tồn >96h (Quá hạn nghiêm trọng)</option>
             <option value="h72_96">🟣 Tồn 72-96h (Báo động)</option>
@@ -640,32 +685,32 @@
       <!-- Order Count & Batch Check -->
       <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-1">
         <div class="flex items-center gap-3 flex-wrap">
-          <span>Đang hiển thị: <b id="statFilteredCountMb" class="text-slate-900 dark:text-white font-mono">0</b> đơn</span>
+          <span>Đang hiển thị: <b id="statFilteredCountMb" class="text-slate-900 dark:text-white font-mono font-bold">0</b> đơn</span>
           <span>&bull;</span>
-          <span>Đã kiểm tra: <b id="statCheckedCountMb" class="text-emerald-600 dark:text-emerald-400 font-mono">0</b> đơn</span>
+          <span>Đã kiểm tra: <b id="statCheckedCountMb" class="text-emerald-600 dark:text-emerald-400 font-mono font-bold">0</b> đơn</span>
           <span>&bull;</span>
-          <span>Chưa kiểm: <b id="statUncheckedCountMb" class="text-amber-600 dark:text-amber-400 font-mono">0</b> đơn</span>
+          <span>Chưa kiểm: <b id="statUncheckedCountMb" class="text-amber-600 dark:text-amber-400 font-mono font-bold">0</b> đơn</span>
         </div>
-        <div class="flex items-center gap-2">
-          <button onclick="checkAllVisibleOrdersMb(true)" class="text-emerald-600 dark:text-emerald-400 hover:underline text-[11px] font-medium">Tích chọn tất cả</button>
+        <div class="flex items-center gap-2 font-medium">
+          <button onclick="checkAllVisibleOrdersMb(true)" class="text-emerald-600 dark:text-emerald-400 hover:underline text-[11px]">Tích chọn tất cả</button>
           <span>&bull;</span>
           <button onclick="checkAllVisibleOrdersMb(false)" class="text-slate-500 hover:underline text-[11px]">Bỏ chọn tất cả</button>
         </div>
       </div>
 
       <!-- Orders Data Table -->
-      <div class="overflow-x-auto custom-scrollbar border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-950/60">
+      <div class="overflow-x-auto custom-scrollbar border border-slate-200 dark:border-slate-800/80 rounded-xl bg-slate-50/50 dark:bg-slate-950/40">
         <table class="w-full text-xs text-left border-collapse font-sans">
           <thead>
-            <tr class="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase font-semibold text-[11px]">
+            <tr class="bg-slate-100/80 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase font-bold text-[11px]">
               <th class="p-3 text-center w-10 border-r border-slate-200 dark:border-slate-800">
-                <input type="checkbox" id="masterCheckboxMb" onchange="toggleMasterCheckboxMb(this.checked)" class="rounded bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-emerald-500 focus:ring-0 cursor-pointer">
+                <input type="checkbox" id="masterCheckboxMb" onchange="toggleMasterCheckboxMb(this.checked)" class="rounded bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-ghn-orange focus:ring-0 cursor-pointer">
               </th>
-              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-sky-600 dark:text-sky-400 font-mono">Mã đơn</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-ghn-blue dark:text-sky-400 font-mono">Mã đơn</th>
               <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-amber-600 dark:text-amber-400 font-mono">Mã kiện</th>
               <th class="p-3 border-r border-slate-200 dark:border-slate-800 font-mono">Mã kho</th>
               <th class="p-3 border-r border-slate-200 dark:border-slate-800">Kho</th>
-              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-orange-600 dark:text-orange-400">Phân loại</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-ghn-orange dark:text-orange-400">Phân loại</th>
               <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-slate-500">Nhóm</th>
               <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-emerald-600 dark:text-emerald-400">Tỉnh/TP</th>
               <th class="p-3 border-r border-slate-200 dark:border-slate-800">Vào trạng thái lúc</th>
@@ -673,7 +718,7 @@
               <th class="p-3 text-center">Thao tác</th>
             </tr>
           </thead>
-          <tbody id="ordersTableBodyMb" class="divide-y divide-slate-200 dark:divide-slate-800/60 font-sans">
+          <tbody id="ordersTableBodyMb" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-sans">
             <!-- Populated via Javascript -->
           </tbody>
         </table>
@@ -683,13 +728,13 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs">
         <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
           <span>Hiển thị mỗi trang:</span>
-          <select id="ordersPerPageMb" onchange="changeOrdersPerPageMb()" class="bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg px-2 py-1 text-slate-800 dark:text-slate-200 outline-none">
+          <select id="ordersPerPageMb" onchange="changeOrdersPerPageMb()" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2 py-1 text-slate-800 dark:text-slate-200 outline-none">
             <option value="25" selected>25 dòng</option>
             <option value="50">50 dòng</option>
             <option value="100">100 dòng</option>
             <option value="200">200 dòng</option>
           </select>
-          <span id="paginationInfoMb" class="text-slate-500 dark:text-slate-400 ml-2">Trang 1 / 1</span>
+          <span id="paginationInfoMb" class="text-slate-500 dark:text-slate-400 ml-2 font-medium">Trang 1 / 1</span>
         </div>
 
         <div class="flex items-center gap-1.5" id="paginationControlsMb">
@@ -698,8 +743,8 @@
       </div>
     </div>
 
-    <!-- METABASE BRANDING FOOTER (KHỚP 100% METABASE SCREENSHOT) -->
-    <div class="flex items-center justify-between pt-4 text-xs text-slate-400">
+    <!-- METABASE BRANDING FOOTER -->
+    <div class="flex items-center justify-between pt-4 text-xs text-slate-400 border-t border-slate-100 dark:border-slate-800/60">
       <div class="flex items-center gap-2">
         <span class="text-slate-500 font-medium">Powered by</span>
         <div class="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-300">
@@ -710,7 +755,7 @@
             <circle cx="18" cy="18" r="3" />
             <circle cx="12" cy="12" r="3" fill="#0066cc" />
           </svg>
-          <span>Metabase</span>
+          <span>Metabase GHN</span>
         </div>
       </div>
       <div class="text-[11px] text-slate-400">
@@ -724,39 +769,46 @@
   <section id="sectionOrdersReport" class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8 space-y-6 hidden">
     
     <!-- HEADER HERO BANNER -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div>
-        <div class="flex items-center gap-2 flex-wrap">
-          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">CÔNG CỤ NHÂN VIÊN KHO</span>
-          <span class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">KTC BÌNH ĐỊNH (20335000)</span>
-          <span class="text-xs text-slate-400 flex items-center gap-1.5"><i data-lucide="barcode" class="w-3.5 h-3.5 text-emerald-400"></i> Tra cứu tức thì & Tải file Excel</span>
+    <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 ghn-card-shadow flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors">
+      <div class="flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-white dark:bg-white/95 p-1 border border-slate-200 dark:border-slate-700 shadow-md shadow-orange-500/10 flex items-center justify-center flex-shrink-0">
+          <img src="/ghn_logo.png" alt="GHN Logo" class="h-8 w-auto object-contain">
         </div>
-        <h2 class="text-xl font-black text-white mt-1.5 flex items-center gap-2">
-          <i data-lucide="list-checks" class="w-5 h-5 text-emerald-400"></i>
-          DANH SÁCH MÃ VẬN ĐƠN & MÃ KIỆN TỒN KHO THEO TRẠNG THÁI
-        </h2>
-        <p class="text-xs text-slate-400 mt-0.5">Hỗ trợ nhân viên tra cứu mã đơn/mã kiện, xuất file Excel theo từng trạng thái, quét barcode và tích đối soát thực tế tại kho.</p>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-black uppercase tracking-wider text-ghn-orange bg-orange-50 dark:bg-orange-500/10 px-2.5 py-0.5 rounded-full border border-orange-200 dark:border-orange-500/30">
+              CÔNG CỤ NHÂN VIÊN KHO &bull; KTC BÌNH ĐỊNH (20335000)
+            </span>
+            <span class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
+              <i data-lucide="barcode" class="w-3.5 h-3.5 text-ghn-orange"></i> Tra cứu tức thì & Tải Excel
+            </span>
+          </div>
+          <h2 class="text-lg md:text-xl font-black text-slate-900 dark:text-white mt-1 flex items-center gap-2">
+            DANH SÁCH MÃ VẬN ĐƠN & MÃ KIỆN TỒN KHO THEO TRẠNG THÁI
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Hỗ trợ tra cứu nhanh mã đơn/kiện, xuất file Excel theo từng trạng thái, quét barcode và tích đối soát thực tế tại kho.</p>
+        </div>
       </div>
 
       <!-- Quick Action Buttons -->
       <div class="flex items-center flex-wrap gap-2.5">
-        <button onclick="exportFilteredOrdersExcel()" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-lg shadow-emerald-600/20 transition">
+        <button onclick="exportFilteredOrdersExcel()" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition">
           <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
           <span>Xuất Excel Đang Xem</span>
         </button>
 
-        <button onclick="exportAllOrdersExcel()" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-orange-600 to-ghn-orange hover:from-orange-500 hover:to-orange-600 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-lg shadow-orange-600/20 transition" title="Xuất toàn bộ danh sách mã đơn">
+        <button onclick="exportAllOrdersExcel()" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-ghn-orange to-orange-600 hover:from-ghn-orange-hover hover:to-orange-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition" title="Xuất toàn bộ danh sách mã đơn">
           <i data-lucide="download" class="w-4 h-4"></i>
           <span id="btnExportAllOrdersText">Xuất Toàn Bộ Mã Đơn</span>
         </button>
 
-        <button onclick="openOrderImportModal()" class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-700 transition">
-          <i data-lucide="upload" class="w-4 h-4 text-sky-400"></i>
-          <span>Nạp File / Dán Mã Mới</span>
+        <button onclick="openOrderImportModal()" class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 transition">
+          <i data-lucide="upload" class="w-4 h-4 text-ghn-blue dark:text-sky-400"></i>
+          <span>Nạp File / Dán Mã</span>
         </button>
 
-        <button onclick="downloadExcelTemplate()" class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-3 py-2.5 rounded-xl border border-slate-700 transition" title="Tải file mẫu Excel">
-          <i data-lucide="file-down" class="w-4 h-4 text-amber-400"></i>
+        <button onclick="downloadExcelTemplate()" class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 transition" title="Tải file mẫu Excel">
+          <i data-lucide="file-down" class="w-4 h-4 text-amber-500"></i>
           <span>File Mẫu</span>
         </button>
       </div>
@@ -764,65 +816,71 @@
 
     <!-- 5 QUICK FILTER & STATUS COUNTER CARDS -->
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
-      <button onclick="filterOrdersByStage('all')" id="cardFilterAll" class="order-filter-card bg-slate-900 border-2 border-emerald-500 rounded-xl p-3.5 text-left transition hover:border-emerald-400">
-        <div class="text-[11px] text-slate-400 font-semibold uppercase">Tất Cả Khâu</div>
-        <div id="statTotalOrdersCount" class="text-xl font-black text-white mt-1">371 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
-        <div id="statTotalOrdersSub" class="text-[10px] text-slate-400 mt-1">Kho Bình Định &bull; 20335000</div>
+      
+      <!-- Card All -->
+      <button onclick="filterOrdersByStage('all')" id="cardFilterAll" class="order-filter-card bg-white dark:bg-[#111c2d] border-2 border-emerald-500 rounded-2xl p-4 text-left transition hover:scale-[1.02] ghn-card-shadow">
+        <div class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase">Tất Cả Khâu</div>
+        <div id="statTotalOrdersCount" class="text-2xl font-black text-slate-900 dark:text-white mt-1">6.380 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
+        <div id="statTotalOrdersSub" class="text-[10px] text-slate-400 mt-1 font-medium">Kho Bình Định &bull; 20335000</div>
       </button>
 
-      <button onclick="filterOrdersByStage('Chờ xuất')" id="cardFilterChoXuat" class="order-filter-card bg-slate-900 border border-slate-800 rounded-xl p-3.5 text-left transition hover:border-amber-500">
-        <div class="text-[11px] text-amber-400 font-bold uppercase flex items-center justify-between">
+      <!-- Card Cho Xuat -->
+      <button onclick="filterOrdersByStage('Chờ xuất')" id="cardFilterChoXuat" class="order-filter-card bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 text-left transition hover:scale-[1.02] hover:border-amber-500 ghn-card-shadow">
+        <div class="text-[11px] text-amber-600 dark:text-amber-400 font-bold uppercase flex items-center justify-between">
           <span>Chờ Xuất Kho</span>
-          <i data-lucide="truck" class="w-3.5 h-3.5"></i>
+          <i data-lucide="truck" class="w-4 h-4"></i>
         </div>
-        <div id="statChoXuatCount" class="text-xl font-black text-amber-400 mt-1">98 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
-        <div class="text-[10px] text-slate-400 mt-1">Đang chờ xe xuất</div>
+        <div id="statChoXuatCount" class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">507 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
+        <div class="text-[10px] text-slate-400 mt-1 font-medium">Đang chờ xe xuất bãi</div>
       </button>
 
-      <button onclick="filterOrdersByStage('Đang luân chuyển đến KTC')" id="cardFilterLuanChuyen" class="order-filter-card bg-slate-900 border border-slate-800 rounded-xl p-3.5 text-left transition hover:border-sky-500">
-        <div class="text-[11px] text-sky-400 font-bold uppercase flex items-center justify-between">
+      <!-- Card Luan Chuyen -->
+      <button onclick="filterOrdersByStage('Đang luân chuyển đến KTC')" id="cardFilterLuanChuyen" class="order-filter-card bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 text-left transition hover:scale-[1.02] hover:border-ghn-blue ghn-card-shadow">
+        <div class="text-[11px] text-ghn-blue dark:text-sky-400 font-bold uppercase flex items-center justify-between">
           <span>Đang Đến KTC</span>
-          <i data-lucide="arrow-right-left" class="w-3.5 h-3.5"></i>
+          <i data-lucide="arrow-right-left" class="w-4 h-4"></i>
         </div>
-        <div id="statLuanChuyenCount" class="text-xl font-black text-sky-400 mt-1">262 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
-        <div class="text-[10px] text-slate-400 mt-1">Đang trên đường đến</div>
+        <div id="statLuanChuyenCount" class="text-2xl font-black text-ghn-blue dark:text-sky-400 mt-1">4.748 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
+        <div class="text-[10px] text-slate-400 mt-1 font-medium">Đang trên đường luân chuyển</div>
       </button>
 
-      <button onclick="filterOrdersByStage('Chờ phân loại')" id="cardFilterPhanLoai" class="order-filter-card bg-slate-900 border border-slate-800 rounded-xl p-3.5 text-left transition hover:border-orange-500">
-        <div class="text-[11px] text-orange-400 font-bold uppercase flex items-center justify-between">
+      <!-- Card Phan Loai -->
+      <button onclick="filterOrdersByStage('Chờ phân loại')" id="cardFilterPhanLoai" class="order-filter-card bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 text-left transition hover:scale-[1.02] hover:border-ghn-orange ghn-card-shadow">
+        <div class="text-[11px] text-ghn-orange dark:text-orange-400 font-bold uppercase flex items-center justify-between">
           <span>Chờ Phân Loại</span>
-          <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+          <i data-lucide="layers" class="w-4 h-4"></i>
         </div>
-        <div id="statPhanLoaiCount" class="text-xl font-black text-orange-400 mt-1">5 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
-        <div class="text-[10px] text-slate-400 mt-1">Đang tại bãi phân loại</div>
+        <div id="statPhanLoaiCount" class="text-2xl font-black text-ghn-orange dark:text-orange-400 mt-1">204 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
+        <div class="text-[10px] text-slate-400 mt-1 font-medium">Đang tại sàn phân loại</div>
       </button>
 
-      <button onclick="filterOrdersByStage('Chờ xuất kiện chuyển tiếp')" id="cardFilterChuyenTiep" class="order-filter-card bg-slate-900 border border-slate-800 rounded-xl p-3.5 text-left transition hover:border-purple-500">
-        <div class="text-[11px] text-purple-400 font-bold uppercase flex items-center justify-between">
+      <!-- Card Chuyen Tiep -->
+      <button onclick="filterOrdersByStage('Chờ xuất kiện chuyển tiếp')" id="cardFilterChuyenTiep" class="order-filter-card bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 text-left transition hover:scale-[1.02] hover:border-purple-500 ghn-card-shadow">
+        <div class="text-[11px] text-purple-600 dark:text-purple-400 font-bold uppercase flex items-center justify-between">
           <span>Xuất Chuyển Tiếp</span>
-          <i data-lucide="corner-up-right" class="w-3.5 h-3.5"></i>
+          <i data-lucide="corner-up-right" class="w-4 h-4"></i>
         </div>
-        <div id="statChuyenTiepCount" class="text-xl font-black text-purple-400 mt-1">2 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
-        <div class="text-[10px] text-slate-400 mt-1">Chuyển tiếp bưu cục</div>
+        <div id="statChuyenTiepCount" class="text-2xl font-black text-purple-600 dark:text-purple-400 mt-1">889 <span class="text-xs text-slate-400 font-normal">đơn</span></div>
+        <div class="text-[10px] text-slate-400 mt-1 font-medium">Chuyển tiếp bưu cục</div>
       </button>
     </div>
 
     <!-- SEARCH & ADVANCED FILTER BAR -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm space-y-3">
+    <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 ghn-card-shadow space-y-3 transition-colors">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
         
         <!-- Live Search Bar -->
         <div class="md:col-span-5 relative">
           <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 transform -translate-y-1/2"></i>
-          <input type="text" id="orderSearchInput" oninput="applyOrderFilters()" placeholder="Nhập hoặc quét Barcode mã đơn (GHNBDI...), mã kiện (PKBDI...), điểm đến..." class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-10 pr-10 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition font-mono">
-          <button onclick="clearOrderSearch()" id="btnClearOrderSearch" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-300 hidden">
+          <input type="text" id="orderSearchInput" oninput="applyOrderFilters()" placeholder="Nhập hoặc quét Barcode mã đơn (GHNBDI...), mã kiện (PKBDI...), điểm đến..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-ghn-orange transition font-mono">
+          <button onclick="clearOrderSearch()" id="btnClearOrderSearch" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hidden">
             <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
 
         <!-- Filter by Stage Dropdown -->
         <div class="md:col-span-3">
-          <select id="selectOrderStage" onchange="applyOrderFilters()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
+          <select id="selectOrderStage" onchange="applyOrderFilters()" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:border-ghn-orange transition cursor-pointer">
             <option value="all">Tất cả khâu xử lý</option>
             <option id="optChoXuat" value="Chờ xuất">Chờ xuất</option>
             <option id="optLuanChuyen" value="Đang luân chuyển đến KTC">Đang luân chuyển đến KTC</option>
@@ -833,7 +891,7 @@
 
         <!-- Filter by Priority / Time Dropdown -->
         <div class="md:col-span-2">
-          <select id="selectOrderPriority" onchange="applyOrderFilters()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
+          <select id="selectOrderPriority" onchange="applyOrderFilters()" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:border-ghn-orange transition cursor-pointer">
             <option value="all">Tất cả thời gian</option>
             <option value="over96">🚨 Tồn >96h (Quá hạn nghiêm trọng)</option>
             <option value="h72_96">🟣 Tồn 72-96h (Báo động)</option>
@@ -846,7 +904,7 @@
 
         <!-- Filter by Check Status -->
         <div class="md:col-span-2">
-          <select id="selectOrderCheckStatus" onchange="applyOrderFilters()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
+          <select id="selectOrderCheckStatus" onchange="applyOrderFilters()" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:border-ghn-orange transition cursor-pointer">
             <option value="all">Tất cả trạng thái check</option>
             <option value="unchecked">⏳ Chưa kiểm hàng</option>
             <option value="checked">✅ Đã kiểm hàng</option>
@@ -856,51 +914,57 @@
       </div>
 
       <!-- Quick Status Indicators -->
-      <div class="flex items-center justify-between text-xs text-slate-400 pt-1 border-t border-slate-800/80">
+      <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800/80">
         <div class="flex items-center gap-4 flex-wrap">
-          <span>Đang hiển thị: <b id="statFilteredCount" class="text-white font-mono">0</b> đơn hàng</span>
-          <span>Đã đối soát: <b id="statCheckedCount" class="text-emerald-400 font-mono">0</b> đơn</span>
-          <span>Chưa kiểm: <b id="statUncheckedCount" class="text-amber-400 font-mono">0</b> đơn</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <button onclick="checkAllVisibleOrders(true)" class="hover:text-emerald-400 transition text-[11px] underline">Tích chọn tất cả</button>
+          <span>Đang hiển thị: <b id="statFilteredCount" class="text-slate-900 dark:text-white font-mono font-bold">0</b> đơn hàng</span>
           <span>&bull;</span>
-          <button onclick="checkAllVisibleOrders(false)" class="hover:text-slate-200 transition text-[11px] underline">Bỏ chọn tất cả</button>
+          <span>Đã đối soát: <b id="statCheckedCount" class="text-emerald-600 dark:text-emerald-400 font-mono font-bold">0</b> đơn</span>
+          <span>&bull;</span>
+          <span>Chưa kiểm: <b id="statUncheckedCount" class="text-amber-600 dark:text-amber-400 font-mono font-bold">0</b> đơn</span>
+        </div>
+        <div class="flex items-center gap-2 font-medium">
+          <button onclick="checkAllVisibleOrders(true)" class="text-emerald-600 dark:text-emerald-400 hover:underline text-[11px]">Tích chọn tất cả</button>
+          <span>&bull;</span>
+          <button onclick="checkAllVisibleOrders(false)" class="text-slate-500 hover:underline text-[11px]">Bỏ chọn tất cả</button>
         </div>
       </div>
     </div>
 
     <!-- MAIN ORDERS INTERACTIVE TABLE (METABASE CHI TIẾT MỨC MÃ ĐƠN) -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
+    <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-5 space-y-4 ghn-card-shadow transition-colors">
       <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-base font-bold text-white flex items-center gap-2">
-            <i data-lucide="list" class="w-5 h-5 text-emerald-400"></i>
-            Chi tiết mức mã đơn & mã kiện (Metabase Card #GHN)
-          </h3>
-          <p class="text-xs text-slate-400 mt-0.5">Khớp 100% cấu trúc báo cáo Metabase nội bộ GHN &bull; Hỗ trợ máy quét mã vạch Barcode</p>
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+            <i data-lucide="list" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              Chi tiết mức mã đơn & mã kiện (Metabase Card #GHN)
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Khớp 100% cấu trúc báo cáo Metabase nội bộ GHN &bull; Hỗ trợ máy quét mã vạch Barcode</p>
+          </div>
         </div>
       </div>
-      <div class="overflow-x-auto custom-scrollbar border border-slate-800 rounded-xl bg-slate-950/80">
-        <table class="w-full text-xs text-left border-collapse font-mono">
+      <div class="overflow-x-auto custom-scrollbar border border-slate-200 dark:border-slate-800/80 rounded-xl bg-slate-50/50 dark:bg-slate-950/40">
+        <table class="w-full text-xs text-left border-collapse font-sans">
           <thead>
-            <tr class="bg-slate-900 border-b border-slate-800 text-slate-300 uppercase font-semibold font-sans">
-              <th class="p-3 text-center w-10 border-r border-slate-800">
-                <input type="checkbox" id="masterCheckbox" onchange="toggleMasterCheckbox(this.checked)" class="rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-0 cursor-pointer">
+            <tr class="bg-slate-100/80 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase font-bold text-[11px]">
+              <th class="p-3 text-center w-10 border-r border-slate-200 dark:border-slate-800">
+                <input type="checkbox" id="masterCheckbox" onchange="toggleMasterCheckbox(this.checked)" class="rounded bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-ghn-orange focus:ring-0 cursor-pointer">
               </th>
-              <th class="p-3 border-r border-slate-800 text-sky-400">Mã đơn</th>
-              <th class="p-3 border-r border-slate-800 text-amber-400">Mã kiện</th>
-              <th class="p-3 border-r border-slate-800">Mã kho</th>
-              <th class="p-3 border-r border-slate-800 font-sans">Kho</th>
-              <th class="p-3 border-r border-slate-800 font-sans text-orange-400">Phân loại</th>
-              <th class="p-3 border-r border-slate-800 font-sans text-slate-400">Nhóm</th>
-              <th class="p-3 border-r border-slate-800 font-sans text-emerald-400">Tỉnh/TP</th>
-              <th class="p-3 border-r border-slate-800 font-sans">Vào trạng thái lúc</th>
-              <th class="p-3 text-right border-r border-slate-800 font-sans">Số giờ đã nằm</th>
-              <th class="p-3 text-center font-sans">Thao tác</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-ghn-blue dark:text-sky-400 font-mono">Mã đơn</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-amber-600 dark:text-amber-400 font-mono">Mã kiện</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 font-mono">Mã kho</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800">Kho</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-ghn-orange dark:text-orange-400">Phân loại</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-slate-500">Nhóm</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-emerald-600 dark:text-emerald-400">Tỉnh/TP</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800">Vào trạng thái lúc</th>
+              <th class="p-3 text-right border-r border-slate-200 dark:border-slate-800">Số giờ đã nằm</th>
+              <th class="p-3 text-center">Thao tác</th>
             </tr>
           </thead>
-          <tbody id="ordersTableBody" class="divide-y divide-slate-800/60">
+          <tbody id="ordersTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-sans">
             <!-- Populated via Javascript -->
           </tbody>
         </table>
@@ -908,15 +972,15 @@
 
       <!-- PAGINATION CONTROLS -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs">
-        <div class="flex items-center gap-2 text-slate-400">
+        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
           <span>Hiển thị mỗi trang:</span>
-          <select id="ordersPerPage" onchange="changeOrdersPerPage()" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-slate-200 outline-none">
+          <select id="ordersPerPage" onchange="changeOrdersPerPage()" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2 py-1 text-slate-800 dark:text-slate-200 outline-none">
             <option value="25" selected>25 dòng</option>
             <option value="50">50 dòng</option>
             <option value="100">100 dòng</option>
             <option value="200">200 dòng</option>
           </select>
-          <span id="paginationInfo" class="text-slate-400 ml-2">Trang 1 / 1</span>
+          <span id="paginationInfo" class="text-slate-500 dark:text-slate-400 ml-2 font-medium">Trang 1 / 1</span>
         </div>
 
         <div class="flex items-center gap-1.5" id="paginationControls">
@@ -929,44 +993,44 @@
 
   <!-- ORDER IMPORT / UPLOAD MODAL -->
   <div id="orderImportModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+    <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-700 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl transition-colors">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-ghn-orange">
             <i data-lucide="file-up" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="text-base font-bold text-white">Nạp Danh Sách Mã Vận Đơn / Mã Kiện Mới</h3>
-            <p class="text-xs text-slate-400">Tải lên file Excel (.xlsx), CSV hoặc dán trực tiếp danh sách mã đơn</p>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Nạp Danh Sách Mã Vận Đơn / Mã Kiện Mới</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Tải lên file Excel (.xlsx), CSV hoặc dán trực tiếp danh sách mã đơn</p>
           </div>
         </div>
-        <button onclick="closeOrderImportModal()" class="text-slate-400 hover:text-slate-200 p-1.5 rounded-lg bg-slate-800 transition">
+        <button onclick="closeOrderImportModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <!-- File Upload Zone -->
-      <div class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-xl p-6 text-center cursor-pointer transition bg-slate-950/50" onclick="document.getElementById('excelFileInput').click()">
+      <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-ghn-orange rounded-xl p-6 text-center cursor-pointer transition bg-slate-50 dark:bg-slate-950/50" onclick="document.getElementById('excelFileInput').click()">
         <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelFileUpload(event)">
-        <i data-lucide="upload-cloud" class="w-10 h-10 text-emerald-400 mx-auto mb-2"></i>
-        <p class="text-xs font-semibold text-slate-200">Nhấp để chọn file Excel (.xlsx, .csv) hoặc kéo thả vào đây</p>
-        <p class="text-[11px] text-slate-500 mt-1">Hỗ trợ file xuất từ hệ thống GHN nội bộ hoặc Metabase</p>
+        <i data-lucide="upload-cloud" class="w-10 h-10 text-ghn-orange mx-auto mb-2"></i>
+        <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Nhấp để chọn file Excel (.xlsx, .csv) hoặc kéo thả vào đây</p>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Hỗ trợ file xuất từ hệ thống GHN nội bộ hoặc Metabase</p>
       </div>
 
       <!-- Raw Text Area Alternative -->
       <div class="space-y-2">
-        <label class="block text-xs font-semibold text-slate-300">Hoặc dán danh sách mã đơn (mỗi dòng 1 mã hoặc JSON):</label>
-        <textarea id="rawOrderTextInput" rows="5" placeholder="GHNBDI20335001&#10;GHNBDI20335002&#10;PKBDI20335-001..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:border-emerald-500 focus:outline-none custom-scrollbar resize-none"></textarea>
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Hoặc dán danh sách mã đơn (mỗi dòng 1 mã hoặc JSON):</label>
+        <textarea id="rawOrderTextInput" rows="5" placeholder="GHNBDI20335001&#10;GHNBDI20335002&#10;PKBDI20335-001..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-xs text-slate-800 dark:text-slate-200 font-mono focus:border-ghn-orange focus:outline-none custom-scrollbar resize-none"></textarea>
       </div>
 
       <div class="flex items-center justify-between pt-2">
-        <button onclick="downloadExcelTemplate()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
+        <button onclick="downloadExcelTemplate()" class="text-xs text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1 font-semibold">
           <i data-lucide="download" class="w-3.5 h-3.5"></i>
           <span>Tải file Excel mẫu chuẩn</span>
         </button>
         <div class="flex items-center gap-3">
-          <button onclick="closeOrderImportModal()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition">Hủy bỏ</button>
-          <button onclick="processOrderImport()" id="btnProcessImport" class="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-white text-xs font-bold transition">
+          <button onclick="closeOrderImportModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition">Hủy bỏ</button>
+          <button onclick="processOrderImport()" id="btnProcessImport" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-ghn-orange to-orange-600 hover:from-ghn-orange-hover hover:to-orange-700 text-white text-xs font-bold shadow-md shadow-orange-500/20 active:scale-95 transition">
             <i data-lucide="check" class="w-4 h-4"></i>
             <span>Nạp Dữ Liệu Ngay</span>
           </button>
@@ -976,36 +1040,45 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="bg-slate-900 border-t border-slate-800 py-3.5 px-4 text-center text-xs text-slate-500">
-    <span>GHN Operations & Real-time Backlog Portal &bull; Tự động đồng bộ Looker Studio & Metabase (KTC Bình Định 20335000)</span>
+  <footer class="bg-white dark:bg-[#0b131e] border-t border-slate-200 dark:border-slate-800 py-4 px-4 text-center text-xs text-slate-500 dark:text-slate-400 font-medium transition-colors">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-ghn-orange">GiaoHangNhanh (GHN)</span>
+        <span>&bull;</span>
+        <span>Cổng Quản Trị Vận Hành & Báo Cáo KTC Bình Định (20335000)</span>
+      </div>
+      <div class="text-[11px] text-slate-400">
+        Tự động đồng bộ Looker Studio & Metabase GHN &bull; Phiên bản 2.0
+      </div>
+    </div>
   </footer>
 
   <!-- UPDATE MODAL -->
   <div id="updateModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400">
+    <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-700 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl transition-colors">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-ghn-orange">
             <i data-lucide="upload-cloud" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="text-base font-bold text-white">Nạp / Cập Nhật Dữ Liệu</h3>
-            <p class="text-xs text-slate-400">Hỗ trợ dán dữ liệu từ cả Looker Studio (`batchedDataV2`) và Metabase</p>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Nạp / Cập Nhật Dữ Liệu Báo Cáo</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Hỗ trợ dán dữ liệu từ cả Looker Studio (`batchedDataV2`) và Metabase</p>
           </div>
         </div>
-        <button onclick="closeUpdateModal()" class="text-slate-400 hover:text-slate-200 p-1.5 rounded-lg bg-slate-800 transition">
+        <button onclick="closeUpdateModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <div class="space-y-3">
-        <label class="block text-xs font-semibold text-slate-300">Dán chuỗi JSON vào đây:</label>
-        <textarea id="rawJsonInput" rows="8" placeholder='Dán JSON từ Looker Studio hoặc Metabase vào đây...' class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:border-orange-500 focus:outline-none custom-scrollbar resize-none"></textarea>
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Dán chuỗi JSON vào đây:</label>
+        <textarea id="rawJsonInput" rows="8" placeholder='Dán JSON từ Looker Studio hoặc Metabase vào đây...' class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-xs text-slate-800 dark:text-slate-200 font-mono focus:border-ghn-orange focus:outline-none custom-scrollbar resize-none"></textarea>
       </div>
 
       <div class="flex items-center justify-end gap-3 pt-2">
-        <button onclick="closeUpdateModal()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition">Hủy bỏ</button>
-        <button onclick="submitUpdateData()" id="btnSubmitData" class="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-gradient-to-r from-orange-600 to-ghn-orange text-white text-xs font-bold transition">
+        <button onclick="closeUpdateModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition">Hủy bỏ</button>
+        <button onclick="submitUpdateData()" id="btnSubmitData" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-ghn-orange to-orange-600 hover:from-ghn-orange-hover hover:to-orange-700 text-white text-xs font-bold shadow-md shadow-orange-500/20 active:scale-95 transition">
           <i data-lucide="check" class="w-4 h-4"></i>
           <span>Cập nhật ngay</span>
         </button>
@@ -1058,6 +1131,16 @@
     let countdownIntervalTimer = null;
 
     document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('ghn_theme');
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+        const icon = document.getElementById('themeIcon');
+        if (icon) icon.setAttribute('data-lucide', 'moon');
+      } else {
+        document.documentElement.classList.add('dark');
+        const icon = document.getElementById('themeIcon');
+        if (icon) icon.setAttribute('data-lucide', 'sun');
+      }
       lucide.createIcons();
       fetchDashboardData();
       startAutoRefresh(1800);
@@ -1145,21 +1228,22 @@
       secBacklog.classList.add('hidden');
       secOrders.classList.add('hidden');
 
-      btnExp.className = 'text-slate-400 hover:text-slate-200 flex items-center gap-2 px-4 py-2 rounded-lg transition';
-      btnBck.className = 'text-slate-400 hover:text-slate-200 flex items-center gap-2 px-4 py-2 rounded-lg transition';
-      btnOrd.className = 'text-slate-400 hover:text-slate-200 flex items-center gap-2 px-4 py-2 rounded-lg transition';
+      const inactiveClass = 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-900/60 flex items-center gap-2 px-3.5 py-2 rounded-xl transition font-semibold text-xs';
+      btnExp.className = inactiveClass;
+      btnBck.className = inactiveClass;
+      btnOrd.className = inactiveClass;
 
       if (tab === 'export') {
         secExport.classList.remove('hidden');
-        btnExp.className = 'tab-active flex items-center gap-2 px-4 py-2 rounded-lg transition';
+        btnExp.className = 'tab-active flex items-center gap-2 px-3.5 py-2 rounded-xl transition text-xs';
         renderCharts();
       } else if (tab === 'backlog') {
         secBacklog.classList.remove('hidden');
-        btnBck.className = 'tab-active flex items-center gap-2 px-4 py-2 rounded-lg transition';
+        btnBck.className = 'tab-active flex items-center gap-2 px-3.5 py-2 rounded-xl transition text-xs';
         renderRealBacklogSection();
       } else if (tab === 'orders') {
         secOrders.classList.remove('hidden');
-        btnOrd.className = 'tab-active flex items-center gap-2 px-4 py-2 rounded-lg transition';
+        btnOrd.className = 'tab-active flex items-center gap-2 px-3.5 py-2 rounded-xl transition text-xs';
         if (rawOrders.length === 0) {
           fetchOrdersData();
         } else {
@@ -1200,8 +1284,7 @@
 
     function setDatePreset(type) {
       document.querySelectorAll('.preset-btn').forEach(btn => {
-        btn.classList.remove('bg-orange-600', 'text-white');
-        btn.classList.add('bg-slate-800', 'text-slate-300');
+        btn.className = 'preset-btn text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition';
       });
 
       const dates = [...new Set(rawDataset.map(d => d.iso_date))].sort();
@@ -1209,16 +1292,18 @@
       const maxDate = dates[dates.length - 1];
       let minDate = dates[0];
 
+      const activePresetClass = 'preset-btn text-xs font-bold px-3.5 py-1.5 rounded-xl bg-ghn-orange text-white shadow-md shadow-orange-500/20 transition';
+
       if (type === 'all') {
-        document.getElementById('btnPresetAll').classList.add('bg-orange-600', 'text-white');
+        document.getElementById('btnPresetAll').className = activePresetClass;
       } else if (type === 'last7') {
-        document.getElementById('btnPreset7').classList.add('bg-orange-600', 'text-white');
+        document.getElementById('btnPreset7').className = activePresetClass;
         minDate = dates[Math.max(0, dates.length - 7)];
       } else if (type === 'last14') {
-        document.getElementById('btnPreset14').classList.add('bg-orange-600', 'text-white');
+        document.getElementById('btnPreset14').className = activePresetClass;
         minDate = dates[Math.max(0, dates.length - 14)];
       } else if (type === 'last3') {
-        document.getElementById('btnPreset3').classList.add('bg-orange-600', 'text-white');
+        document.getElementById('btnPreset3').className = activePresetClass;
         minDate = dates[Math.max(0, dates.length - 3)];
       }
       document.getElementById('startDate').value = minDate;
@@ -1313,17 +1398,17 @@
           { name: 'LeadTime TB (giờ)', type: 'line', data: seriesAvgLead }
         ],
         chart: { height: 320, type: 'line', stacked: true, background: 'transparent', toolbar: { show: false } },
-        colors: ['#10b981', '#0ea5e9', '#f59e0b', '#f43f5e', '#fb923c'],
+        colors: ['#0068a7', '#0284c7', '#f59e0b', '#ef4444', '#f26522'],
         stroke: { width: [0, 0, 0, 0, 3], curve: 'smooth' },
-        plotOptions: { bar: { columnWidth: '55%', borderRadius: 3 } },
-        xaxis: { categories: dates.map(d => d.slice(5)), labels: { style: { colors: '#94a3b8', fontSize: '11px' } } },
+        plotOptions: { bar: { columnWidth: '55%', borderRadius: 4 } },
+        xaxis: { categories: dates.map(d => d.slice(5)), labels: { style: { colors: '#94a3b8', fontSize: '11px', fontFamily: 'Plus Jakarta Sans' } } },
         yaxis: [
-          { title: { text: 'Volume', style: { color: '#94a3b8' } }, labels: { formatter: val => (val/1000).toFixed(0) + 'k', style: { colors: '#94a3b8' } } },
-          { opposite: true, title: { text: 'LeadTime (h)', style: { color: '#fb923c' } }, labels: { formatter: val => val + 'h', style: { colors: '#fb923c' } }, min: 0 }
+          { title: { text: 'Volume (Kiện)', style: { color: '#94a3b8', fontSize: '11px', fontWeight: 600 } }, labels: { formatter: val => (val/1000).toFixed(0) + 'k', style: { colors: '#94a3b8' } } },
+          { opposite: true, title: { text: 'LeadTime (h)', style: { color: '#f26522', fontSize: '11px', fontWeight: 700 } }, labels: { formatter: val => val + 'h', style: { colors: '#f26522' } }, min: 0 }
         ],
-        legend: { labels: { colors: '#cbd5e1' }, position: 'top' },
-        theme: { mode: 'dark' },
-        grid: { borderColor: '#334155', strokeDashArray: 3 }
+        legend: { labels: { colors: '#94a3b8' }, position: 'top', fontFamily: 'Plus Jakarta Sans' },
+        theme: { mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light' },
+        grid: { borderColor: '#33415520', strokeDashArray: 3 }
       };
 
       if (dailyChart) dailyChart.destroy();
@@ -1341,10 +1426,10 @@
         series: [vol06, vol612, vol1224, volOver24],
         labels: ['1. 0 - 6h', '2. 6 - 12h', '3. 12 - 24h', '4. >24h'],
         chart: { type: 'donut', height: 260, background: 'transparent' },
-        colors: ['#10b981', '#0ea5e9', '#f59e0b', '#f43f5e'],
+        colors: ['#0068a7', '#0284c7', '#f59e0b', '#f26522'],
         legend: { show: false },
         plotOptions: { pie: { donut: { size: '70%' } } },
-        theme: { mode: 'dark' }
+        theme: { mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light' }
       };
 
       if (donutChart) donutChart.destroy();
@@ -1373,16 +1458,17 @@
           { name: 'LeadTime TB (h)', type: 'line', data: avgLt }
         ],
         chart: { height: 280, type: 'line', background: 'transparent', toolbar: { show: false } },
-        colors: ['#38bdf8', '#f59e0b'],
+        colors: ['#0068a7', '#f26522'],
         stroke: { width: [0, 3], curve: 'smooth' },
         plotOptions: { bar: { columnWidth: '45%', borderRadius: 4 } },
-        xaxis: { categories: dayNames, labels: { style: { colors: '#94a3b8' } } },
+        xaxis: { categories: dayNames, labels: { style: { colors: '#94a3b8', fontFamily: 'Plus Jakarta Sans' } } },
         yaxis: [
           { labels: { formatter: val => (val / 1000).toFixed(0) + 'k', style: { colors: '#94a3b8' } } },
-          { opposite: true, labels: { formatter: val => val + 'h', style: { colors: '#f59e0b' } }, min: 0 }
+          { opposite: true, labels: { formatter: val => val + 'h', style: { colors: '#f26522' } }, min: 0 }
         ],
-        theme: { mode: 'dark' },
-        grid: { borderColor: '#334155', strokeDashArray: 3 }
+        legend: { labels: { colors: '#94a3b8' }, position: 'top', fontFamily: 'Plus Jakarta Sans' },
+        theme: { mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light' },
+        grid: { borderColor: '#33415520', strokeDashArray: 3 }
       };
 
       if (dayOfWeekChart) dayOfWeekChart.destroy();
@@ -1405,12 +1491,13 @@
       const options = {
         series: series,
         chart: { height: 280, type: 'line', background: 'transparent', toolbar: { show: false } },
-        colors: ['#10b981', '#0ea5e9', '#f59e0b', '#f43f5e'],
+        colors: ['#0068a7', '#0284c7', '#f59e0b', '#f26522'],
         stroke: { width: 2.5, curve: 'smooth' },
-        xaxis: { categories: dates.map(d => d.slice(5)), labels: { style: { colors: '#94a3b8' } } },
+        xaxis: { categories: dates.map(d => d.slice(5)), labels: { style: { colors: '#94a3b8', fontFamily: 'Plus Jakarta Sans' } } },
         yaxis: { labels: { formatter: val => val ? val.toFixed(1) + 'h' : '', style: { colors: '#94a3b8' } } },
-        theme: { mode: 'dark' },
-        grid: { borderColor: '#334155', strokeDashArray: 3 }
+        legend: { labels: { colors: '#94a3b8' }, position: 'top', fontFamily: 'Plus Jakarta Sans' },
+        theme: { mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light' },
+        grid: { borderColor: '#33415520', strokeDashArray: 3 }
       };
 
       if (leadTimeTrendChart) leadTimeTrendChart.destroy();
@@ -1420,8 +1507,8 @@
 
     function setTableMode(mode) {
       tableMode = mode;
-      document.getElementById('btnTabMatrix').className = mode === 'matrix' ? 'px-3 py-1 rounded font-medium bg-orange-600 text-white' : 'px-3 py-1 rounded font-medium text-slate-400';
-      document.getElementById('btnTabGrid').className = mode === 'grid' ? 'px-3 py-1 rounded font-medium bg-orange-600 text-white' : 'px-3 py-1 rounded font-medium text-slate-400';
+      document.getElementById('btnTabMatrix').className = mode === 'matrix' ? 'px-3.5 py-1.5 rounded-lg font-bold bg-ghn-orange text-white shadow-sm transition' : 'px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition';
+      document.getElementById('btnTabGrid').className = mode === 'grid' ? 'px-3.5 py-1.5 rounded-lg font-bold bg-ghn-orange text-white shadow-sm transition' : 'px-3.5 py-1.5 rounded-lg font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition';
       renderTable();
     }
 
@@ -1431,44 +1518,44 @@
         const dates = [...new Set(filteredDataset.map(d => d.iso_date))].sort().reverse();
         const slots = ['1.0 - 6h', '2.6 - 12h', '3.12 - 24h', '4.>24h'];
 
-        let html = `<thead><tr class="bg-slate-900 border-b border-slate-800 text-slate-300 uppercase font-semibold"><th class="p-3 border-r border-slate-800 w-28 sticky left-0 bg-slate-900 z-10">Quản lý</th><th class="p-3 border-r border-slate-800 w-36">Chi tiết</th><th class="p-3 border-r border-slate-800 w-32">Mốc giờ</th>`;
+        let html = `<thead><tr class="bg-slate-100/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 uppercase font-bold text-[11px]"><th class="p-3 border-r border-slate-200 dark:border-slate-800 w-28 sticky left-0 bg-slate-100 dark:bg-slate-900 z-10">Quản lý</th><th class="p-3 border-r border-slate-200 dark:border-slate-800 w-36">Chi tiết</th><th class="p-3 border-r border-slate-200 dark:border-slate-800 w-32">Mốc giờ</th>`;
         dates.forEach(d => {
           const dObj = filteredDataset.find(r => r.iso_date === d);
-          html += `<th colspan="3" class="p-2 border-r border-slate-800 text-center bg-slate-900/90 text-orange-400 font-bold">${dObj ? dObj.raw_date : d}</th>`;
+          html += `<th colspan="3" class="p-2.5 border-r border-slate-200 dark:border-slate-800 text-center bg-slate-100 dark:bg-slate-900 text-ghn-orange font-bold">${dObj ? dObj.raw_date : d}</th>`;
         });
-        html += `</tr><tr class="bg-slate-950 border-b border-slate-800 text-slate-400 text-[11px]"><th class="p-2 border-r border-slate-800 sticky left-0 bg-slate-950 z-10"></th><th class="p-2 border-r border-slate-800"></th><th class="p-2 border-r border-slate-800"></th>`;
+        html += `</tr><tr class="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-semibold"><th class="p-2 border-r border-slate-200 dark:border-slate-800 sticky left-0 bg-slate-50 dark:bg-slate-950 z-10"></th><th class="p-2 border-r border-slate-200 dark:border-slate-800"></th><th class="p-2 border-r border-slate-200 dark:border-slate-800"></th>`;
         dates.forEach(() => {
-          html += `<th class="p-2 text-right border-r border-slate-800">Volume</th><th class="p-2 text-right border-r border-slate-800">%Volume</th><th class="p-2 text-right border-r border-slate-800">LeadTime</th>`;
+          html += `<th class="p-2 text-right border-r border-slate-200 dark:border-slate-800">Volume</th><th class="p-2 text-right border-r border-slate-200 dark:border-slate-800">%Volume</th><th class="p-2 text-right border-r border-slate-200 dark:border-slate-800">LeadTime</th>`;
         });
-        html += `</tr></thead><tbody class="divide-y divide-slate-800/60 font-mono">`;
+        html += `</tr></thead><tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">`;
 
         slots.forEach((slot, idx) => {
-          const slotColor = slot.includes('0 - 6h') ? 'text-emerald-400' : slot.includes('6 - 12h') ? 'text-sky-400' : slot.includes('12 - 24h') ? 'text-amber-400' : 'text-rose-400 font-semibold';
-          html += `<tr class="hover:bg-slate-900/40">${idx === 0 ? '<td rowspan="5" class="p-3 border-r border-slate-800 font-sans font-medium text-slate-300 align-top sticky left-0 bg-slate-950 z-10">Kho KTC</td>' : ''}${idx === 0 ? '<td rowspan="5" class="p-3 border-r border-slate-800 font-sans font-medium text-slate-300 align-top">2. Miền Trung (Bình Định)</td>' : ''}<td class="p-2.5 border-r border-slate-800 font-sans ${slotColor}">${slot}</td>`;
+          const slotColor = slot.includes('0 - 6h') ? 'text-ghn-blue dark:text-sky-400 font-bold' : slot.includes('6 - 12h') ? 'text-sky-600 dark:text-sky-400 font-medium' : slot.includes('12 - 24h') ? 'text-amber-600 dark:text-amber-400 font-medium' : 'text-rose-600 dark:text-rose-400 font-bold';
+          html += `<tr class="hover:bg-slate-100/50 dark:hover:bg-slate-900/40">${idx === 0 ? '<td rowspan="5" class="p-3 border-r border-slate-200 dark:border-slate-800 font-sans font-bold text-slate-800 dark:text-slate-200 align-top sticky left-0 bg-white dark:bg-slate-950 z-10">Kho KTC</td>' : ''}${idx === 0 ? '<td rowspan="5" class="p-3 border-r border-slate-200 dark:border-slate-800 font-sans font-semibold text-slate-700 dark:text-slate-300 align-top">2. Miền Trung (Bình Định)</td>' : ''}<td class="p-2.5 border-r border-slate-200 dark:border-slate-800 font-sans ${slotColor}">${slot}</td>`;
           dates.forEach(d => {
             const row = filteredDataset.find(r => r.iso_date === d && r.timeslot === slot);
             if (row) {
-              html += `<td class="p-2 text-right border-r border-slate-800/60 text-slate-200">${row.volume.toLocaleString('vi-VN')}</td><td class="p-2 text-right border-r border-slate-800/60 text-slate-300">${row.pct_volume.toFixed(2)}%</td><td class="p-2 text-right border-r border-slate-800/60 ${row.lead_time > 24 ? 'text-rose-400 font-bold bg-rose-500/10' : 'text-slate-300'}">${row.lead_time.toFixed(2)}</td>`;
+              html += `<td class="p-2 text-right border-r border-slate-200 dark:border-slate-800/60 text-slate-800 dark:text-slate-200 font-semibold">${row.volume.toLocaleString('vi-VN')}</td><td class="p-2 text-right border-r border-slate-200 dark:border-slate-800/60 text-slate-600 dark:text-slate-300">${row.pct_volume.toFixed(2)}%</td><td class="p-2 text-right border-r border-slate-200 dark:border-slate-800/60 ${row.lead_time > 24 ? 'text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-500/10' : 'text-slate-700 dark:text-slate-300'}">${row.lead_time.toFixed(2)}</td>`;
             } else {
-              html += `<td colspan="3" class="p-2 text-center border-r border-slate-800/60 text-slate-600">-</td>`;
+              html += `<td colspan="3" class="p-2 text-center border-r border-slate-200 dark:border-slate-800/60 text-slate-400">-</td>`;
             }
           });
           html += `</tr>`;
         });
 
-        html += `<tr class="bg-slate-900/80 font-bold border-t-2 border-slate-700 text-white"><td class="p-2.5 border-r border-slate-800 font-sans">Total</td>`;
+        html += `<tr class="bg-slate-100 dark:bg-slate-900/80 font-bold border-t-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white"><td class="p-2.5 border-r border-slate-200 dark:border-slate-800 font-sans">Total</td>`;
         dates.forEach(d => {
           const dayRows = filteredDataset.filter(r => r.iso_date === d);
           const dayVol = dayRows.reduce((s, r) => s + r.volume, 0);
           const dayLT = dayRows.reduce((s, r) => s + r.lead_time * r.volume, 0);
-          html += `<td class="p-2 text-right border-r border-slate-800 text-orange-400">${dayVol.toLocaleString('vi-VN')}</td><td class="p-2 text-right border-r border-slate-800">100%</td><td class="p-2 text-right border-r border-slate-800 text-amber-300">${dayVol > 0 ? (dayLT / dayVol).toFixed(2) : '0.00'}</td>`;
+          html += `<td class="p-2 text-right border-r border-slate-200 dark:border-slate-800 text-ghn-orange font-black">${dayVol.toLocaleString('vi-VN')}</td><td class="p-2 text-right border-r border-slate-200 dark:border-slate-800">100%</td><td class="p-2 text-right border-r border-slate-200 dark:border-slate-800 text-amber-600 dark:text-amber-300">${dayVol > 0 ? (dayLT / dayVol).toFixed(2) : '0.00'}</td>`;
         });
         html += `</tr></tbody>`;
         table.innerHTML = html;
       } else {
-        let html = `<thead><tr class="bg-slate-900 border-b border-slate-800 text-slate-300 uppercase font-semibold"><th class="p-3 border-r border-slate-800">Ngày xuất</th><th class="p-3 border-r border-slate-800">Thứ</th><th class="p-3 border-r border-slate-800">Mốc giờ</th><th class="p-3 text-right border-r border-slate-800">Volume</th><th class="p-3 text-right border-r border-slate-800">%Volume</th><th class="p-3 text-right">LeadTime (h)</th></tr></thead><tbody class="divide-y divide-slate-800/60 font-mono">`;
+        let html = `<thead><tr class="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase font-bold text-[11px]"><th class="p-3 border-r border-slate-200 dark:border-slate-800">Ngày xuất</th><th class="p-3 border-r border-slate-200 dark:border-slate-800">Thứ</th><th class="p-3 border-r border-slate-200 dark:border-slate-800">Mốc giờ</th><th class="p-3 text-right border-r border-slate-200 dark:border-slate-800">Volume</th><th class="p-3 text-right border-r border-slate-200 dark:border-slate-800">%Volume</th><th class="p-3 text-right">LeadTime (h)</th></tr></thead><tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">`;
         filteredDataset.forEach(row => {
-          html += `<tr class="hover:bg-slate-900/40"><td class="p-3 border-r border-slate-800 font-sans">${row.iso_date}</td><td class="p-3 border-r border-slate-800 font-sans text-slate-400">${row.day_name}</td><td class="p-3 border-r border-slate-800 font-sans">${row.timeslot}</td><td class="p-3 text-right border-r border-slate-800 font-bold">${row.volume.toLocaleString('vi-VN')}</td><td class="p-3 text-right border-r border-slate-800">${row.pct_volume.toFixed(2)}%</td><td class="p-3 text-right ${row.lead_time > 24 ? 'text-rose-400 font-bold' : 'text-amber-300'}">${row.lead_time.toFixed(2)}h</td></tr>`;
+          html += `<tr class="hover:bg-slate-100/50 dark:hover:bg-slate-900/40"><td class="p-3 border-r border-slate-200 dark:border-slate-800 font-sans font-semibold">${row.iso_date}</td><td class="p-3 border-r border-slate-200 dark:border-slate-800 font-sans text-slate-500 dark:text-slate-400">${row.day_name}</td><td class="p-3 border-r border-slate-200 dark:border-slate-800 font-sans">${row.timeslot}</td><td class="p-3 text-right border-r border-slate-200 dark:border-slate-800 font-bold text-slate-900 dark:text-white">${row.volume.toLocaleString('vi-VN')}</td><td class="p-3 text-right border-r border-slate-200 dark:border-slate-800">${row.pct_volume.toFixed(2)}%</td><td class="p-3 text-right ${row.lead_time > 24 ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-amber-600 dark:text-amber-300'}">${row.lead_time.toFixed(2)}h</td></tr>`;
         });
         html += `</tbody>`;
         table.innerHTML = html;
@@ -2053,15 +2140,32 @@
       document.getElementById('selectOrderStage').value = stage;
       
       // Update filter card styling
-      document.querySelectorAll('.order-filter-card').forEach(c => {
-        c.classList.remove('border-2', 'border-emerald-500', 'border-amber-500', 'border-sky-500', 'border-orange-500', 'border-purple-500');
-        c.classList.add('border', 'border-slate-800');
+      const cards = [
+        { id: 'cardFilterAll', colorBorder: 'border-emerald-500' },
+        { id: 'cardFilterChoXuat', colorBorder: 'border-amber-500' },
+        { id: 'cardFilterLuanChuyen', colorBorder: 'border-ghn-blue' },
+        { id: 'cardFilterPhanLoai', colorBorder: 'border-ghn-orange' },
+        { id: 'cardFilterChuyenTiep', colorBorder: 'border-purple-500' }
+      ];
+
+      cards.forEach(c => {
+        const el = document.getElementById(c.id);
+        if (el) {
+          el.className = 'order-filter-card bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 text-left transition hover:scale-[1.02] ghn-card-shadow';
+        }
       });
-      if (stage === 'all') document.getElementById('cardFilterAll').className = 'order-filter-card bg-slate-900 border-2 border-emerald-500 rounded-xl p-3.5 text-left transition';
-      else if (stage === 'Chờ xuất') document.getElementById('cardFilterChoXuat').className = 'order-filter-card bg-slate-900 border-2 border-amber-500 rounded-xl p-3.5 text-left transition';
-      else if (stage === 'Đang luân chuyển đến KTC') document.getElementById('cardFilterLuanChuyen').className = 'order-filter-card bg-slate-900 border-2 border-sky-500 rounded-xl p-3.5 text-left transition';
-      else if (stage === 'Chờ phân loại') document.getElementById('cardFilterPhanLoai').className = 'order-filter-card bg-slate-900 border-2 border-orange-500 rounded-xl p-3.5 text-left transition';
-      else if (stage === 'Chờ xuất kiện chuyển tiếp') document.getElementById('cardFilterChuyenTiep').className = 'order-filter-card bg-slate-900 border-2 border-purple-500 rounded-xl p-3.5 text-left transition';
+
+      let activeId = 'cardFilterAll';
+      let activeBorder = 'border-emerald-500';
+      if (stage === 'Chờ xuất') { activeId = 'cardFilterChoXuat'; activeBorder = 'border-amber-500'; }
+      else if (stage === 'Đang luân chuyển đến KTC') { activeId = 'cardFilterLuanChuyen'; activeBorder = 'border-ghn-blue'; }
+      else if (stage === 'Chờ phân loại') { activeId = 'cardFilterPhanLoai'; activeBorder = 'border-ghn-orange'; }
+      else if (stage === 'Chờ xuất kiện chuyển tiếp') { activeId = 'cardFilterChuyenTiep'; activeBorder = 'border-purple-500'; }
+
+      const activeEl = document.getElementById(activeId);
+      if (activeEl) {
+        activeEl.className = `order-filter-card bg-white dark:bg-[#111c2d] border-2 ${activeBorder} rounded-2xl p-4 text-left transition hover:scale-[1.02] ghn-card-shadow`;
+      }
 
       applyOrderFilters();
     }
@@ -2204,8 +2308,8 @@
           <tr>
             <td colspan="11" class="py-12 text-center">
               <div class="inline-flex flex-col items-center gap-3">
-                <div class="w-8 h-8 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                <p class="text-sm font-semibold text-emerald-400">Đang tải dữ liệu đơn hàng...</p>
+                <div class="w-8 h-8 border-3 border-ghn-orange border-t-transparent rounded-full animate-spin"></div>
+                <p class="text-sm font-semibold text-ghn-orange">Đang tải dữ liệu đơn hàng...</p>
                 <p class="text-xs text-slate-400">Đang đồng bộ trực tiếp từ Metabase GHN</p>
               </div>
             </td>
@@ -2220,7 +2324,7 @@
           <tr>
             <td colspan="11" class="p-8 text-center text-rose-500 font-sans">
               <p class="font-semibold mb-2">Không thể tải danh sách đơn hàng.</p>
-              <button onclick="fetchOrdersData()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-semibold shadow transition">Thử tải lại ngay</button>
+              <button onclick="fetchOrdersData()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-semibold shadow transition">Thử tải lại ngay</button>
             </td>
           </tr>
         `;
@@ -2236,7 +2340,7 @@
       const pageItems = filteredOrders.slice(startIdx, startIdx + ordersPerPageCount);
 
       if (pageItems.length === 0) {
-        tb.innerHTML = `<tr><td colspan="11" class="p-8 text-center text-slate-500 font-sans">Không tìm thấy mã đơn hàng hoặc mã kiện phù hợp với bộ lọc.</td></tr>`;
+        tb.innerHTML = `<tr><td colspan="11" class="p-8 text-center text-slate-400 font-sans">Không tìm thấy mã đơn hàng hoặc mã kiện phù hợp với bộ lọc.</td></tr>`;
         renderOrdersPagination(0, 1);
         return;
       }
@@ -2253,46 +2357,46 @@
         const vaoLuc = ord.vao_trang_thai_luc || ord.in_time || 'September 16, 2026';
         const soGio = parseFloat(ord.so_gio_da_nam !== undefined ? ord.so_gio_da_nam : (ord.hours_in_warehouse || 0));
 
-        const plColor = pl.includes('Chờ xuất') ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 
-                        pl.includes('luân chuyển') ? 'text-sky-400 bg-sky-500/10 border-sky-500/20' :
-                        pl.includes('phân loại') ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' :
-                        'text-purple-400 bg-purple-500/10 border-purple-500/20';
+        const plColor = pl.includes('Chờ xuất') ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20' : 
+                        pl.includes('luân chuyển') ? 'text-ghn-blue dark:text-sky-400 bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20' :
+                        pl.includes('phân loại') ? 'text-ghn-orange dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/20' :
+                        'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-500/10 border-purple-200 dark:border-purple-500/20';
 
-        const hoursClass = soGio > 24 ? 'text-rose-400 font-bold bg-rose-500/10 px-2 py-0.5 rounded' :
-                           soGio > 12 ? 'text-amber-300 font-semibold' : 'text-slate-200';
+        const hoursClass = soGio > 24 ? 'text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded' :
+                           soGio > 12 ? 'text-amber-600 dark:text-amber-300 font-semibold' : 'text-slate-700 dark:text-slate-200';
 
-        const rowBg = ord.checked ? 'bg-emerald-950/20 hover:bg-emerald-950/30' : 'hover:bg-slate-900/60';
+        const rowBg = ord.checked ? 'bg-emerald-50/50 dark:bg-emerald-950/20' : 'hover:bg-slate-100/60 dark:hover:bg-slate-900/60';
 
         html += `
           <tr class="${rowBg} transition">
-            <td class="p-3 text-center border-r border-slate-800">
-              <input type="checkbox" onchange="toggleOrderCheck('${ordCode}', this.checked)" ${ord.checked ? 'checked' : ''} class="rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-0 cursor-pointer">
+            <td class="p-3 text-center border-r border-slate-200 dark:border-slate-800">
+              <input type="checkbox" onchange="toggleOrderCheck('${ordCode}', this.checked)" ${ord.checked ? 'checked' : ''} class="rounded bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-ghn-orange focus:ring-0 cursor-pointer">
             </td>
-            <td class="p-3 border-r border-slate-800">
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800">
               <div class="flex items-center justify-between gap-1.5">
-                <span class="font-bold text-sky-400 tracking-wider">${ordCode}</span>
-                <button onclick="copyToClipboard('${ordCode}', this)" class="text-slate-500 hover:text-slate-200 p-1 rounded hover:bg-slate-800 transition" title="Copy mã đơn">
+                <span class="font-bold text-ghn-blue dark:text-sky-400 font-mono tracking-wider">${ordCode}</span>
+                <button onclick="copyToClipboard('${ordCode}', this)" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 transition" title="Copy mã đơn">
                   <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
             </td>
-            <td class="p-3 border-r border-slate-800">
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800">
               <div class="flex items-center justify-between gap-1.5">
-                <span class="font-bold text-amber-300 tracking-wider">${pkgCode || '<span class=\"text-slate-600 font-normal\">-</span>'}</span>
-                ${pkgCode ? `<button onclick="copyToClipboard('${pkgCode}', this)" class="text-slate-500 hover:text-slate-200 p-1 rounded hover:bg-slate-800 transition" title="Copy mã kiện"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>` : ''}
+                <span class="font-bold text-amber-600 dark:text-amber-300 font-mono tracking-wider">${pkgCode || '<span class=\"text-slate-400 font-normal\">-</span>'}</span>
+                ${pkgCode ? `<button onclick="copyToClipboard('${pkgCode}', this)" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 transition" title="Copy mã kiện"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>` : ''}
               </div>
             </td>
-            <td class="p-3 border-r border-slate-800 text-slate-400 font-mono">${mk}</td>
-            <td class="p-3 border-r border-slate-800 font-sans text-slate-200">${khoName}</td>
-            <td class="p-3 border-r border-slate-800 font-sans">
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-mono">${mk}</td>
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">${khoName}</td>
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800">
               <span class="px-2 py-0.5 rounded text-[11px] font-semibold border ${plColor}">${pl}</span>
             </td>
-            <td class="p-3 border-r border-slate-800 font-sans text-slate-400">${nhom}</td>
-            <td class="p-3 border-r border-slate-800 font-sans font-semibold text-emerald-400">${tinh}</td>
-            <td class="p-3 border-r border-slate-800 font-sans text-slate-300">${vaoLuc}</td>
-            <td class="p-3 text-right border-r border-slate-800 font-sans font-mono ${hoursClass}">${soGio.toFixed(1)}</td>
-            <td class="p-3 text-center font-sans">
-              <button onclick="toggleOrderCheck('${ordCode}', ${!ord.checked})" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition ${ord.checked ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'}">
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">${nhom}</td>
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800 font-semibold text-emerald-600 dark:text-emerald-400">${tinh}</td>
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300">${vaoLuc}</td>
+            <td class="p-3 text-right border-r border-slate-200 dark:border-slate-800 font-mono ${hoursClass}">${soGio.toFixed(1)}</td>
+            <td class="p-3 text-center">
+              <button onclick="toggleOrderCheck('${ordCode}', ${!ord.checked})" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition ${ord.checked ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'}">
                 ${ord.checked ? '✓ Đã check' : 'Check đơn'}
               </button>
             </td>
@@ -2312,7 +2416,7 @@
       if (!ctrlEl) return;
 
       let html = `
-        <button onclick="goToOrdersPage(${Math.max(1, currentOrdersPage - 1)})" ${currentOrdersPage === 1 ? 'disabled class="px-2.5 py-1 rounded bg-slate-950 text-slate-600 border border-slate-800 cursor-not-allowed"' : 'class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"'}>
+        <button onclick="goToOrdersPage(${Math.max(1, currentOrdersPage - 1)})" ${currentOrdersPage === 1 ? 'disabled class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-950 text-slate-400 border border-slate-200 dark:border-slate-800 cursor-not-allowed"' : 'class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition"'}>
           &laquo; Trước
         </button>
       `;
@@ -2324,14 +2428,14 @@
 
       for (let p = startP; p <= endP; p++) {
         html += `
-          <button onclick="goToOrdersPage(${p})" class="px-2.5 py-1 rounded font-mono text-xs transition ${p === currentOrdersPage ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'}">
+          <button onclick="goToOrdersPage(${p})" class="px-2.5 py-1 rounded font-mono text-xs transition ${p === currentOrdersPage ? 'bg-ghn-orange text-white font-bold shadow-sm' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'}">
             ${p}
           </button>
         `;
       }
 
       html += `
-        <button onclick="goToOrdersPage(${Math.min(totalPages, currentOrdersPage + 1)})" ${currentOrdersPage === totalPages ? 'disabled class="px-2.5 py-1 rounded bg-slate-950 text-slate-600 border border-slate-800 cursor-not-allowed"' : 'class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"'}>
+        <button onclick="goToOrdersPage(${Math.min(totalPages, currentOrdersPage + 1)})" ${currentOrdersPage === totalPages ? 'disabled class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-950 text-slate-400 border border-slate-200 dark:border-slate-800 cursor-not-allowed"' : 'class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition"'}>
           Tiếp &raquo;
         </button>
       `;
@@ -2707,7 +2811,16 @@
     }
 
     function toggleTheme() {
-      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('ghn_theme', isDark ? 'dark' : 'light');
+      const icon = document.getElementById('themeIcon');
+      if (icon) {
+        icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+        lucide.createIcons();
+      }
+      if (activeReport === 'export') {
+        renderCharts();
+      }
     }
   </script>
 </body>
