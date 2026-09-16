@@ -56,6 +56,54 @@ def parse_looker_response(raw_input):
         })
     return records
 
+def parse_metabase_rows(rows):
+    """Converts raw Metabase rows array into structured order objects."""
+    formatted_orders = []
+    for idx, r in enumerate(rows):
+        if not isinstance(r, list):
+            continue
+        ma_don = str(r[0]) if len(r) > 0 and r[0] is not None else ''
+        ma_kien = str(r[1]) if len(r) > 1 and r[1] is not None else ''
+        ma_kho = str(r[2]) if len(r) > 2 and r[2] is not None else '20335000'
+        kho = str(r[3]) if len(r) > 3 and r[3] is not None else 'Kho Trung Chuyển Bình Định'
+        phan_loai = str(r[4]) if len(r) > 4 and r[4] is not None else 'Đang luân chuyển đến KTC'
+        nhom = str(r[5]) if len(r) > 5 and r[5] is not None else 'Đang luân chuyển đến KTC'
+        tinh_tp = str(r[6]) if len(r) > 6 and r[6] is not None else 'Bình Định'
+        vao_tt = str(r[7]) if len(r) > 7 and r[7] is not None else ''
+        
+        so_gio = 0.0
+        if len(r) > 8 and r[8] is not None:
+            try:
+                so_gio = round(float(r[8]), 1)
+            except:
+                so_gio = 0.0
+                
+        khung_gio = str(r[9]) if len(r) > 9 and r[9] is not None else ''
+        
+        trong_luong = 0.0
+        if len(r) > 10 and r[10] is not None:
+            try:
+                trong_luong = round(float(r[10]), 2)
+            except:
+                trong_luong = 0.0
+                
+        formatted_orders.append({
+            'stt': idx + 1,
+            'ma_don': ma_don,
+            'ma_kien': ma_kien,
+            'ma_kho': ma_kho,
+            'kho': kho,
+            'phan_loai': phan_loai,
+            'nhom': nhom,
+            'tinh_tp': tinh_tp,
+            'vao_trang_thai_luc': vao_tt,
+            'so_gio_da_nam': so_gio,
+            'khung_gio': khung_gio,
+            'trong_luong_kg': trong_luong,
+            'checked': False
+        })
+    return formatted_orders
+
 def save_and_merge(records):
     existing_map = {}
     if os.path.exists(DATA_FILE):

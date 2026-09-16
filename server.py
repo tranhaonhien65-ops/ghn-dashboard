@@ -3,7 +3,7 @@ import socketserver
 import json
 import os
 import sys
-from updater import parse_looker_response, save_and_merge, DATA_FILE
+from updater import parse_looker_response, parse_metabase_rows, save_and_merge, DATA_FILE
 
 PORT = int(os.environ.get("PORT", 8080))
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
@@ -132,10 +132,23 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 
                 # if raw list of orders provided
                 if isinstance(payload, list):
-                    orders_data["orders"] = payload
-                    orders_data["records_count"] = len(payload)
+                    if len(payload) > 0 and isinstance(payload[0], list):
+                        parsed_orders = parse_metabase_rows(payload)
+                        orders_data["orders"] = parsed_orders
+                        orders_data["records_count"] = len(parsed_orders)
+                    else:
+                        orders_data["orders"] = payload
+                        orders_data["records_count"] = len(payload)
                 elif isinstance(payload, dict):
-                    if "orders" in payload:
+                    if "data" in payload and isinstance(payload["data"], dict) and "rows" in payload["data"]:
+                        parsed_orders = parse_metabase_rows(payload["data"]["rows"])
+                        orders_data["orders"] = parsed_orders
+                        orders_data["records_count"] = len(parsed_orders)
+                    elif "rows" in payload and isinstance(payload["rows"], list):
+                        parsed_orders = parse_metabase_rows(payload["rows"])
+                        orders_data["orders"] = parsed_orders
+                        orders_data["records_count"] = len(parsed_orders)
+                    elif "orders" in payload:
                         orders_data["orders"] = payload["orders"]
                         orders_data["records_count"] = len(payload["orders"])
                         if "summary" in payload:
