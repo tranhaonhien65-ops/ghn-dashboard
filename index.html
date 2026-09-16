@@ -346,9 +346,9 @@
 
       <!-- Quick Action Buttons -->
       <div class="flex items-center flex-wrap gap-2.5">
-        <button onclick="exportAllOrdersExcel()" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-lg shadow-emerald-600/20 transition">
+        <button onclick="exportAllOrdersExcel()" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-lg shadow-emerald-600/20 transition" title="Tải toàn bộ danh sách mã đơn">
           <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-          <span>Tải Excel Toàn Bộ 10.505 Đơn</span>
+          <span id="btnExportAllBacklogText">Tải Excel Toàn Bộ Đơn</span>
         </button>
         <button onclick="switchReport('orders')" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-orange-600 to-ghn-orange hover:from-orange-500 hover:to-orange-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-lg shadow-orange-600/20 transition">
           <i data-lucide="search" class="w-4 h-4"></i>
@@ -592,7 +592,7 @@
         </div>
 
         <div class="flex items-center gap-2 flex-wrap">
-          <button onclick="exportFilteredOrdersExcel()" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
+          <button onclick="exportFilteredOrdersMbExcel()" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition" title="Xuất danh sách mã đơn đang hiển thị theo bộ lọc">
             <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
             <span>Tải Excel Danh Sách Này</span>
           </button>
@@ -745,9 +745,9 @@
           <span>Xuất Excel Đang Xem</span>
         </button>
 
-        <button onclick="exportAllOrdersExcel()" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-orange-600 to-ghn-orange hover:from-orange-500 hover:to-orange-600 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-lg shadow-orange-600/20 transition">
+        <button onclick="exportAllOrdersExcel()" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-orange-600 to-ghn-orange hover:from-orange-500 hover:to-orange-600 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-lg shadow-orange-600/20 transition" title="Xuất toàn bộ danh sách mã đơn">
           <i data-lucide="download" class="w-4 h-4"></i>
-          <span>Xuất Toàn Bộ 10.271 Mã Đơn</span>
+          <span id="btnExportAllOrdersText">Xuất Toàn Bộ Mã Đơn</span>
         </button>
 
         <button onclick="openOrderImportModal()" class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-700 transition">
@@ -1580,6 +1580,11 @@
       const rowCountEl = document.getElementById('matrixRowCount');
       if (rowCountEl) rowCountEl.textContent = `${rows.length} rows`;
 
+      const btnExportAllBacklogText = document.getElementById('btnExportAllBacklogText');
+      if (btnExportAllBacklogText) {
+        btnExportAllBacklogText.textContent = `Tải Excel Toàn Bộ (${sumTotal.toLocaleString('vi-VN')} Đơn)`;
+      }
+
       // 2. Render Card 2: Tồn theo kho × số giờ đã nằm
       const tbWarehouse = document.getElementById('warehouseMatrixTableBody');
       const wRows = rawBacklogData.ton_theo_kho || [];
@@ -2159,6 +2164,15 @@
       if (document.getElementById('statCheckedCount')) document.getElementById('statCheckedCount').textContent = checkedCount.toLocaleString('vi-VN');
       if (document.getElementById('statUncheckedCount')) document.getElementById('statUncheckedCount').textContent = uncheckCount.toLocaleString('vi-VN');
 
+      const btnExportAllOrdersText = document.getElementById('btnExportAllOrdersText');
+      if (btnExportAllOrdersText) {
+        btnExportAllOrdersText.textContent = `Xuất Toàn Bộ (${totalAll.toLocaleString('vi-VN')} Mã Đơn)`;
+      }
+      const btnExportAllBacklogText = document.getElementById('btnExportAllBacklogText');
+      if (btnExportAllBacklogText && totalAll > 0) {
+        btnExportAllBacklogText.textContent = `Tải Excel Toàn Bộ (${totalAll.toLocaleString('vi-VN')} Đơn)`;
+      }
+
       currentOrdersPage = 1;
       renderOrdersTable();
     }
@@ -2368,9 +2382,12 @@
     }
 
     // ==================== EXCEL EXPORT FUNCTIONS (METABASE SCHEMA) ====================
-    function exportFilteredOrdersExcel() {
-      if (!filteredOrders.length) return alert('Không có dữ liệu đơn hàng để xuất!');
-      const exportRows = filteredOrders.map((o, idx) => ({
+    function exportFilteredOrdersMbExcel() {
+      if (!filteredOrdersMb || !filteredOrdersMb.length) {
+        return alert('Không có dữ liệu đơn hàng để xuất!');
+      }
+      const exportRows = filteredOrdersMb.map((o, idx) => ({
+        "STT": idx + 1,
         "Mã đơn": o.ma_don || o.order_code,
         "Mã kiện": o.ma_kien || o.package_code || "",
         "Mã kho": o.ma_kho || o.warehouse_id || "20335000",
@@ -2380,6 +2397,37 @@
         "Tỉnh/TP": o.tinh_tp || o.destination,
         "Vào trạng thái lúc": o.vao_trang_thai_luc || o.in_time,
         "Số giờ đã nằm": o.so_gio_da_nam !== undefined ? o.so_gio_da_nam : o.hours_in_warehouse,
+        "Trọng lượng (kg)": o.weight !== undefined ? o.weight : (o.trong_luong || ""),
+        "Đã kiểm tra": o.checked ? "Đã kiểm" : "Chưa kiểm"
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(exportRows);
+      const wb = XLSX.utils.book_new();
+      let sheetName = "ChiTiet_MaDon";
+      if (matrixSelectedStage && matrixSelectedStage !== 'all') {
+        sheetName = matrixSelectedStage.slice(0, 25).replace(/[^a-zA-Z0-9]/g, '_');
+      }
+      XLSX.utils.book_append_sheet(wb, ws, sheetName);
+      XLSX.writeFile(wb, `GHN_ChiTiet_${sheetName}_KTC_BinhDinh_${new Date().toISOString().slice(0,10)}.xlsx`);
+      showToast(`📥 Đã tải file Excel danh sách ${exportRows.length.toLocaleString('vi-VN')} mã đơn!`);
+    }
+
+    function exportFilteredOrdersExcel() {
+      if (!filteredOrders || !filteredOrders.length) {
+        return alert('Không có dữ liệu đơn hàng để xuất!');
+      }
+      const exportRows = filteredOrders.map((o, idx) => ({
+        "STT": idx + 1,
+        "Mã đơn": o.ma_don || o.order_code,
+        "Mã kiện": o.ma_kien || o.package_code || "",
+        "Mã kho": o.ma_kho || o.warehouse_id || "20335000",
+        "Kho": o.kho || o.warehouse_name || "Kho Trung Chuyển Bình Định",
+        "Phân loại": o.phan_loai || o.stage,
+        "Nhóm": o.nhom || "Đang ở KTC",
+        "Tỉnh/TP": o.tinh_tp || o.destination,
+        "Vào trạng thái lúc": o.vao_trang_thai_luc || o.in_time,
+        "Số giờ đã nằm": o.so_gio_da_nam !== undefined ? o.so_gio_da_nam : o.hours_in_warehouse,
+        "Trọng lượng (kg)": o.weight !== undefined ? o.weight : (o.trong_luong || ""),
         "Đã kiểm tra": o.checked ? "Đã kiểm" : "Chưa kiểm"
       }));
 
@@ -2387,11 +2435,16 @@
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Chi_tiet_muc_ma_don");
       XLSX.writeFile(wb, `GHN_ChiTiet_MaDon_KTC_BinhDinh_${new Date().toISOString().slice(0,10)}.xlsx`);
-      showToast('📥 Đã tải file Excel danh sách mã đơn thành công!');
+      showToast(`📥 Đã tải file Excel danh sách ${exportRows.length.toLocaleString('vi-VN')} mã đơn đang xem!`);
     }
 
     function exportAllOrdersExcel() {
-      const allRows = rawOrders.map(o => ({
+      if (!rawOrders || rawOrders.length === 0) {
+        showToast('⚠️ Đang nạp dữ liệu đơn hàng, vui lòng thử lại sau giây lát...', 'warning');
+        return;
+      }
+      const allRows = rawOrders.map((o, idx) => ({
+        "STT": idx + 1,
         "Mã đơn": o.ma_don || o.order_code,
         "Mã kiện": o.ma_kien || o.package_code || "",
         "Mã kho": o.ma_kho || o.warehouse_id || "20335000",
@@ -2401,6 +2454,7 @@
         "Tỉnh/TP": o.tinh_tp || o.destination,
         "Vào trạng thái lúc": o.vao_trang_thai_luc || o.in_time,
         "Số giờ đã nằm": o.so_gio_da_nam !== undefined ? o.so_gio_da_nam : o.hours_in_warehouse,
+        "Trọng lượng (kg)": o.weight !== undefined ? o.weight : (o.trong_luong || ""),
         "Đã kiểm tra": o.checked ? "Đã kiểm" : "Chưa kiểm"
       }));
 
@@ -2408,14 +2462,15 @@
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "ToanBo_MaDon_Metabase");
       XLSX.writeFile(wb, `GHN_Full_MaDon_KTC_BinhDinh_20335000_${new Date().toISOString().slice(0,10)}.xlsx`);
-      showToast('📥 Đã xuất file Excel toàn bộ 10.271 mã đơn KTC Bình Định!');
+      showToast(`📥 Đã xuất file Excel toàn bộ ${allRows.length.toLocaleString('vi-VN')} mã đơn KTC Bình Định!`);
     }
 
     function exportStageOrdersExcel(stageName) {
       const stageRows = rawOrders.filter(o => (o.phan_loai === stageName || o.stage === stageName));
       const rowsToExport = stageRows.length > 0 ? stageRows : rawOrders;
 
-      const exportRows = rowsToExport.map(o => ({
+      const exportRows = rowsToExport.map((o, idx) => ({
+        "STT": idx + 1,
         "Mã đơn": o.ma_don || o.order_code,
         "Mã kiện": o.ma_kien || o.package_code || "",
         "Mã kho": o.ma_kho || o.warehouse_id || "20335000",
@@ -2425,6 +2480,7 @@
         "Tỉnh/TP": o.tinh_tp || o.destination,
         "Vào trạng thái lúc": o.vao_trang_thai_luc || o.in_time,
         "Số giờ đã nằm": o.so_gio_da_nam !== undefined ? o.so_gio_da_nam : o.hours_in_warehouse,
+        "Trọng lượng (kg)": o.weight !== undefined ? o.weight : (o.trong_luong || ""),
         "Đã kiểm tra": o.checked ? "Đã kiểm" : "Chưa kiểm"
       }));
 
@@ -2433,7 +2489,7 @@
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, safeStageName.slice(0, 30));
       XLSX.writeFile(wb, `GHN_${safeStageName}_KTC_BinhDinh_${new Date().toISOString().slice(0,10)}.xlsx`);
-      showToast(`📥 Đã tải file Excel khâu "${stageName}"!`);
+      showToast(`📥 Đã tải file Excel khâu "${stageName}" (${exportRows.length.toLocaleString('vi-VN')} đơn)!`);
     }
 
     function downloadExcelTemplate() {
@@ -2618,11 +2674,32 @@
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "BaoCao_XuatKien");
         XLSX.writeFile(wb, `GHN_XuatKien_${new Date().toISOString().slice(0,10)}.xlsx`);
+        showToast('📥 Đã tải file Excel Báo Cáo Xuất Kiện!');
       } else if (activeReport === 'backlog') {
-        const ws = XLSX.utils.json_to_sheet(realBinhDinhBacklog.rows);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "TonDong_BinhDinh_20335000");
-        XLSX.writeFile(wb, `GHN_TonDong_BinhDinh_20335000_${new Date().toISOString().slice(0,10)}.xlsx`);
+        if (rawBacklogData && rawBacklogData.ton_theo_phan_loai) {
+          const ws1 = XLSX.utils.json_to_sheet(rawBacklogData.ton_theo_phan_loai);
+          XLSX.utils.book_append_sheet(wb, ws1, "Ton_Theo_Phan_Loai");
+        }
+        if (rawBacklogData && rawBacklogData.ton_theo_kho) {
+          const ws2 = XLSX.utils.json_to_sheet(rawBacklogData.ton_theo_kho);
+          XLSX.utils.book_append_sheet(wb, ws2, "Ton_Theo_Kho");
+        }
+        if (rawOrders && rawOrders.length > 0) {
+          const allRows = rawOrders.map((o, idx) => ({
+            "STT": idx + 1,
+            "Mã đơn": o.ma_don || o.order_code,
+            "Mã kiện": o.ma_kien || o.package_code || "",
+            "Phân loại": o.phan_loai || o.stage,
+            "Số giờ đã nằm": o.so_gio_da_nam !== undefined ? o.so_gio_da_nam : o.hours_in_warehouse,
+            "Tỉnh/TP": o.tinh_tp || o.destination,
+            "Vào trạng thái lúc": o.vao_trang_thai_luc || o.in_time
+          }));
+          const ws3 = XLSX.utils.json_to_sheet(allRows);
+          XLSX.utils.book_append_sheet(wb, ws3, "Chi_Tiet_Ma_Don");
+        }
+        XLSX.writeFile(wb, `GHN_TonDong_KTC_BinhDinh_20335000_${new Date().toISOString().slice(0,10)}.xlsx`);
+        showToast('📥 Đã tải file Excel Báo Cáo Tồn Đọng KTC Bình Định!');
       } else if (activeReport === 'orders') {
         exportFilteredOrdersExcel();
       }
