@@ -12,9 +12,56 @@ DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 BACKLOG_FILE = os.path.join(DIRECTORY, "backlog_data.json")
 ORDERS_FILE = os.path.join(DIRECTORY, "orders_data.json")
 
+import gzip
+
+_cache = {
+    "orders": {"mtime": 0, "raw": b"", "gz": b""},
+    "backlog": {"mtime": 0, "raw": b"", "gz": b""},
+    "data": {"mtime": 0, "raw": b"", "gz": b""}
+}
+
+def get_cached_file(file_path, key, default_json=b"{}"):
+    global _cache
+    if not os.path.exists(file_path):
+        raw = default_json
+        gz = gzip.compress(raw, compresslevel=6)
+        return raw, gz
+    
+    try:
+        mtime = os.path.getmtime(file_path)
+        entry = _cache.get(key)
+        if entry and entry["mtime"] == mtime and entry["raw"]:
+            return entry["raw"], entry["gz"]
+        
+        with open(file_path, "rb") as f:
+            raw = f.read()
+        gz = gzip.compress(raw, compresslevel=6)
+        _cache[key] = {"mtime": mtime, "raw": raw, "gz": gz}
+        return raw, gz
+    except Exception as e:
+        print(f"Cache read error for {key}: {e}")
+        return default_json, gzip.compress(default_json)
+
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
+
+    def send_json_response(self, raw_bytes, gz_bytes):
+        accept_encoding = self.headers.get("Accept-Encoding", "")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Cache-Control", "no-cache")
+        
+        if "gzip" in accept_encoding:
+            self.send_header("Content-Encoding", "gzip")
+            self.send_header("Content-Length", str(len(gz_bytes)))
+            self.end_headers()
+            self.wfile.write(gz_bytes)
+        else:
+            self.send_header("Content-Length", str(len(raw_bytes)))
+            self.end_headers()
+            self.wfile.write(raw_bytes)
 
     def do_GET(self):
         url_path = self.path.split("?")[0]
@@ -22,52 +69,35 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.path = "/index.html"
             return super().do_GET()
         elif url_path == "/api/data":
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-            
-            records = []
             if os.path.exists(DATA_FILE):
-                with open(DATA_FILE, "r", encoding="utf-8") as f:
-                    records = json.load(f)
-
-            response = {
-                "status": "success",
-                "total_records": len(records),
-                "data": records
-            }
-            self.wfile.write(json.dumps(response, ensure_ascii=False).encode("utf-8"))
+                raw, gz = get_cached_file(DATA_FILE, "data", b"[]")
+                # Wrap records if needed
+                try:
+                    records = json.loads(raw.decode("utf-8"))
+                    res = json.dumps({"status": "success", "total_records": len(records), "data": records}, ensure_ascii=False).encode("utf-8")
+                    self.send_json_response(res, gzip.compress(res, compresslevel=6))
+                except Exception:
+                    self.send_json_response(raw, gz)
+            else:
+                empty = b'{"status":"success","total_records":0,"data":[]}'
+                self.send_json_response(empty, gzip.compress(empty))
             return
         elif url_path == "/api/backlog":
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-            
-            backlog_data = {}
             if os.path.exists(BACKLOG_FILE):
-                with open(BACKLOG_FILE, "r", encoding="utf-8") as f:
-                    backlog_data = json.load(f)
-
-            response = {
-                "status": "success",
-                "data": backlog_data
-            }
-            self.wfile.write(json.dumps(response, ensure_ascii=False).encode("utf-8"))
+                raw, gz = get_cached_file(BACKLOG_FILE, "backlog", b"{}")
+                try:
+                    bdata = json.loads(raw.decode("utf-8"))
+                    res = json.dumps({"status": "success", "data": bdata}, ensure_ascii=False).encode("utf-8")
+                    self.send_json_response(res, gzip.compress(res, compresslevel=6))
+                except Exception:
+                    self.send_json_response(raw, gz)
+            else:
+                empty = b'{"status":"success","data":{}}'
+                self.send_json_response(empty, gzip.compress(empty))
             return
         elif url_path == "/api/orders":
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-            
-            orders_data = {"orders": []}
-            if os.path.exists(ORDERS_FILE):
-                with open(ORDERS_FILE, "r", encoding="utf-8") as f:
-                    orders_data = json.load(f)
-
-            self.wfile.write(json.dumps(orders_data, ensure_ascii=False).encode("utf-8"))
+            raw, gz = get_cached_file(ORDERS_FILE, "orders", b'{"orders":[]}')
+            self.send_json_response(raw, gz)
             return
         elif url_path == "/health" or url_path == "/ping":
             self.send_response(200)
@@ -78,12 +108,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         elif url_path == "/api/sync-metabase":
             try:
                 count = sync_metabase_live()
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.send_header("Access-Control-Allow-Origin", "*")
-                self.end_headers()
-                res = {"status": "success", "message": f"Đã tự động đồng bộ thành công {count} mã đơn thật từ GHN Metabase!", "total_orders": count}
-                self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+                res = json.dumps({"status": "success", "message": f"Đã tự động đồng bộ thành công {count} mã đơn thật từ GHN Metabase!", "total_orders": count}, ensure_ascii=False).encode("utf-8")
+                self.send_json_response(res, gzip.compress(res))
             except Exception as e:
                 self.send_response(500)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
