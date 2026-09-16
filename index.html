@@ -1029,22 +1029,22 @@
         region: "Miền Trung"
       },
       summary: {
-        total_orders: 10505,
-        total_packages: 4794,
-        total_weight_kg: 59339.37,
-        total_weight_ton: 59.34,
-        last_updated: "2026-09-16 09:59:00"
+        total_orders: 6380,
+        total_packages: 3620,
+        total_weight_kg: 42645.29,
+        total_weight_ton: 42.65,
+        last_updated: "2026-09-16 12:13:47"
       },
       ton_theo_phan_loai: [
-        { phan_loai: "Chờ phân loại", h0_6: 596, h6_12: 2, h12_24: 13, h24_48: 0, h_over48: 11, tong: 622, nhom: "Đang ở KTC" },
-        { phan_loai: "Đang phân loại", h0_6: 179, h6_12: 9, h12_24: 1, h24_48: 0, h_over48: 6, tong: 195, nhom: "Đang ở KTC" },
-        { phan_loai: "Chờ xuất kiện chuyển tiếp", h0_6: 28, h6_12: 34, h12_24: 14, h24_48: 0, h_over48: 1, tong: 77, nhom: "Đang ở KTC" },
-        { phan_loai: "Chờ xuất", h0_6: 1250, h6_12: 185, h12_24: 45, h24_48: 1, h_over48: 2, tong: 1483, nhom: "Đang ở KTC" },
-        { phan_loai: "Đang luân chuyển đến KTC", h0_6: 4194, h6_12: 3390, h12_24: 530, h24_48: 5, h_over48: 8, tong: 8127, nhom: "Đang luân chuyển đến KTC" },
-        { phan_loai: "Tồn khác trong kho", h0_6: 1, h6_12: 0, h12_24: 0, h24_48: 0, h_over48: 0, tong: 1, nhom: "Đang ở KTC" }
+        { phan_loai: "Chờ phân loại", h0_6: 178, h6_12: 1, h12_24: 14, h24_48: 0, h48_72: 0, h72_96: 0, h_over96: 11, h_over48: 11, tong: 204, nhom: "Đang ở KTC" },
+        { phan_loai: "Đang phân loại", h0_6: 18, h6_12: 1, h12_24: 6, h24_48: 0, h48_72: 1, h72_96: 1, h_over96: 4, h_over48: 6, tong: 31, nhom: "Đang ở KTC" },
+        { phan_loai: "Chờ xuất kiện chuyển tiếp", h0_6: 844, h6_12: 0, h12_24: 44, h24_48: 0, h48_72: 0, h72_96: 0, h_over96: 1, h_over48: 1, tong: 889, nhom: "Đang ở KTC" },
+        { phan_loai: "Chờ xuất", h0_6: 386, h6_12: 59, h12_24: 56, h24_48: 3, h48_72: 2, h72_96: 0, h_over96: 1, h_over48: 3, tong: 507, nhom: "Đang ở KTC" },
+        { phan_loai: "Đang luân chuyển đến KTC", h0_6: 427, h6_12: 3576, h12_24: 737, h24_48: 1, h48_72: 0, h72_96: 0, h_over96: 7, h_over48: 7, tong: 4748, nhom: "Đang luân chuyển đến KTC" },
+        { phan_loai: "Tồn khác trong kho", h0_6: 0, h6_12: 1, h12_24: 0, h24_48: 0, h48_72: 0, h72_96: 0, h_over96: 0, h_over48: 0, tong: 1, nhom: "Đang ở KTC" }
       ],
       ton_theo_kho: [
-        { ma_kho: "20335000", kho: "Kho Trung Chuyển Bình Định", h0_6: 6248, h6_12: 3620, h12_24: 603, h24_48: 6, h_over48: 28, tong: 10505 }
+        { ma_kho: "20335000", kho: "Kho Trung Chuyển Bình Định", h0_6: 1853, h6_12: 3638, h12_24: 857, h24_48: 4, h48_72: 3, h72_96: 1, h_over96: 24, h_over48: 28, tong: 6380 }
       ]
     };
     const realBinhDinhBacklog = rawBacklogData;
@@ -1489,6 +1489,7 @@
           const json = await res.json();
           if (json && json.data && json.data.ton_theo_phan_loai) {
             rawBacklogData = json.data;
+            renderRealBacklogSection();
           }
         }
       } catch (e) {

@@ -65,9 +65,23 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         url_path = self.path.split("?")[0]
-        if url_path == "/" or url_path == "":
-            self.path = "/index.html"
-            return super().do_GET()
+        if url_path == "/" or url_path == "" or url_path == "/index.html":
+            file_path = os.path.join(DIRECTORY, "index.html")
+            if os.path.exists(file_path):
+                with open(file_path, "rb") as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+                self.send_header("Pragma", "no-cache")
+                self.send_header("Expires", "0")
+                self.send_header("Content-Length", str(len(content)))
+                self.end_headers()
+                self.wfile.write(content)
+                return
+            else:
+                self.path = "/index.html"
+                return super().do_GET()
         elif url_path == "/api/data":
             if os.path.exists(DATA_FILE):
                 raw, gz = get_cached_file(DATA_FILE, "data", b"[]")
