@@ -1161,12 +1161,14 @@
 
         <div class="relative">
           <pre id="userscriptCodeBox" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-[11px] text-slate-300 font-mono overflow-x-auto max-h-48 custom-scrollbar">// ==UserScript==
-// @name         GHN Dashboard Auto-Sync Bridge
+// @name         GHN Dashboard Auto-Sync Master
 // @namespace    http://tampermonkey.net/
-// @version      3.0
-// @description  Tự động đồng bộ số liệu Metabase từ baocao.ghn.vn về GHN Dashboard
+// @version      4.0
+// @description  Tự động bắt gói tin và đồng bộ số liệu Metabase từ baocao.ghn.vn về GHN Dashboard
 // @author       Hao Nhien
 // @match        https://baocao.ghn.vn/*
+// @match        https://data-bi.ghn.vn/*
+// @run-at       document-start
 // @grant        GM_xmlhttpRequest
 // @connect      ghn-dashboard.onrender.com
 // @connect      localhost
@@ -1175,16 +1177,17 @@
 
 (function() {
     'use strict';
-    console.log('[GHN Bridge v3.0] Khởi động cầu nối tự động...');
 
-    function getJwtFromIframe() {
-        const iframes = document.querySelectorAll('iframe');
-        for (const f of iframes) {
-            const src = f.src || '';
-            const m = src.match(/dashboard\/([a-zA-Z0-9_\-\.]+)/);
-            if (m && m[1].length > 40) return m[1];
+    function showFloatingBadge(msg, color = '#059669') {
+        let b = document.getElementById('ghn-master-badge');
+        if (!b) {
+            b = document.createElement('div');
+            b.id = 'ghn-master-badge';
+            b.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999999;padding:12px 18px;border-radius:12px;color:#fff;font-family:sans-serif;font-size:13px;font-weight:bold;box-shadow:0 8px 25px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px;transition:all 0.3s;';
+            document.body.appendChild(b);
         }
-        return '';
+        b.style.background = color;
+        b.innerHTML = msg;
     }
 
     function sendToDashboard(payload) {
@@ -1199,65 +1202,143 @@
                 headers: { 'Content-Type': 'application/json' },
                 data: JSON.stringify(payload),
                 onload: function(r) {
-                    console.log('🎉 [GHN Bridge] Đã đồng bộ thành công tới ' + url, r.responseText);
+                    try {
+                        const res = JSON.parse(r.responseText);
+                        const count = res.total_orders || payload.rows?.length || 0;
+                        showFloatingBadge(`🎉 Đã đồng bộ ${count.toLocaleString('vi-VN')} đơn về Dashboard!`, '#059669');
+                    } catch(e) {
+                        showFloatingBadge(`🎉 Đã đẩy dữ liệu thành công!`, '#059669');
+                    }
                 },
                 onerror: function(e) {
-                    console.warn('[GHN Bridge] Gửi thất bại tới ' + url, e);
+                    console.warn('[GHN Sync] Gửi thất bại tới ' + url, e);
                 }
             });
         });
     }
 
-    async function syncToDashboard() {
+    // Tự động bắt mọi gói tin qua Fetch
+    const originalFetch = window.fetch;
+    window.fetch = async function(...args) {
+        const url = (args[0] && typeof args[0] === 'string') ? args[0] : (args[0]?.url || '');
         try {
-            let jT = getJwtFromIframe();
+            if (args[1] && args[1].headers) {
+                let h = args[1].headers;
+                let tk = h.token || (h.get && h.get('token')) || '';
+                let rip = h['remote-ip'] || (h.get && h.get('remote-ip')) || '';
+                if (tk) {
+                    window.__GHN_TOKEN = tk;
+                    window.__GHN_REMOTE_IP = rip;
+                }
+            }
+        } catch(e) {}
 
-            if (!jT) {
-                let k = localStorage.getItem('token') || localStorage.getItem('accessToken') || '';
-                if (!k) {
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const s = localStorage.key(i), v = localStorage.getItem(s);
-                        if (v && v.includes('token') && v.length > 20) {
-                            try { const p = JSON.parse(v); if (p.token) k = p.token; else if (p.accessToken) k = p.accessToken; } catch(e) {}
-                        }
+        const res = await originalFetch.apply(this, args);
+
+        try {
+            const clone = res.clone();
+            if (url.includes('metabase-token')) {
+                clone.json().then(data => {
+                    const jwt = data?.data?.token;
+                    if (jwt) {
+                        window.__GHN_JWT = jwt;
+                        sendToDashboard({ token: window.__GHN_TOKEN, remote_ip: window.__GHN_REMOTE_IP, jwt_token: jwt });
+                    }
+                }).catch(() => {});
+            } else if (url.includes('card/4885') || url.includes('card/4884')) {
+                clone.json().then(data => {
+                    const rows = data?.data?.rows || [];
+                    if (rows.length > 0) {
+                        showFloatingBadge(`📦 Đang đồng bộ ${rows.length.toLocaleString('vi-VN')} đơn...`, '#0068a7');
+                        sendToDashboard({ rows: rows, jwt_token: window.__GHN_JWT, token: window.__GHN_TOKEN });
+                    }
+                }).catch(() => {});
+            }
+        } catch(e) {}
+
+        return res;
+    };
+
+    // Tự động bắt mọi gói tin qua XMLHttpRequest
+    const originalXhrOpen = XMLHttpRequest.prototype.open;
+    const originalXhrSend = XMLHttpRequest.prototype.send;
+    const originalSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
+
+    XMLHttpRequest.prototype.setRequestHeader = function(header, value) {
+        if (header.toLowerCase() === 'token') window.__GHN_TOKEN = value;
+        if (header.toLowerCase() === 'remote-ip') window.__GHN_REMOTE_IP = value;
+        return originalSetRequestHeader.apply(this, arguments);
+    };
+
+    XMLHttpRequest.prototype.open = function(method, url) {
+        this._ghn_url = url;
+        return originalXhrOpen.apply(this, arguments);
+    };
+
+    XMLHttpRequest.prototype.send = function() {
+        this.addEventListener('load', function() {
+            try {
+                const url = this._ghn_url || '';
+                if (url.includes('metabase-token')) {
+                    const data = JSON.parse(this.responseText);
+                    const jwt = data?.data?.token;
+                    if (jwt) {
+                        window.__GHN_JWT = jwt;
+                        sendToDashboard({ token: window.__GHN_TOKEN, remote_ip: window.__GHN_REMOTE_IP, jwt_token: jwt });
+                    }
+                } else if (url.includes('card/4885') || url.includes('card/4884')) {
+                    const data = JSON.parse(this.responseText);
+                    const rows = data?.data?.rows || [];
+                    if (rows.length > 0) {
+                        showFloatingBadge(`📦 Đang đồng bộ ${rows.length.toLocaleString('vi-VN')} đơn...`, '#0068a7');
+                        sendToDashboard({ rows: rows, jwt_token: window.__GHN_JWT, token: window.__GHN_TOKEN });
                     }
                 }
-                const h = { 'accept': 'application/json, text/plain, */*', 'content-type': 'application/json' };
-                if (k) h['token'] = k;
+            } catch(e) {}
+        });
+        return originalXhrSend.apply(this, arguments);
+    };
 
-                const rT = await fetch('https://baocao-v2-api.ghn.vn/baocao-service/report/dashboard/metabase-token', {
-                    method: 'POST',
-                    headers: h,
-                    body: JSON.stringify({ user_id: 3007413, dashboard_id: 317 })
-                });
-                if (rT.ok) {
-                    const d = await rT.json();
-                    jT = d?.data?.token || '';
+    // Quét chủ động
+    async function activeScanner() {
+        try {
+            let tk = window.__GHN_TOKEN || localStorage.getItem('token') || localStorage.getItem('accessToken') || '';
+            if (!tk) {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i), v = localStorage.getItem(k);
+                    if (v && v.length > 20) {
+                        const m = v.match(/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i);
+                        if (m) { tk = m[0]; break; }
+                    }
+                }
+            }
+            if (tk) window.__GHN_TOKEN = tk;
+
+            let jwt = window.__GHN_JWT;
+            if (!jwt) {
+                const iframes = document.querySelectorAll('iframe');
+                for (const f of iframes) {
+                    const m = (f.src || '').match(/dashboard\/([a-zA-Z0-9_\-\.]+)/);
+                    if (m && m[1].length > 40) { jwt = m[1]; break; }
                 }
             }
 
-            if (!jT) {
-                console.log('[GHN Bridge] Đang đợi Iframe Metabase tải xong...');
-                return;
+            if (jwt) {
+                const qR = await fetch(`https://data-bi.ghn.vn/api/embed/dashboard/${jwt}/dashcard/6243/card/4885?parameters=%7B%22kho%22%3Anull%2C%22ma_kho%22%3A%5B%2220335000%22%5D%2C%22phan_loai%22%3Anull%7D`);
+                if (qR.ok) {
+                    const qJ = await qR.json();
+                    const rows = qJ?.data?.rows || [];
+                    if (rows.length > 0) {
+                        sendToDashboard({ rows: rows, jwt_token: jwt, token: tk });
+                    }
+                }
             }
-
-            console.log('[GHN Bridge] Đang trích xuất đơn hàng Metabase...');
-            const qR = await fetch(`https://data-bi.ghn.vn/api/embed/dashboard/${jT}/dashcard/6243/card/4885?parameters=%7B%22kho%22%3Anull%2C%22ma_kho%22%3A%5B%2220335000%22%5D%2C%22phan_loai%22%3Anull%7D`);
-            if (qR.ok) {
-                const qJ = await qR.json();
-                const rows = qJ?.data?.rows || [];
-                console.log(`[GHN Bridge] Đã lấy thành công ${rows.length} đơn hàng!`);
-                sendToDashboard({ jwt_token: jT, rows: rows, timestamp: new Date().toISOString() });
-            }
-        } catch(e) {
-            console.warn('[GHN Bridge] Lỗi:', e);
-        }
+        } catch(e) {}
     }
 
-    setTimeout(syncToDashboard, 3000);
-    setTimeout(syncToDashboard, 6000);
-    setTimeout(syncToDashboard, 10000);
-    setInterval(syncToDashboard, 300000);
+    setTimeout(activeScanner, 2000);
+    setTimeout(activeScanner, 5000);
+    setInterval(activeScanner, 300000);
 })();</pre>
           <button onclick="copyUserscriptCode()" class="absolute top-2 right-2 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow transition flex items-center gap-1.5">
             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
