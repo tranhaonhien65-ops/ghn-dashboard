@@ -1140,7 +1140,7 @@
 
     async function fetchDashboardData() {
       try {
-        const res = await fetch('/api/data');
+        const res = await fetch('/api/data?t=' + Date.now());
         if (res.ok) {
           const json = await res.json();
           if (json.status === 'success' && json.data && json.data.length > 0) {
@@ -1453,7 +1453,7 @@
 
     async function fetchBacklogData() {
       try {
-        const res = await fetch('/api/backlog');
+        const res = await fetch('/api/backlog?t=' + Date.now());
         if (res.ok) {
           const json = await res.json();
           if (json && json.data && json.data.ton_theo_phan_loai) {
@@ -1890,12 +1890,13 @@
 
     async function fetchOrdersData() {
       try {
-        const res = await fetch('/api/orders');
+        const res = await fetch('/api/orders?t=' + Date.now());
         if (res.ok) {
           const json = await res.json();
           if (json && json.orders && json.orders.length > 0) {
             rawOrders = json.orders;
             applyOrderFilters();
+            applyOrderFiltersFromMb();
             return;
           }
         }
@@ -1908,6 +1909,7 @@
         rawOrders = generateSampleOrdersClient();
       }
       applyOrderFilters();
+      applyOrderFiltersFromMb();
     }
 
     function generateSampleOrdersClient() {
