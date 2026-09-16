@@ -5,52 +5,84 @@
     "region": "Miền Trung"
   },
   "summary": {
+    "total_orders": 10505,
     "total_packages": 4794,
-    "total_orders": 10271,
     "total_weight_kg": 59339.37,
     "total_weight_ton": 59.34,
-    "last_updated": "2026-09-16 09:12:00"
+    "last_updated": "2026-09-16 09:59:00"
   },
-  "stages": [
+  "ton_theo_phan_loai": [
     {
-      "stage": "Đang luân chuyển đến KTC",
-      "packages": 3783,
-      "orders": 7805,
-      "weight_kg": 42018.12,
-      "weight_ton": 42.02,
-      "pct_packages": 78.91,
-      "pct_orders": 75.99,
-      "status": "info"
+      "phan_loai": "Chờ phân loại",
+      "h0_6": 596,
+      "h6_12": 2,
+      "h12_24": 13,
+      "h24_48": 0,
+      "h_over48": 11,
+      "tong": 622,
+      "nhom": "Đang ở KTC"
     },
     {
-      "stage": "Chờ xuất",
-      "packages": 949,
-      "orders": 1483,
-      "weight_kg": 16205.86,
-      "weight_ton": 16.21,
-      "pct_packages": 19.79,
-      "pct_orders": 14.44,
-      "status": "warning"
+      "phan_loai": "Đang phân loại",
+      "h0_6": 179,
+      "h6_12": 9,
+      "h12_24": 1,
+      "h24_48": 0,
+      "h_over48": 6,
+      "tong": 195,
+      "nhom": "Đang ở KTC"
     },
     {
-      "stage": "Chờ phân loại",
-      "packages": 36,
-      "orders": 899,
-      "weight_kg": 842.36,
-      "weight_ton": 0.84,
-      "pct_packages": 0.75,
-      "pct_orders": 8.75,
-      "status": "warning"
+      "phan_loai": "Chờ xuất kiện chuyển tiếp",
+      "h0_6": 28,
+      "h6_12": 34,
+      "h12_24": 14,
+      "h24_48": 0,
+      "h_over48": 1,
+      "tong": 77,
+      "nhom": "Đang ở KTC"
     },
     {
-      "stage": "Chờ xuất kiện chuyển tiếp",
-      "packages": 26,
-      "orders": 84,
-      "weight_kg": 273.03,
-      "weight_ton": 0.27,
-      "pct_packages": 0.54,
-      "pct_orders": 0.82,
-      "status": "warning"
+      "phan_loai": "Chờ xuất",
+      "h0_6": 1250,
+      "h6_12": 185,
+      "h12_24": 45,
+      "h24_48": 1,
+      "h_over48": 2,
+      "tong": 1483,
+      "nhom": "Đang ở KTC"
+    },
+    {
+      "phan_loai": "Đang luân chuyển đến KTC",
+      "h0_6": 4194,
+      "h6_12": 3390,
+      "h12_24": 530,
+      "h24_48": 5,
+      "h_over48": 8,
+      "tong": 8127,
+      "nhom": "Đang luân chuyển đến KTC"
+    },
+    {
+      "phan_loai": "Tồn khác trong kho",
+      "h0_6": 1,
+      "h6_12": 0,
+      "h12_24": 0,
+      "h24_48": 0,
+      "h_over48": 0,
+      "tong": 1,
+      "nhom": "Đang ở KTC"
+    }
+  ],
+  "ton_theo_kho": [
+    {
+      "ma_kho": "20335000",
+      "kho": "Kho Trung Chuyển Bình Định",
+      "h0_6": 6248,
+      "h6_12": 3620,
+      "h12_24": 603,
+      "h24_48": 6,
+      "h_over48": 28,
+      "tong": 10505
     }
   ]
 }

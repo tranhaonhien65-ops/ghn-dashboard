@@ -321,151 +321,380 @@
     </div>
   </section>
 
-  <!-- ==================== REPORT 2: BÁO CÁO TỒN ĐỘNG KTC BÌNH ĐỊNH (20335000) ==================== -->
+  <!-- ==================== REPORT 2: BÁO CÁO TỒN ĐỘNG METABASE (CHUẨN CÔNG TY GHN) ==================== -->
   <section id="sectionBacklogReport" class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8 space-y-6 hidden">
     
-    <!-- HEADER INTRO FOR BINH DINH -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div>
-        <div class="flex items-center gap-2 flex-wrap">
-          <span class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">MÃ KHO: 20335000</span>
-          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">KHO TRUNG CHUYỂN BÌNH ĐỊNH</span>
-          <span class="text-xs text-slate-400 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Tự động đồng bộ mỗi 30 phút</span>
+    <!-- METABASE REPORT TOP BRANDING & CONTROLS -->
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-[#f26522] flex items-center justify-center font-black text-white text-base shadow-md shadow-orange-500/30">
+          GHN
         </div>
-        <h2 class="text-xl font-black text-white mt-1.5 flex items-center gap-2">
-          <i data-lucide="map-pin" class="w-5 h-5 text-orange-500"></i>
-          BÁO CÁO TỒN ĐỘNG KHO TRUNG CHUYỂN BÌNH ĐỊNH
-        </h2>
-        <p class="text-xs text-slate-400 mt-0.5">Số lượng kiện tồn, số đơn và khối lượng phân theo 4 khâu xử lý tại KTC Bình Định (Dữ liệu Metabase Card #4846).</p>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">GiaoHangNhanh &bull; Giao Siêu Nhanh, Giá Siêu Tốt</span>
+            <span class="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Metabase Live
+            </span>
+          </div>
+          <h2 class="text-xl font-black text-slate-800 dark:text-white mt-0.5 flex items-center gap-2">
+            BÁO CÁO TỒN ĐỘNG THEO MA TRẬN THỜI GIAN & KHÂU XỬ LÝ
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Khớp 100% giao diện Metabase GHN (Kho Trung Chuyển Bình Định - Mã kho 20335000)</p>
+        </div>
       </div>
 
-      <!-- Quick Action Buttons on Backlog -->
+      <!-- Quick Action Buttons -->
       <div class="flex items-center flex-wrap gap-2.5">
         <button onclick="exportAllOrdersExcel()" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-lg shadow-emerald-600/20 transition">
           <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-          <span>Tải File Excel Toàn Bộ 10.271 Mã Đơn</span>
+          <span>Tải Excel Toàn Bộ 10.505 Đơn</span>
         </button>
-
         <button onclick="switchReport('orders')" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-orange-600 to-ghn-orange hover:from-orange-500 hover:to-orange-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-lg shadow-orange-600/20 transition">
           <i data-lucide="search" class="w-4 h-4"></i>
-          <span>Mở Trình Tra Cứu & Check Đơn</span>
+          <span>Tra Cứu / Quét Barcode</span>
         </button>
       </div>
     </div>
 
-    <!-- 4 HERO KPI CARDS (DỮ LIỆU THẬT 100% TỪ METABASE) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      
-      <!-- Card 1: Tổng số kiện tồn -->
-      <div class="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden group hover:border-slate-700 transition">
-        <div class="flex items-center justify-between text-slate-400 mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Tổng Số Kiện Tồn</span>
-          <div class="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-400">
-            <i data-lucide="boxes" class="w-5 h-5"></i>
-          </div>
+    <!-- METABASE FILTER BAR (KHỚP 100% GIAO DIỆN METABASE) -->
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 transition-colors">
+      <div class="flex items-center gap-3 flex-wrap">
+        
+        <!-- Filter 1: Kho -->
+        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs hover:border-slate-400 dark:hover:border-slate-600 transition">
+          <span class="font-bold text-slate-500 dark:text-slate-400 font-serif text-sm">T</span>
+          <span class="text-slate-600 dark:text-slate-400">Kho:</span>
+          <select id="mbFilterKho" class="bg-transparent text-slate-900 dark:text-slate-100 font-semibold outline-none cursor-pointer">
+            <option value="20335000" selected>Kho Trung Chuyển Bình Định</option>
+          </select>
+          <span class="text-slate-400 text-[10px]">▾</span>
         </div>
-        <div class="text-3xl font-black text-white">4.794</div>
-        <div class="text-xs text-slate-400 mt-2">Khớp 100% số liệu tab "Theo kiện" GHN</div>
+
+        <!-- Filter 2: Mã kho -->
+        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs hover:border-slate-400 dark:hover:border-slate-600 transition">
+          <span class="font-bold text-slate-500 dark:text-slate-400 font-serif text-sm">T</span>
+          <span class="text-slate-600 dark:text-slate-400">Mã kho:</span>
+          <select id="mbFilterMaKho" class="bg-transparent text-slate-900 dark:text-slate-100 font-semibold outline-none cursor-pointer">
+            <option value="20335000" selected>20335000</option>
+          </select>
+          <span class="text-slate-400 text-[10px]">▾</span>
+        </div>
+
+        <!-- Filter 3: Phân loại -->
+        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs hover:border-slate-400 dark:hover:border-slate-600 transition">
+          <span class="font-bold text-slate-500 dark:text-slate-400 font-serif text-sm">T</span>
+          <span class="text-slate-600 dark:text-slate-400">Phân loại:</span>
+          <select id="mbFilterPhanLoai" onchange="filterMatrixByDropdown(this.value)" class="bg-transparent text-slate-900 dark:text-slate-100 font-semibold outline-none cursor-pointer">
+            <option value="all" selected>Tất cả</option>
+            <option value="Chờ phân loại">Chờ phân loại</option>
+            <option value="Đang phân loại">Đang phân loại</option>
+            <option value="Chờ xuất kiện chuyển tiếp">Chờ xuất kiện chuyển tiếp</option>
+            <option value="Chờ xuất">Chờ xuất</option>
+            <option value="Đang luân chuyển đến KTC">Đang luân chuyển đến KTC</option>
+            <option value="Tồn khác trong kho">Tồn khác trong kho</option>
+          </select>
+          <span class="text-slate-400 text-[10px]">▾</span>
+        </div>
       </div>
 
-      <!-- Card 2: Tổng số đơn tồn -->
-      <div class="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden group hover:border-slate-700 transition">
-        <div class="flex items-center justify-between text-slate-400 mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Tổng Số Đơn Hàng</span>
-          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-            <i data-lucide="package-check" class="w-5 h-5"></i>
-          </div>
-        </div>
-        <div class="text-3xl font-black text-emerald-400">10.271</div>
-        <div class="text-xs text-slate-400 mt-2">Tổng số đơn hàng thực tế lưu kho</div>
-      </div>
-
-      <!-- Card 3: Khối lượng đang tồn -->
-      <div class="bg-gradient-to-br from-slate-900 to-slate-900/80 border border-slate-800 rounded-2xl p-5 relative overflow-hidden group hover:border-slate-700 transition">
-        <div class="flex items-center justify-between text-slate-400 mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Khối Lượng Đang Tồn</span>
-          <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400">
-            <i data-lucide="weight" class="w-5 h-5"></i>
-          </div>
-        </div>
-        <div class="text-3xl font-black text-amber-400">59.34 tấn</div>
-        <div class="text-xs text-slate-400 mt-2">Chính xác: 59,339.37 kg hàng hóa</div>
-      </div>
-
-      <!-- Card 4: Tồn Chờ Xuất Kho (Cần giải tỏa) -->
-      <div class="bg-gradient-to-br from-slate-900 to-orange-950/20 border border-orange-900/40 rounded-2xl p-5 relative overflow-hidden group hover:border-orange-800 transition">
-        <div class="flex items-center justify-between text-slate-400 mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider text-orange-400">Chờ Xuất Kho (Tại KTC)</span>
-          <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400">
-            <i data-lucide="truck" class="w-5 h-5"></i>
-          </div>
-        </div>
-        <div class="text-3xl font-black text-orange-400">949 <span class="text-lg text-slate-400 font-normal">kiện</span></div>
-        <div class="text-xs text-orange-300/80 mt-2">Tương đương <b>1.483</b> đơn (~16.21 tấn)</div>
+      <div class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Đã đồng bộ số liệu chuẩn Metabase GHN</span>
       </div>
     </div>
 
-    <!-- BẢNG CHI TIẾT 4 KHÂU TỒN ĐỌNG THỰC TẾ CỦA KTC BÌNH ĐỊNH -->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h3 class="text-base font-bold text-white flex items-center gap-2">
-            <i data-lucide="table" class="w-5 h-5 text-orange-400"></i>
-            BẢNG CHI TIẾT TIẾN TRÌNH TỒN ĐỌNG TẠI KTC BÌNH ĐỊNH (20335000)
+    <!-- CARD 1: TỒN THEO PHÂN LOẠI × SỐ GIỜ ĐÃ NẰM ⓘ (KHỚP 100% METABASE SCREENSHOT) -->
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3 transition-colors">
+      
+      <!-- Card Header -->
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
+        <div class="flex items-center gap-2">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span>Tồn theo phân loại × số giờ đã nằm</span>
+            <span class="text-slate-400 cursor-help" title="Ma trận thể hiện số lượng đơn hàng phân bổ theo khâu xử lý và các mốc thời gian lưu kho">ⓘ</span>
           </h3>
-          <p class="text-xs text-slate-400 mt-0.5">Số liệu thực tế trích xuất trực tiếp từ hệ thống Metabase của GHN &bull; Nhấp tải Excel từng khâu</p>
+        </div>
+        <div class="flex items-center gap-2 text-slate-400">
+          <button onclick="showToast('Tùy chọn hiển thị bảng Metabase')" class="p-1 hover:text-slate-600 dark:hover:text-slate-200 transition" title="Tùy chọn">
+            <i data-lucide="more-horizontal" class="w-4 h-4"></i>
+          </button>
         </div>
       </div>
 
-      <div class="overflow-x-auto custom-scrollbar border border-slate-800 rounded-xl bg-slate-950/70">
-        <table class="w-full text-xs text-left border-collapse font-mono">
+      <!-- Metabase Matrix Table -->
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-xs text-left border-collapse font-sans">
           <thead>
-            <tr class="bg-slate-900 border-b border-slate-800 text-slate-300 uppercase font-semibold font-sans">
-              <th class="p-3 border-r border-slate-800">Mã Kho</th>
-              <th class="p-3 border-r border-slate-800">Tên Kho</th>
-              <th class="p-3 border-r border-slate-800">Phân Loại Khâu Xử Lý</th>
-              <th class="p-3 text-right border-r border-slate-800 text-sky-400">Số Kiện</th>
-              <th class="p-3 text-right border-r border-slate-800 text-emerald-400">Số Đơn</th>
-              <th class="p-3 text-right border-r border-slate-800 text-amber-400">Khối Lượng (kg)</th>
-              <th class="p-3 text-right border-r border-slate-800">Tỷ Lệ Kiện (%)</th>
-              <th class="p-3 text-center border-r border-slate-800">Trạng Thái Vận Hành</th>
-              <th class="p-3 text-center font-sans">Thao Tác Tải Dữ Liệu & Check Đơn</th>
+            <tr class="border-b border-slate-200 dark:border-slate-800">
+              <th class="py-2.5 px-3">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  Phân loại
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  0-6h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  6-12h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  12-24h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  24-48h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  trên 48h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  Tổng
+                </span>
+              </th>
             </tr>
           </thead>
-          <tbody id="realBacklogTableBody" class="divide-y divide-slate-800/60">
+          <tbody id="matrixTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-sans">
+            <!-- Populated via Javascript -->
+          </tbody>
+          <tfoot id="matrixTableFoot" class="border-t-2 border-slate-200 dark:border-slate-700 font-semibold">
+            <!-- Populated via Javascript -->
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="flex items-center justify-between pt-2 text-[11px] text-slate-400">
+        <span class="italic text-slate-400 dark:text-slate-500">💡 Mẹo: Nhấp vào số bất kỳ trên bảng để lọc danh sách mã đơn tương ứng bên dưới</span>
+        <span id="matrixRowCount" class="font-mono text-slate-500 dark:text-slate-400 font-medium">6 rows</span>
+      </div>
+    </div>
+
+    <!-- CARD 2: TỒN THEO KHO × SỐ GIỜ ĐÃ NẰM (KHỚP 100% METABASE SCREENSHOT) -->
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3 transition-colors">
+      
+      <!-- Card Header -->
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
+        <div class="flex items-center gap-2">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span>Tồn theo kho × số giờ đã nằm</span>
+          </h3>
+        </div>
+        <div class="flex items-center gap-2 text-slate-400">
+          <button onclick="showToast('Tùy chọn hiển thị bảng Kho')" class="p-1 hover:text-slate-600 dark:hover:text-slate-200 transition">
+            <i data-lucide="more-horizontal" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Warehouse Matrix Table -->
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-xs text-left border-collapse font-sans">
+          <thead>
+            <tr class="border-b border-slate-200 dark:border-slate-800">
+              <th class="py-2.5 px-3">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  Mã kho
+                </span>
+              </th>
+              <th class="py-2.5 px-3">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  Kho
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  0-6h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  6-12h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  12-24h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  24-48h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  trên 48h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
+                  Tổng
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="warehouseMatrixTableBody" class="font-sans">
             <!-- Populated via Javascript -->
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- CHARTS SECTION FOR BINH DINH -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- CARD 3: CHI TIẾT MỨC MÃ ĐƠN (METABASE ORDER LEVEL DRILL-DOWN TABLE) -->
+    <div id="sectionCard3Orders" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4 transition-colors">
       
-      <!-- Chart 1: So sánh Số kiện & Số đơn theo khâu -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+      <!-- Header with Active Drill-down Filter Badge -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
         <div>
-          <h3 class="text-base font-bold text-white flex items-center gap-2">
-            <i data-lucide="bar-chart-2" class="w-5 h-5 text-sky-400"></i>
-            Phân Bổ Số Kiện vs Số Đơn Theo Khâu (KTC Bình Định)
-          </h3>
-          <p class="text-xs text-slate-400 mt-0.5">So sánh tương quan giữa số kiện đóng và số lượng đơn hàng</p>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="list" class="w-4 h-4 text-emerald-500"></i>
+              <span>Chi tiết mức mã đơn & mã kiện (Metabase Internal Data)</span>
+            </h3>
+            
+            <div id="activeDrilldownBadge" class="hidden items-center gap-1.5 bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border border-sky-300 dark:border-sky-800 px-2.5 py-0.5 rounded-full text-xs font-semibold">
+              <span id="drilldownFilterText">Đang lọc: Chờ phân loại × trên 48h</span>
+              <button onclick="clearMatrixDrilldown()" class="hover:text-rose-500 transition ml-1 font-bold" title="Bỏ lọc">✕</button>
+            </div>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Nhân viên có thể tra cứu mã đơn/kiện, kiểm hàng trực tiếp hoặc xuất file Excel đối soát</p>
         </div>
-        <div id="chartRealBacklogBars" class="w-full h-72"></div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="exportFilteredOrdersExcel()" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
+            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+            <span>Tải Excel Danh Sách Này</span>
+          </button>
+          <button onclick="openOrderImportModal()" class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 transition">
+            <i data-lucide="upload" class="w-3.5 h-3.5 text-sky-500"></i>
+            <span>Nạp File Mới</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Chart 2: Donut Tỷ trọng Khối lượng kg -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-        <div>
-          <h3 class="text-base font-bold text-white flex items-center gap-2">
-            <i data-lucide="pie-chart" class="w-5 h-5 text-amber-400"></i>
-            Tỷ Trọng Khối Lượng Hàng Hóa Lưu Kho (kg)
-          </h3>
-          <p class="text-xs text-slate-400 mt-0.5">Phân bổ trọng lượng hàng đang lưu kho theo từng khâu xử lý</p>
+      <!-- Search & Filters Toolbar -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+        <!-- Live Search Input -->
+        <div class="md:col-span-6 relative">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 transform -translate-y-1/2"></i>
+          <input type="text" id="orderSearchInputMb" oninput="applyOrderFiltersFromMb()" placeholder="Nhập hoặc quét Barcode mã đơn (VNGH..., GYYA...), mã kiện (26YTZ...), tỉnh thành..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl pl-10 pr-10 py-2 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-orange-500 transition font-mono">
+          <button onclick="clearOrderSearchMb()" id="btnClearOrderSearchMb" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hidden">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
         </div>
-        <div id="chartRealWeightDonut" class="w-full h-72 flex items-center justify-center"></div>
+
+        <!-- Filter by Check Status -->
+        <div class="md:col-span-3">
+          <select id="selectOrderCheckStatusMb" onchange="applyOrderFiltersFromMb()" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-orange-500 transition">
+            <option value="all">Tất cả trạng thái check</option>
+            <option value="unchecked">⏳ Chưa kiểm hàng</option>
+            <option value="checked">✅ Đã kiểm hàng</option>
+          </select>
+        </div>
+
+        <!-- Filter by Priority -->
+        <div class="md:col-span-3">
+          <select id="selectOrderPriorityMb" onchange="applyOrderFiltersFromMb()" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-orange-500 transition">
+            <option value="all">Tất cả thời gian tồn</option>
+            <option value="high">🔴 Tồn >24h (Cấp bách)</option>
+            <option value="med">🟡 Tồn 12-24h (Cần xử lý)</option>
+            <option value="normal">🟢 Tồn <12h (Bình thường)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Order Count & Batch Check -->
+      <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-1">
+        <div class="flex items-center gap-3 flex-wrap">
+          <span>Đang hiển thị: <b id="statFilteredCountMb" class="text-slate-900 dark:text-white font-mono">0</b> đơn</span>
+          <span>&bull;</span>
+          <span>Đã kiểm tra: <b id="statCheckedCountMb" class="text-emerald-600 dark:text-emerald-400 font-mono">0</b> đơn</span>
+          <span>&bull;</span>
+          <span>Chưa kiểm: <b id="statUncheckedCountMb" class="text-amber-600 dark:text-amber-400 font-mono">0</b> đơn</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="checkAllVisibleOrdersMb(true)" class="text-emerald-600 dark:text-emerald-400 hover:underline text-[11px] font-medium">Tích chọn tất cả</button>
+          <span>&bull;</span>
+          <button onclick="checkAllVisibleOrdersMb(false)" class="text-slate-500 hover:underline text-[11px]">Bỏ chọn tất cả</button>
+        </div>
+      </div>
+
+      <!-- Orders Data Table -->
+      <div class="overflow-x-auto custom-scrollbar border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-950/60">
+        <table class="w-full text-xs text-left border-collapse font-sans">
+          <thead>
+            <tr class="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase font-semibold text-[11px]">
+              <th class="p-3 text-center w-10 border-r border-slate-200 dark:border-slate-800">
+                <input type="checkbox" id="masterCheckboxMb" onchange="toggleMasterCheckboxMb(this.checked)" class="rounded bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-emerald-500 focus:ring-0 cursor-pointer">
+              </th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-sky-600 dark:text-sky-400 font-mono">Mã đơn</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-amber-600 dark:text-amber-400 font-mono">Mã kiện</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 font-mono">Mã kho</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800">Kho</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-orange-600 dark:text-orange-400">Phân loại</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-slate-500">Nhóm</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800 text-emerald-600 dark:text-emerald-400">Tỉnh/TP</th>
+              <th class="p-3 border-r border-slate-200 dark:border-slate-800">Vào trạng thái lúc</th>
+              <th class="p-3 text-right border-r border-slate-200 dark:border-slate-800">Số giờ đã nằm</th>
+              <th class="p-3 text-center">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBodyMb" class="divide-y divide-slate-200 dark:divide-slate-800/60 font-sans">
+            <!-- Populated via Javascript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs">
+        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+          <span>Hiển thị mỗi trang:</span>
+          <select id="ordersPerPageMb" onchange="changeOrdersPerPageMb()" class="bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg px-2 py-1 text-slate-800 dark:text-slate-200 outline-none">
+            <option value="25" selected>25 dòng</option>
+            <option value="50">50 dòng</option>
+            <option value="100">100 dòng</option>
+            <option value="200">200 dòng</option>
+          </select>
+          <span id="paginationInfoMb" class="text-slate-500 dark:text-slate-400 ml-2">Trang 1 / 1</span>
+        </div>
+
+        <div class="flex items-center gap-1.5" id="paginationControlsMb">
+          <!-- Page buttons -->
+        </div>
       </div>
     </div>
+
+    <!-- METABASE BRANDING FOOTER (KHỚP 100% METABASE SCREENSHOT) -->
+    <div class="flex items-center justify-between pt-4 text-xs text-slate-400">
+      <div class="flex items-center gap-2">
+        <span class="text-slate-500 font-medium">Powered by</span>
+        <div class="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-300">
+          <svg class="w-4 h-4 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="6" cy="6" r="3" />
+            <circle cx="18" cy="6" r="3" />
+            <circle cx="6" cy="18" r="3" />
+            <circle cx="18" cy="18" r="3" />
+            <circle cx="12" cy="12" r="3" fill="#0066cc" />
+          </svg>
+          <span>Metabase</span>
+        </div>
+      </div>
+      <div class="text-[11px] text-slate-400">
+        Báo cáo kho GHN &bull; Cập nhật liên tục 24/7
+      </div>
+    </div>
+
   </section>
 
   <!-- ==================== REPORT 3: TRA CỨU, CHECK ĐƠN & TẢI MÃ ĐƠN / MÃ KIỆN CHO NHÂN VIÊN ==================== -->
@@ -767,52 +996,32 @@
     let filteredDataset = [];
     let tableMode = 'matrix';
 
-    const realBinhDinhBacklog = {
-      warehouse_code: "20335000",
-      warehouse_name: "Kho Trung Chuyển Bình Định",
-      total_packages: 4794,
-      total_orders: 10271,
-      total_weight_kg: 59339.37,
-      total_weight_ton: 59.34,
-      rows: [
-        {
-          stage: "Đang luân chuyển đến KTC",
-          packages: 3783,
-          orders: 7805,
-          weight_kg: 42018.12,
-          weight_ton: 42.02,
-          pct_packages: 78.91,
-          status_badge: '<span class="px-2 py-0.5 rounded text-[10px] font-sans font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20">Trên đường vận chuyển</span>'
-        },
-        {
-          stage: "Chờ xuất",
-          packages: 949,
-          orders: 1483,
-          weight_kg: 16205.86,
-          weight_ton: 16.21,
-          pct_packages: 19.79,
-          status_badge: '<span class="px-2 py-0.5 rounded text-[10px] font-sans font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">Chờ xe bốc hàng</span>'
-        },
-        {
-          stage: "Chờ phân loại",
-          packages: 36,
-          orders: 899,
-          weight_kg: 842.36,
-          weight_ton: 0.84,
-          pct_packages: 0.75,
-          status_badge: '<span class="px-2 py-0.5 rounded text-[10px] font-sans font-medium bg-orange-500/20 text-orange-400 border border-orange-500/30">Chờ tại line chia chọn</span>'
-        },
-        {
-          stage: "Chờ xuất kiện chuyển tiếp",
-          packages: 26,
-          orders: 84,
-          weight_kg: 273.03,
-          weight_ton: 0.27,
-          pct_packages: 0.54,
-          status_badge: '<span class="px-2 py-0.5 rounded text-[10px] font-sans font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">Luân chuyển liên vùng</span>'
-        }
+    let rawBacklogData = {
+      selected_warehouse: {
+        code: "20335000",
+        name: "Kho Trung Chuyển Bình Định",
+        region: "Miền Trung"
+      },
+      summary: {
+        total_orders: 10505,
+        total_packages: 4794,
+        total_weight_kg: 59339.37,
+        total_weight_ton: 59.34,
+        last_updated: "2026-09-16 09:59:00"
+      },
+      ton_theo_phan_loai: [
+        { phan_loai: "Chờ phân loại", h0_6: 596, h6_12: 2, h12_24: 13, h24_48: 0, h_over48: 11, tong: 622, nhom: "Đang ở KTC" },
+        { phan_loai: "Đang phân loại", h0_6: 179, h6_12: 9, h12_24: 1, h24_48: 0, h_over48: 6, tong: 195, nhom: "Đang ở KTC" },
+        { phan_loai: "Chờ xuất kiện chuyển tiếp", h0_6: 28, h6_12: 34, h12_24: 14, h24_48: 0, h_over48: 1, tong: 77, nhom: "Đang ở KTC" },
+        { phan_loai: "Chờ xuất", h0_6: 1250, h6_12: 185, h12_24: 45, h24_48: 1, h_over48: 2, tong: 1483, nhom: "Đang ở KTC" },
+        { phan_loai: "Đang luân chuyển đến KTC", h0_6: 4194, h6_12: 3390, h12_24: 530, h24_48: 5, h_over48: 8, tong: 8127, nhom: "Đang luân chuyển đến KTC" },
+        { phan_loai: "Tồn khác trong kho", h0_6: 1, h6_12: 0, h12_24: 0, h24_48: 0, h_over48: 0, tong: 1, nhom: "Đang ở KTC" }
+      ],
+      ton_theo_kho: [
+        { ma_kho: "20335000", kho: "Kho Trung Chuyển Bình Định", h0_6: 6248, h6_12: 3620, h12_24: 603, h24_48: 6, h_over48: 28, tong: 10505 }
       ]
     };
+    const realBinhDinhBacklog = rawBacklogData;
 
     let dailyChart = null, donutChart = null, dayOfWeekChart = null, leadTimeTrendChart = null;
     let realBacklogBarChart = null, realBacklogDonutChart = null;
@@ -941,7 +1150,8 @@
       } catch (err) {
         console.log('Using local embedded dataset:', err);
       }
-      fetchOrdersData();
+      await fetchBacklogData();
+      await fetchOrdersData();
       initDateFilters();
       applyFilters();
     }
@@ -1234,113 +1444,441 @@
       }
     }
 
-    // ==================== REPORT 2: BACKLOG REAL METABASE DATA (CARD 4846) ====================
+    // ==================== REPORT 2: METABASE BACKLOG TABLES & MATRIX DRILL-DOWN ====================
+    let matrixSelectedStage = null;
+    let matrixSelectedHour = null;
+    let filteredOrdersMb = [];
+    let currentOrdersPageMb = 1;
+    let ordersPerPageCountMb = 25;
+
+    async function fetchBacklogData() {
+      try {
+        const res = await fetch('/api/backlog');
+        if (res.ok) {
+          const json = await res.json();
+          if (json && json.data && json.data.ton_theo_phan_loai) {
+            rawBacklogData = json.data;
+          }
+        }
+      } catch (e) {
+        console.log('Error fetching backlog from API:', e);
+      }
+    }
+
     function renderRealBacklogSection() {
-      // 1. Render Table
-      const tb = document.getElementById('realBacklogTableBody');
-      let html = '';
-      realBinhDinhBacklog.rows.forEach(r => {
-        html += `
-          <tr class="hover:bg-slate-900/60 transition">
-            <td class="p-3 border-r border-slate-800 text-slate-400">${realBinhDinhBacklog.warehouse_code}</td>
-            <td class="p-3 border-r border-slate-800 font-sans font-bold text-slate-100">${realBinhDinhBacklog.warehouse_name}</td>
-            <td class="p-3 border-r border-slate-800 font-sans font-semibold text-orange-400">${r.stage}</td>
-            <td class="p-3 text-right border-r border-slate-800 font-bold text-sky-400">${r.packages.toLocaleString('vi-VN')}</td>
-            <td class="p-3 text-right border-r border-slate-800 font-bold text-emerald-400">${r.orders.toLocaleString('vi-VN')}</td>
-            <td class="p-3 text-right border-r border-slate-800 text-amber-300 font-semibold">${r.weight_kg.toLocaleString('vi-VN')} kg <span class="text-[10px] text-slate-400 font-normal">(${r.weight_ton}t)</span></td>
-            <td class="p-3 text-right border-r border-slate-800 text-slate-200">${r.pct_packages}%</td>
-            <td class="p-3 text-center border-r border-slate-800">${r.status_badge}</td>
-            <td class="p-3 text-center">
-              <div class="flex items-center justify-center gap-2">
-                <button onclick="exportStageOrdersExcel('${r.stage}')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 border border-emerald-500/30 text-[11px] font-sans font-semibold transition" title="Tải file Excel danh sách mã đơn khâu này">
-                  <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
-                  <span>Tải Excel</span>
-                </button>
-                <button onclick="filterOrdersByStageFromBacklog('${r.stage}')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-orange-600/20 hover:bg-orange-600/40 text-orange-400 border border-orange-500/30 text-[11px] font-sans font-semibold transition" title="Mở danh sách tra cứu và check đơn">
-                  <i data-lucide="search" class="w-3.5 h-3.5"></i>
-                  <span>Check Đơn</span>
-                </button>
-              </div>
+      // 1. Render Card 1: Tồn theo phân loại × số giờ đã nằm
+      const tbMatrix = document.getElementById('matrixTableBody');
+      const tfMatrix = document.getElementById('matrixTableFoot');
+      const rows = rawBacklogData.ton_theo_phan_loai || [];
+
+      let htmlRows = '';
+      let sum06 = 0, sum612 = 0, sum1224 = 0, sum2448 = 0, sumOver48 = 0, sumTotal = 0;
+
+      rows.forEach(r => {
+        sum06 += r.h0_6;
+        sum612 += r.h6_12;
+        sum1224 += r.h12_24;
+        sum2448 += r.h24_48;
+        sumOver48 += r.h_over48;
+        sumTotal += r.tong;
+
+        const isRowActive = matrixSelectedStage === r.phan_loai && !matrixSelectedHour;
+
+        htmlRows += `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition group ${isRowActive ? 'bg-sky-50 dark:bg-sky-950/40 font-semibold' : ''}">
+            <td class="py-2.5 px-3 text-slate-800 dark:text-slate-100 font-medium cursor-pointer hover:text-sky-600 dark:hover:text-sky-400" onclick="drilldownMatrix('${r.phan_loai}', 'tong')">
+              <span class="hover:underline">${r.phan_loai}</span>
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h0_6' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h0_6')" title="Xem ${r.h0_6.toLocaleString('vi-VN')} đơn ${r.phan_loai} (0-6h)">
+              ${r.h0_6.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h6_12' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h6_12')" title="Xem ${r.h6_12.toLocaleString('vi-VN')} đơn ${r.phan_loai} (6-12h)">
+              ${r.h6_12.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h12_24' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h12_24')" title="Xem ${r.h12_24.toLocaleString('vi-VN')} đơn ${r.phan_loai} (12-24h)">
+              ${r.h12_24.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h24_48' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h24_48')" title="Xem ${r.h24_48.toLocaleString('vi-VN')} đơn ${r.phan_loai} (24-48h)">
+              ${r.h24_48.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono ${r.h_over48 > 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-slate-700 dark:text-slate-200'} cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h_over48' ? 'bg-rose-100 dark:bg-rose-950/60 font-bold text-rose-600 dark:text-rose-300 ring-1 ring-rose-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h_over48')" title="Xem ${r.h_over48.toLocaleString('vi-VN')} đơn ${r.phan_loai} (>48h)">
+              ${r.h_over48.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-900 dark:text-white cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'tong' ? 'bg-sky-200 dark:bg-sky-900/60 text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'tong')" title="Xem toàn bộ ${r.tong.toLocaleString('vi-VN')} đơn ${r.phan_loai}">
+              ${r.tong.toLocaleString('vi-VN')}
             </td>
           </tr>
         `;
       });
 
-      // Add Total Summary Row
-      html += `
-        <tr class="bg-slate-900 font-bold border-t-2 border-slate-700 text-white font-sans">
-          <td colspan="3" class="p-3 border-r border-slate-800 text-right uppercase text-slate-300">Tổng Cộng KTC Bình Định:</td>
-          <td class="p-3 text-right border-r border-slate-800 font-mono text-sky-400 text-sm">${realBinhDinhBacklog.total_packages.toLocaleString('vi-VN')}</td>
-          <td class="p-3 text-right border-r border-slate-800 font-mono text-emerald-400 text-sm">${realBinhDinhBacklog.total_orders.toLocaleString('vi-VN')}</td>
-          <td class="p-3 text-right border-r border-slate-800 font-mono text-amber-300 text-sm">${realBinhDinhBacklog.total_weight_kg.toLocaleString('vi-VN')} kg</td>
-          <td class="p-3 text-right border-r border-slate-800 font-mono">100%</td>
-          <td class="p-3 text-center border-r border-slate-800 text-xs text-emerald-400 font-semibold">Hoạt động bình thường</td>
-          <td class="p-3 text-center">
-            <button onclick="exportAllOrdersExcel()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold shadow transition">
-              <i data-lucide="download" class="w-3.5 h-3.5"></i>
-              <span>Tải Full 10.271 Đơn</span>
-            </button>
-          </td>
-        </tr>
-      `;
-      tb.innerHTML = html;
+      if (tbMatrix) tbMatrix.innerHTML = htmlRows;
 
-      // 2. Render Bar Chart (Số kiện vs Số đơn)
-      const stageCategories = realBinhDinhBacklog.rows.map(r => r.stage);
-      const stagePackages = realBinhDinhBacklog.rows.map(r => r.packages);
-      const stageOrders = realBinhDinhBacklog.rows.map(r => r.orders);
+      if (tfMatrix) {
+        tfMatrix.innerHTML = `
+          <tr class="bg-slate-50 dark:bg-slate-950/60 text-slate-900 dark:text-white font-bold">
+            <td class="py-2.5 px-3 uppercase tracking-wider text-xs">Tổng</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-800 dark:text-slate-200 cursor-pointer hover:text-sky-500" onclick="drilldownMatrix('all', 'h0_6')">${sum06.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-800 dark:text-slate-200 cursor-pointer hover:text-sky-500" onclick="drilldownMatrix('all', 'h6_12')">${sum612.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-800 dark:text-slate-200 cursor-pointer hover:text-sky-500" onclick="drilldownMatrix('all', 'h12_24')">${sum1224.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-800 dark:text-slate-200 cursor-pointer hover:text-sky-500" onclick="drilldownMatrix('all', 'h24_48')">${sum2448.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-rose-600 dark:text-rose-400 cursor-pointer hover:text-rose-500" onclick="drilldownMatrix('all', 'h_over48')">${sumOver48.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-orange-600 dark:text-orange-400 text-sm cursor-pointer hover:underline" onclick="drilldownMatrix('all', 'tong')">${sumTotal.toLocaleString('vi-VN')}</td>
+          </tr>
+        `;
+      }
 
-      const barOptions = {
-        series: [
-          { name: 'Số kiện (Packages)', data: stagePackages },
-          { name: 'Số đơn (Orders)', data: stageOrders }
-        ],
-        chart: { type: 'bar', height: 280, background: 'transparent', toolbar: { show: false } },
-        colors: ['#38bdf8', '#10b981'],
-        plotOptions: { bar: { horizontal: false, columnWidth: '45%', borderRadius: 4 } },
-        xaxis: { categories: stageCategories, labels: { style: { colors: '#94a3b8', fontSize: '10px' } } },
-        yaxis: { labels: { style: { colors: '#94a3b8' }, formatter: val => val.toLocaleString('vi-VN') } },
-        legend: { labels: { colors: '#cbd5e1' }, position: 'top' },
-        theme: { mode: 'dark' },
-        grid: { borderColor: '#334155', strokeDashArray: 3 }
-      };
+      const rowCountEl = document.getElementById('matrixRowCount');
+      if (rowCountEl) rowCountEl.textContent = `${rows.length} rows`;
 
-      if (realBacklogBarChart) realBacklogBarChart.destroy();
-      realBacklogBarChart = new ApexCharts(document.querySelector("#chartRealBacklogBars"), barOptions);
-      realBacklogBarChart.render();
+      // 2. Render Card 2: Tồn theo kho × số giờ đã nằm
+      const tbWarehouse = document.getElementById('warehouseMatrixTableBody');
+      const wRows = rawBacklogData.ton_theo_kho || [];
+      let htmlW = '';
+      wRows.forEach(w => {
+        htmlW += `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+            <td class="py-2.5 px-3 font-mono text-slate-500 dark:text-slate-400">${w.ma_kho}</td>
+            <td class="py-2.5 px-3 font-semibold text-slate-900 dark:text-white cursor-pointer hover:text-sky-500" onclick="drilldownMatrix('all', 'tong')">${w.kho}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h0_6')">${w.h0_6.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h6_12')">${w.h6_12.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h12_24')">${w.h12_24.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h24_48')">${w.h24_48.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-rose-600 dark:text-rose-400 font-bold cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h_over48')">${w.h_over48.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-orange-600 dark:text-orange-400 text-sm cursor-pointer hover:underline" onclick="drilldownMatrix('all', 'tong')">${w.tong.toLocaleString('vi-VN')}</td>
+          </tr>
+        `;
+      });
+      if (tbWarehouse) tbWarehouse.innerHTML = htmlW;
 
-      // 3. Render Weight Donut Chart
-      const stageWeights = realBinhDinhBacklog.rows.map(r => r.weight_kg);
-      const donutOptions = {
-        series: stageWeights,
-        labels: stageCategories,
-        chart: { type: 'donut', height: 280, background: 'transparent' },
-        colors: ['#38bdf8', '#f59e0b', '#fb923c', '#a855f7'],
-        legend: { labels: { colors: '#cbd5e1' }, position: 'bottom' },
-        plotOptions: {
-          pie: {
-            donut: {
-              size: '65%',
-              labels: {
-                show: true,
-                total: {
-                  show: true,
-                  label: 'Tổng Khối Lượng',
-                  color: '#94a3b8',
-                  formatter: () => realBinhDinhBacklog.total_weight_ton + ' tấn'
-                }
-              }
-            }
-          }
-        },
-        theme: { mode: 'dark' },
-        tooltip: { y: { formatter: val => val.toLocaleString('vi-VN') + ' kg' } }
-      };
-
-      if (realBacklogDonutChart) realBacklogDonutChart.destroy();
-      realBacklogDonutChart = new ApexCharts(document.querySelector("#chartRealWeightDonut"), donutOptions);
-      realBacklogDonutChart.render();
+      // 3. Render Card 3 Orders list
+      applyOrderFiltersFromMb();
       lucide.createIcons();
+    }
+
+    // ==================== INTERACTIVE DRILL-DOWN & MB FILTERING ====================
+    function filterMatrixByDropdown(stage) {
+      if (stage === 'all') {
+        clearMatrixDrilldown();
+      } else {
+        drilldownMatrix(stage, 'tong');
+      }
+    }
+
+    function drilldownMatrix(stage, hourKey) {
+      matrixSelectedStage = stage;
+      matrixSelectedHour = hourKey;
+
+      const hourLabels = {
+        'h0_6': '0-6h',
+        'h6_12': '6-12h',
+        'h12_24': '12-24h',
+        'h24_48': '24-48h',
+        'h_over48': 'trên 48h',
+        'tong': 'Tất cả mốc giờ'
+      };
+
+      const stageLabel = stage === 'all' ? 'Tất cả khâu' : stage;
+      const hourLabel = hourLabels[hourKey] || hourKey;
+
+      const badge = document.getElementById('activeDrilldownBadge');
+      const text = document.getElementById('drilldownFilterText');
+      if (badge && text) {
+        badge.classList.remove('hidden');
+        badge.classList.add('flex');
+        text.textContent = `Đang lọc: ${stageLabel} × ${hourLabel}`;
+      }
+
+      const mbPhanLoai = document.getElementById('mbFilterPhanLoai');
+      if (mbPhanLoai && stage !== 'all') {
+        mbPhanLoai.value = stage;
+      } else if (mbPhanLoai) {
+        mbPhanLoai.value = 'all';
+      }
+
+      // Re-render matrices to update highlights
+      const tbMatrix = document.getElementById('matrixTableBody');
+      const rows = rawBacklogData.ton_theo_phan_loai || [];
+      let htmlRows = '';
+      rows.forEach(r => {
+        const isRowActive = matrixSelectedStage === r.phan_loai && !matrixSelectedHour;
+        htmlRows += `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition group ${isRowActive ? 'bg-sky-50 dark:bg-sky-950/40 font-semibold' : ''}">
+            <td class="py-2.5 px-3 text-slate-800 dark:text-slate-100 font-medium cursor-pointer hover:text-sky-600 dark:hover:text-sky-400" onclick="drilldownMatrix('${r.phan_loai}', 'tong')">
+              <span class="hover:underline">${r.phan_loai}</span>
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h0_6' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h0_6')">
+              ${r.h0_6.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h6_12' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h6_12')">
+              ${r.h6_12.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h12_24' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h12_24')">
+              ${r.h12_24.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h24_48' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h24_48')">
+              ${r.h24_48.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono ${r.h_over48 > 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-slate-700 dark:text-slate-200'} cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h_over48' ? 'bg-rose-100 dark:bg-rose-950/60 font-bold text-rose-600 dark:text-rose-300 ring-1 ring-rose-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h_over48')">
+              ${r.h_over48.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-900 dark:text-white cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'tong' ? 'bg-sky-200 dark:bg-sky-900/60 text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'tong')">
+              ${r.tong.toLocaleString('vi-VN')}
+            </td>
+          </tr>
+        `;
+      });
+      if (tbMatrix) tbMatrix.innerHTML = htmlRows;
+
+      applyOrderFiltersFromMb();
+
+      // Smooth scroll to Card 3
+      const card3 = document.getElementById('sectionCard3Orders');
+      if (card3) {
+        card3.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function clearMatrixDrilldown() {
+      matrixSelectedStage = null;
+      matrixSelectedHour = null;
+
+      const badge = document.getElementById('activeDrilldownBadge');
+      if (badge) {
+        badge.classList.add('hidden');
+        badge.classList.remove('flex');
+      }
+
+      const mbPhanLoai = document.getElementById('mbFilterPhanLoai');
+      if (mbPhanLoai) mbPhanLoai.value = 'all';
+
+      renderRealBacklogSection();
+    }
+
+    function applyOrderFiltersFromMb() {
+      const q = (document.getElementById('orderSearchInputMb')?.value || '').trim().toLowerCase();
+      const pri = document.getElementById('selectOrderPriorityMb')?.value || 'all';
+      const chk = document.getElementById('selectOrderCheckStatusMb')?.value || 'all';
+
+      const btnClear = document.getElementById('btnClearOrderSearchMb');
+      if (btnClear) {
+        if (q) btnClear.classList.remove('hidden');
+        else btnClear.classList.add('hidden');
+      }
+
+      filteredOrdersMb = rawOrders.filter(ord => {
+        const ordCode = ord.ma_don || ord.order_code || '';
+        const pkgCode = ord.ma_kien || ord.package_code || '';
+        const pl = ord.phan_loai || ord.stage || '';
+        const tinh = ord.tinh_tp || ord.destination || '';
+        const hours = parseFloat(ord.so_gio_da_nam !== undefined ? ord.so_gio_da_nam : (ord.hours_in_warehouse || 0));
+
+        // Stage Matrix Filter
+        if (matrixSelectedStage && matrixSelectedStage !== 'all' && pl !== matrixSelectedStage) {
+          return false;
+        }
+
+        // Hour Matrix Filter
+        if (matrixSelectedHour && matrixSelectedHour !== 'tong') {
+          if (matrixSelectedHour === 'h0_6' && hours > 6) return false;
+          if (matrixSelectedHour === 'h6_12' && (hours <= 6 || hours > 12)) return false;
+          if (matrixSelectedHour === 'h12_24' && (hours <= 12 || hours > 24)) return false;
+          if (matrixSelectedHour === 'h24_48' && (hours <= 24 || hours > 48)) return false;
+          if (matrixSelectedHour === 'h_over48' && hours <= 48) return false;
+        }
+
+        // Priority Dropdown Filter
+        if (pri === 'high' && hours <= 24) return false;
+        if (pri === 'med' && (hours <= 12 || hours > 24)) return false;
+        if (pri === 'normal' && hours > 12) return false;
+
+        // Checkbox status filter
+        if (chk === 'checked' && !ord.checked) return false;
+        if (chk === 'unchecked' && ord.checked) return false;
+
+        // Search text
+        if (q) {
+          const matchPkg = pkgCode.toLowerCase().includes(q);
+          const matchOrd = ordCode.toLowerCase().includes(q);
+          const matchDest = tinh.toLowerCase().includes(q);
+          const matchStage = pl.toLowerCase().includes(q);
+          if (!matchPkg && !matchOrd && !matchDest && !matchStage) return false;
+        }
+
+        return true;
+      });
+
+      const totalFiltered = filteredOrdersMb.length;
+      const checkedCount = rawOrders.filter(o => o.checked).length;
+      const uncheckCount = rawOrders.length - checkedCount;
+
+      if (document.getElementById('statFilteredCountMb')) document.getElementById('statFilteredCountMb').textContent = totalFiltered.toLocaleString('vi-VN');
+      if (document.getElementById('statCheckedCountMb')) document.getElementById('statCheckedCountMb').textContent = checkedCount.toLocaleString('vi-VN');
+      if (document.getElementById('statUncheckedCountMb')) document.getElementById('statUncheckedCountMb').textContent = uncheckCount.toLocaleString('vi-VN');
+
+      currentOrdersPageMb = 1;
+      renderOrdersTableMb();
+    }
+
+    function clearOrderSearchMb() {
+      const inp = document.getElementById('orderSearchInputMb');
+      if (inp) inp.value = '';
+      applyOrderFiltersFromMb();
+    }
+
+    function changeOrdersPerPageMb() {
+      ordersPerPageCountMb = parseInt(document.getElementById('ordersPerPageMb').value) || 25;
+      currentOrdersPageMb = 1;
+      renderOrdersTableMb();
+    }
+
+    function goToOrdersPageMb(page) {
+      currentOrdersPageMb = page;
+      renderOrdersTableMb();
+    }
+
+    function renderOrdersTableMb() {
+      const tb = document.getElementById('ordersTableBodyMb');
+      if (!tb) return;
+
+      const total = filteredOrdersMb.length;
+      const totalPages = Math.max(1, Math.ceil(total / ordersPerPageCountMb));
+      if (currentOrdersPageMb > totalPages) currentOrdersPageMb = totalPages;
+
+      const startIdx = (currentOrdersPageMb - 1) * ordersPerPageCountMb;
+      const pageItems = filteredOrdersMb.slice(startIdx, startIdx + ordersPerPageCountMb);
+
+      if (pageItems.length === 0) {
+        tb.innerHTML = `<tr><td colspan="11" class="p-8 text-center text-slate-400 font-sans">Không tìm thấy mã đơn hàng phù hợp với điều kiện lọc.</td></tr>`;
+        renderOrdersPaginationMb(0, 1);
+        return;
+      }
+
+      let html = '';
+      pageItems.forEach((ord, index) => {
+        const ordCode = ord.ma_don || ord.order_code || '';
+        const pkgCode = ord.ma_kien || ord.package_code || '';
+        const mk = ord.ma_kho || ord.warehouse_id || '20335000';
+        const khoName = ord.kho || ord.warehouse_name || 'Kho Trung Chuyển Bình Định';
+        const pl = ord.phan_loai || ord.stage || 'Đang luân chuyển đến KTC';
+        const nhom = ord.nhom || (pl.includes('luân chuyển') ? 'Đang luân chuyển đến KTC' : 'Đang ở KTC');
+        const tinh = ord.tinh_tp || ord.destination || 'Bình Định';
+        const vaoLuc = ord.vao_trang_thai_luc || ord.in_time || 'September 16, 2026';
+        const soGio = parseFloat(ord.so_gio_da_nam !== undefined ? ord.so_gio_da_nam : (ord.hours_in_warehouse || 0));
+
+        const plColor = pl.includes('Chờ xuất') ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20' : 
+                        pl.includes('luân chuyển') ? 'text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/20' :
+                        pl.includes('phân loại') ? 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/20' :
+                        'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-500/10 border-purple-200 dark:border-purple-500/20';
+
+        const hoursClass = soGio > 24 ? 'text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded' :
+                           soGio > 12 ? 'text-amber-600 dark:text-amber-300 font-semibold' : 'text-slate-700 dark:text-slate-200';
+
+        const rowBg = ord.checked ? 'bg-emerald-50/50 dark:bg-emerald-950/20' : 'hover:bg-slate-100/60 dark:hover:bg-slate-900/60';
+
+        html += `
+          <tr class="${rowBg} transition">
+            <td class="p-3 text-center border-r border-slate-200 dark:border-slate-800">
+              <input type="checkbox" onchange="toggleOrderCheckMb('${ordCode}', this.checked)" ${ord.checked ? 'checked' : ''} class="rounded bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-emerald-500 focus:ring-0 cursor-pointer">
+            </td>
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800">
+              <div class="flex items-center justify-between gap-1.5">
+                <span class="font-bold text-sky-600 dark:text-sky-400 font-mono tracking-wider">${ordCode}</span>
+                <button onclick="copyToClipboard('${ordCode}', this)" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 transition" title="Copy mã đơn">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </td>
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800">
+              <div class="flex items-center justify-between gap-1.5">
+                <span class="font-bold text-amber-600 dark:text-amber-300 font-mono tracking-wider">${pkgCode || '<span class=\"text-slate-400 font-normal\">-</span>'}</span>
+                ${pkgCode ? `<button onclick="copyToClipboard('${pkgCode}', this)" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 transition" title="Copy mã kiện"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>` : ''}
+              </div>
+            </td>
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-mono">${mk}</td>
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">${khoName}</td>
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800">
+              <span class="px-2 py-0.5 rounded text-[11px] font-semibold border ${plColor}">${pl}</span>
+            </td>
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">${nhom}</td>
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800 font-semibold text-emerald-600 dark:text-emerald-400">${tinh}</td>
+            <td class="p-3 border-r border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300">${vaoLuc}</td>
+            <td class="p-3 text-right border-r border-slate-200 dark:border-slate-800 font-mono ${hoursClass}">${soGio.toFixed(1)}</td>
+            <td class="p-3 text-center">
+              <button onclick="toggleOrderCheckMb('${ordCode}', ${!ord.checked})" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition ${ord.checked ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'}">
+                ${ord.checked ? '✓ Đã check' : 'Check đơn'}
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tb.innerHTML = html;
+      renderOrdersPaginationMb(total, totalPages);
+      lucide.createIcons();
+    }
+
+    function renderOrdersPaginationMb(total, totalPages) {
+      const infoEl = document.getElementById('paginationInfoMb');
+      const ctrlEl = document.getElementById('paginationControlsMb');
+      if (infoEl) infoEl.textContent = `Trang ${currentOrdersPageMb} / ${totalPages} (Tổng ${total.toLocaleString('vi-VN')} đơn)`;
+      if (!ctrlEl) return;
+
+      let html = `
+        <button onclick="goToOrdersPageMb(${Math.max(1, currentOrdersPageMb - 1)})" ${currentOrdersPageMb === 1 ? 'disabled class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-950 text-slate-400 border border-slate-200 dark:border-slate-800 cursor-not-allowed"' : 'class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition"'}>
+          &laquo; Trước
+        </button>
+      `;
+
+      const maxBtns = 5;
+      let startP = Math.max(1, currentOrdersPageMb - 2);
+      let endP = Math.min(totalPages, startP + maxBtns - 1);
+      if (endP - startP < maxBtns - 1) startP = Math.max(1, endP - maxBtns + 1);
+
+      for (let p = startP; p <= endP; p++) {
+        html += `
+          <button onclick="goToOrdersPageMb(${p})" class="px-2.5 py-1 rounded font-mono text-xs transition ${p === currentOrdersPageMb ? 'bg-orange-600 text-white font-bold' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'}">
+            ${p}
+          </button>
+        `;
+      }
+
+      html += `
+        <button onclick="goToOrdersPageMb(${Math.min(totalPages, currentOrdersPageMb + 1)})" ${currentOrdersPageMb === totalPages ? 'disabled class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-950 text-slate-400 border border-slate-200 dark:border-slate-800 cursor-not-allowed"' : 'class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition"'}>
+          Tiếp &raquo;
+        </button>
+      `;
+
+      ctrlEl.innerHTML = html;
+    }
+
+    async function toggleOrderCheckMb(orderCode, isChecked) {
+      const ord = rawOrders.find(o => (o.ma_don === orderCode || o.order_code === orderCode));
+      if (ord) {
+        ord.checked = isChecked;
+        applyOrderFiltersFromMb();
+        applyOrderFilters();
+        try {
+          fetch('/api/orders/toggle-check', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order_code: orderCode, checked: isChecked })
+          });
+        } catch(e) {}
+      }
+    }
+
+    function toggleMasterCheckboxMb(isChecked) {
+      filteredOrdersMb.forEach(o => o.checked = isChecked);
+      renderOrdersTableMb();
+      showToast(isChecked ? '✅ Đã đánh dấu kiểm tra các đơn hiển thị!' : 'Đã bỏ chọn các đơn');
+    }
+
+    function checkAllVisibleOrdersMb(isChecked) {
+      filteredOrdersMb.forEach(o => o.checked = isChecked);
+      const masterCb = document.getElementById('masterCheckboxMb');
+      if (masterCb) masterCb.checked = isChecked;
+      renderOrdersTableMb();
+      showToast(isChecked ? '✅ Đã đánh dấu kiểm tra tất cả!' : 'Đã bỏ chọn tất cả');
     }
 
     // ==================== REPORT 3: ORDERS & PACKAGE LOOKUP HUB ====================
