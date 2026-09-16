@@ -145,7 +145,7 @@ def sync_metabase_live():
     token_data = json.dumps({'user_id': 3007413, 'dashboard_id': 317}).encode('utf-8')
     req = urllib.request.Request(token_url, data=token_data, headers=token_headers, method='POST')
 
-    with urllib.request.urlopen(req, timeout=15) as resp:
+    with urllib.request.urlopen(req, timeout=30) as resp:
         res = json.loads(resp.read().decode('utf-8'))
         jwt_token = res['data']['token']
 
@@ -160,7 +160,7 @@ def sync_metabase_live():
         'x-metabase-locale': 'en'
     }
     req2 = urllib.request.Request(query_url, headers=query_headers, method='GET')
-    with urllib.request.urlopen(req2, timeout=20) as resp2:
+    with urllib.request.urlopen(req2, timeout=60) as resp2:
         query_res = json.loads(resp2.read().decode('utf-8'))
         rows = query_res.get('data', {}).get('rows', [])
 
@@ -176,8 +176,8 @@ def sync_metabase_live():
         'Đang luân chuyển đến KTC',
         'Tồn khác trong kho'
     ]
-    matrix_stage = {s: {'h0_6': 0, 'h6_12': 0, 'h12_24': 0, 'h24_48': 0, 'h_over48': 0, 'tong': 0} for s in stage_list}
-    wh_matrix = {'h0_6': 0, 'h6_12': 0, 'h12_24': 0, 'h24_48': 0, 'h_over48': 0, 'tong': 0}
+    matrix_stage = {s: {'h0_6': 0, 'h6_12': 0, 'h12_24': 0, 'h24_48': 0, 'h48_72': 0, 'h72_96': 0, 'h_over96': 0, 'h_over48': 0, 'tong': 0} for s in stage_list}
+    wh_matrix = {'h0_6': 0, 'h6_12': 0, 'h12_24': 0, 'h24_48': 0, 'h48_72': 0, 'h72_96': 0, 'h_over96': 0, 'h_over48': 0, 'tong': 0}
 
     for idx, r in enumerate(rows):
         ma_don = str(r[0]) if len(r) > 0 and r[0] is not None else ''
@@ -195,13 +195,27 @@ def sync_metabase_live():
             try: so_gio = round(float(r[8]), 1)
             except: so_gio = 0.0
             
-        khung_gio = str(r[9]) if len(r) > 9 and r[9] is not None else ''
-        if not khung_gio:
-            if so_gio <= 6: khung_gio = '0-6h'
-            elif so_gio <= 12: khung_gio = '6-12h'
-            elif so_gio <= 24: khung_gio = '12-24h'
-            elif so_gio <= 48: khung_gio = '24-48h'
-            else: khung_gio = 'trên 48h'
+        if so_gio <= 6:
+            khung_gio = '0-6h'
+            h_key = 'h0_6'
+        elif so_gio <= 12:
+            khung_gio = '6-12h'
+            h_key = 'h6_12'
+        elif so_gio <= 24:
+            khung_gio = '12-24h'
+            h_key = 'h12_24'
+        elif so_gio <= 48:
+            khung_gio = '24-48h'
+            h_key = 'h24_48'
+        elif so_gio <= 72:
+            khung_gio = '48-72h'
+            h_key = 'h48_72'
+        elif so_gio <= 96:
+            khung_gio = '72-96h'
+            h_key = 'h72_96'
+        else:
+            khung_gio = 'trên 96h'
+            h_key = 'h_over96'
             
         trong_luong = 0.0
         if len(r) > 10 and r[10] is not None:
@@ -210,8 +224,6 @@ def sync_metabase_live():
                 total_weight += trong_luong
             except: trong_luong = 0.0
             
-        h_key = 'h0_6' if khung_gio == '0-6h' else 'h6_12' if khung_gio == '6-12h' else 'h12_24' if khung_gio == '12-24h' else 'h24_48' if khung_gio == '24-48h' else 'h_over48'
-        
         st_match = phan_loai
         if phan_loai not in matrix_stage:
             if 'phân loại' in phan_loai.lower(): st_match = 'Đang phân loại' if 'đang' in phan_loai.lower() else 'Chờ phân loại'
@@ -222,6 +234,10 @@ def sync_metabase_live():
             
         matrix_stage[st_match][h_key] += 1
         matrix_stage[st_match]['tong'] += 1
+        if so_gio > 48:
+            matrix_stage[st_match]['h_over48'] += 1
+            wh_matrix['h_over48'] += 1
+
         wh_matrix[h_key] += 1
         wh_matrix['tong'] += 1
 
@@ -269,6 +285,9 @@ def sync_metabase_live():
             'h6_12': m['h6_12'],
             'h12_24': m['h12_24'],
             'h24_48': m['h24_48'],
+            'h48_72': m['h48_72'],
+            'h72_96': m['h72_96'],
+            'h_over96': m['h_over96'],
             'h_over48': m['h_over48'],
             'tong': m['tong']
         })
@@ -290,6 +309,9 @@ def sync_metabase_live():
                 'h6_12': wh_matrix['h6_12'],
                 'h12_24': wh_matrix['h12_24'],
                 'h24_48': wh_matrix['h24_48'],
+                'h48_72': wh_matrix['h48_72'],
+                'h72_96': wh_matrix['h72_96'],
+                'h_over96': wh_matrix['h_over96'],
                 'h_over48': wh_matrix['h_over48'],
                 'tong': wh_matrix['tong']
             }

@@ -453,8 +453,18 @@
                 </span>
               </th>
               <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
-                  trên 48h
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 font-semibold text-xs">
+                  48-72h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 font-semibold text-xs">
+                  72-96h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-rose-100 dark:bg-rose-900/80 text-rose-700 dark:text-rose-300 font-bold text-xs">
+                  trên 96h
                 </span>
               </th>
               <th class="py-2.5 px-3 text-right">
@@ -533,8 +543,18 @@
                 </span>
               </th>
               <th class="py-2.5 px-3 text-right">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#e6f4ff] dark:bg-sky-950/80 text-[#0066cc] dark:text-sky-400 font-semibold text-xs">
-                  trên 48h
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 font-semibold text-xs">
+                  48-72h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 font-semibold text-xs">
+                  72-96h
+                </span>
+              </th>
+              <th class="py-2.5 px-3 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-rose-100 dark:bg-rose-900/80 text-rose-700 dark:text-rose-300 font-bold text-xs">
+                  trên 96h
                 </span>
               </th>
               <th class="py-2.5 px-3 text-right">
@@ -607,7 +627,10 @@
         <div class="md:col-span-3">
           <select id="selectOrderPriorityMb" onchange="applyOrderFiltersFromMb()" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-orange-500 transition">
             <option value="all">Tất cả thời gian tồn</option>
-            <option value="high">🔴 Tồn >24h (Cấp bách)</option>
+            <option value="over96">🚨 Tồn >96h (Quá hạn nghiêm trọng)</option>
+            <option value="h72_96">🟣 Tồn 72-96h (Báo động)</option>
+            <option value="h48_72">🔴 Tồn 48-72h (Cấp bách)</option>
+            <option value="high">🟠 Tồn >24h</option>
             <option value="med">🟡 Tồn 12-24h (Cần xử lý)</option>
             <option value="normal">🟢 Tồn <12h (Bình thường)</option>
           </select>
@@ -812,7 +835,10 @@
         <div class="md:col-span-2">
           <select id="selectOrderPriority" onchange="applyOrderFilters()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
             <option value="all">Tất cả thời gian</option>
-            <option value="high">🔴 Tồn >24h (Cấp bách)</option>
+            <option value="over96">🚨 Tồn >96h (Quá hạn nghiêm trọng)</option>
+            <option value="h72_96">🟣 Tồn 72-96h (Báo động)</option>
+            <option value="h48_72">🔴 Tồn 48-72h (Cấp bách)</option>
+            <option value="high">🟠 Tồn >24h</option>
             <option value="med">🟡 Tồn 12-24h (Cần xử lý)</option>
             <option value="normal">🟢 Tồn <12h (Bình thường)</option>
           </select>
@@ -1477,15 +1503,26 @@
       const rows = rawBacklogData.ton_theo_phan_loai || [];
 
       let htmlRows = '';
-      let sum06 = 0, sum612 = 0, sum1224 = 0, sum2448 = 0, sumOver48 = 0, sumTotal = 0;
+      let sum06 = 0, sum612 = 0, sum1224 = 0, sum2448 = 0, sum4872 = 0, sum7296 = 0, sumOver96 = 0, sumTotal = 0;
 
       rows.forEach(r => {
-        sum06 += r.h0_6;
-        sum612 += r.h6_12;
-        sum1224 += r.h12_24;
-        sum2448 += r.h24_48;
-        sumOver48 += r.h_over48;
-        sumTotal += r.tong;
+        const h0_6 = r.h0_6 || 0;
+        const h6_12 = r.h6_12 || 0;
+        const h12_24 = r.h12_24 || 0;
+        const h24_48 = r.h24_48 || 0;
+        const h48_72 = r.h48_72 !== undefined ? r.h48_72 : 0;
+        const h72_96 = r.h72_96 !== undefined ? r.h72_96 : 0;
+        const h_over96 = r.h_over96 !== undefined ? r.h_over96 : (r.h_over48 || 0);
+        const tong = r.tong || 0;
+
+        sum06 += h0_6;
+        sum612 += h6_12;
+        sum1224 += h12_24;
+        sum2448 += h24_48;
+        sum4872 += h48_72;
+        sum7296 += h72_96;
+        sumOver96 += h_over96;
+        sumTotal += tong;
 
         const isRowActive = matrixSelectedStage === r.phan_loai && !matrixSelectedHour;
 
@@ -1494,23 +1531,29 @@
             <td class="py-2.5 px-3 text-slate-800 dark:text-slate-100 font-medium cursor-pointer hover:text-sky-600 dark:hover:text-sky-400" onclick="drilldownMatrix('${r.phan_loai}', 'tong')">
               <span class="hover:underline">${r.phan_loai}</span>
             </td>
-            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h0_6' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h0_6')" title="Xem ${r.h0_6.toLocaleString('vi-VN')} đơn ${r.phan_loai} (0-6h)">
-              ${r.h0_6.toLocaleString('vi-VN')}
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h0_6' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h0_6')" title="Xem ${h0_6.toLocaleString('vi-VN')} đơn ${r.phan_loai} (0-6h)">
+              ${h0_6.toLocaleString('vi-VN')}
             </td>
-            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h6_12' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h6_12')" title="Xem ${r.h6_12.toLocaleString('vi-VN')} đơn ${r.phan_loai} (6-12h)">
-              ${r.h6_12.toLocaleString('vi-VN')}
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h6_12' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h6_12')" title="Xem ${h6_12.toLocaleString('vi-VN')} đơn ${r.phan_loai} (6-12h)">
+              ${h6_12.toLocaleString('vi-VN')}
             </td>
-            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h12_24' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h12_24')" title="Xem ${r.h12_24.toLocaleString('vi-VN')} đơn ${r.phan_loai} (12-24h)">
-              ${r.h12_24.toLocaleString('vi-VN')}
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h12_24' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h12_24')" title="Xem ${h12_24.toLocaleString('vi-VN')} đơn ${r.phan_loai} (12-24h)">
+              ${h12_24.toLocaleString('vi-VN')}
             </td>
-            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h24_48' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h24_48')" title="Xem ${r.h24_48.toLocaleString('vi-VN')} đơn ${r.phan_loai} (24-48h)">
-              ${r.h24_48.toLocaleString('vi-VN')}
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h24_48' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h24_48')" title="Xem ${h24_48.toLocaleString('vi-VN')} đơn ${r.phan_loai} (24-48h)">
+              ${h24_48.toLocaleString('vi-VN')}
             </td>
-            <td class="py-2.5 px-3 text-right font-mono ${r.h_over48 > 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-slate-700 dark:text-slate-200'} cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h_over48' ? 'bg-rose-100 dark:bg-rose-950/60 font-bold text-rose-600 dark:text-rose-300 ring-1 ring-rose-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h_over48')" title="Xem ${r.h_over48.toLocaleString('vi-VN')} đơn ${r.phan_loai} (>48h)">
-              ${r.h_over48.toLocaleString('vi-VN')}
+            <td class="py-2.5 px-3 text-right font-mono ${h48_72 > 0 ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-slate-700 dark:text-slate-200'} cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h48_72' ? 'bg-amber-100 dark:bg-amber-950/60 font-bold text-amber-600 dark:text-amber-300 ring-1 ring-amber-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h48_72')" title="Xem ${h48_72.toLocaleString('vi-VN')} đơn ${r.phan_loai} (48-72h)">
+              ${h48_72.toLocaleString('vi-VN')}
             </td>
-            <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-900 dark:text-white cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'tong' ? 'bg-sky-200 dark:bg-sky-900/60 text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'tong')" title="Xem toàn bộ ${r.tong.toLocaleString('vi-VN')} đơn ${r.phan_loai}">
-              ${r.tong.toLocaleString('vi-VN')}
+            <td class="py-2.5 px-3 text-right font-mono ${h72_96 > 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-slate-700 dark:text-slate-200'} cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h72_96' ? 'bg-rose-100 dark:bg-rose-950/60 font-bold text-rose-600 dark:text-rose-300 ring-1 ring-rose-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h72_96')" title="Xem ${h72_96.toLocaleString('vi-VN')} đơn ${r.phan_loai} (72-96h)">
+              ${h72_96.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono ${h_over96 > 0 ? 'text-rose-700 dark:text-rose-400 font-extrabold' : 'text-slate-700 dark:text-slate-200'} cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h_over96' ? 'bg-rose-200 dark:bg-rose-900/70 font-extrabold text-rose-700 dark:text-rose-200 ring-1 ring-rose-500' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h_over96')" title="Xem ${h_over96.toLocaleString('vi-VN')} đơn ${r.phan_loai} (>96h)">
+              ${h_over96.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-900 dark:text-white cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'tong' ? 'bg-sky-200 dark:bg-sky-900/60 text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'tong')" title="Xem toàn bộ ${tong.toLocaleString('vi-VN')} đơn ${r.phan_loai}">
+              ${tong.toLocaleString('vi-VN')}
             </td>
           </tr>
         `;
@@ -1526,7 +1569,9 @@
             <td class="py-2.5 px-3 text-right font-mono text-slate-800 dark:text-slate-200 cursor-pointer hover:text-sky-500" onclick="drilldownMatrix('all', 'h6_12')">${sum612.toLocaleString('vi-VN')}</td>
             <td class="py-2.5 px-3 text-right font-mono text-slate-800 dark:text-slate-200 cursor-pointer hover:text-sky-500" onclick="drilldownMatrix('all', 'h12_24')">${sum1224.toLocaleString('vi-VN')}</td>
             <td class="py-2.5 px-3 text-right font-mono text-slate-800 dark:text-slate-200 cursor-pointer hover:text-sky-500" onclick="drilldownMatrix('all', 'h24_48')">${sum2448.toLocaleString('vi-VN')}</td>
-            <td class="py-2.5 px-3 text-right font-mono text-rose-600 dark:text-rose-400 cursor-pointer hover:text-rose-500" onclick="drilldownMatrix('all', 'h_over48')">${sumOver48.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-amber-600 dark:text-amber-400 cursor-pointer hover:text-amber-500" onclick="drilldownMatrix('all', 'h48_72')">${sum4872.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-rose-600 dark:text-rose-400 cursor-pointer hover:text-rose-500" onclick="drilldownMatrix('all', 'h72_96')">${sum7296.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-rose-700 dark:text-rose-300 font-extrabold cursor-pointer hover:text-rose-500" onclick="drilldownMatrix('all', 'h_over96')">${sumOver96.toLocaleString('vi-VN')}</td>
             <td class="py-2.5 px-3 text-right font-mono text-orange-600 dark:text-orange-400 text-sm cursor-pointer hover:underline" onclick="drilldownMatrix('all', 'tong')">${sumTotal.toLocaleString('vi-VN')}</td>
           </tr>
         `;
@@ -1540,16 +1585,27 @@
       const wRows = rawBacklogData.ton_theo_kho || [];
       let htmlW = '';
       wRows.forEach(w => {
+        const h0_6 = w.h0_6 || 0;
+        const h6_12 = w.h6_12 || 0;
+        const h12_24 = w.h12_24 || 0;
+        const h24_48 = w.h24_48 || 0;
+        const h48_72 = w.h48_72 !== undefined ? w.h48_72 : 0;
+        const h72_96 = w.h72_96 !== undefined ? w.h72_96 : 0;
+        const h_over96 = w.h_over96 !== undefined ? w.h_over96 : (w.h_over48 || 0);
+        const tong = w.tong || 0;
+
         htmlW += `
           <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
             <td class="py-2.5 px-3 font-mono text-slate-500 dark:text-slate-400">${w.ma_kho}</td>
             <td class="py-2.5 px-3 font-semibold text-slate-900 dark:text-white cursor-pointer hover:text-sky-500" onclick="drilldownMatrix('all', 'tong')">${w.kho}</td>
-            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h0_6')">${w.h0_6.toLocaleString('vi-VN')}</td>
-            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h6_12')">${w.h6_12.toLocaleString('vi-VN')}</td>
-            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h12_24')">${w.h12_24.toLocaleString('vi-VN')}</td>
-            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h24_48')">${w.h24_48.toLocaleString('vi-VN')}</td>
-            <td class="py-2.5 px-3 text-right font-mono text-rose-600 dark:text-rose-400 font-bold cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h_over48')">${w.h_over48.toLocaleString('vi-VN')}</td>
-            <td class="py-2.5 px-3 text-right font-mono font-bold text-orange-600 dark:text-orange-400 text-sm cursor-pointer hover:underline" onclick="drilldownMatrix('all', 'tong')">${w.tong.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h0_6')">${h0_6.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h6_12')">${h6_12.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h12_24')">${h12_24.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h24_48')">${h24_48.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-amber-600 dark:text-amber-400 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h48_72')">${h48_72.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-rose-600 dark:text-rose-400 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h72_96')">${h72_96.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-rose-700 dark:text-rose-300 font-extrabold cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition" onclick="drilldownMatrix('all', 'h_over96')">${h_over96.toLocaleString('vi-VN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-orange-600 dark:text-orange-400 text-sm cursor-pointer hover:underline" onclick="drilldownMatrix('all', 'tong')">${tong.toLocaleString('vi-VN')}</td>
           </tr>
         `;
       });
@@ -1578,6 +1634,9 @@
         'h6_12': '6-12h',
         'h12_24': '12-24h',
         'h24_48': '24-48h',
+        'h48_72': '48-72h',
+        'h72_96': '72-96h',
+        'h_over96': 'trên 96h',
         'h_over48': 'trên 48h',
         'tong': 'Tất cả mốc giờ'
       };
@@ -1605,6 +1664,15 @@
       const rows = rawBacklogData.ton_theo_phan_loai || [];
       let htmlRows = '';
       rows.forEach(r => {
+        const h0_6 = r.h0_6 || 0;
+        const h6_12 = r.h6_12 || 0;
+        const h12_24 = r.h12_24 || 0;
+        const h24_48 = r.h24_48 || 0;
+        const h48_72 = r.h48_72 !== undefined ? r.h48_72 : 0;
+        const h72_96 = r.h72_96 !== undefined ? r.h72_96 : 0;
+        const h_over96 = r.h_over96 !== undefined ? r.h_over96 : (r.h_over48 || 0);
+        const tong = r.tong || 0;
+
         const isRowActive = matrixSelectedStage === r.phan_loai && !matrixSelectedHour;
         htmlRows += `
           <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition group ${isRowActive ? 'bg-sky-50 dark:bg-sky-950/40 font-semibold' : ''}">
@@ -1612,22 +1680,28 @@
               <span class="hover:underline">${r.phan_loai}</span>
             </td>
             <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h0_6' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h0_6')">
-              ${r.h0_6.toLocaleString('vi-VN')}
+              ${h0_6.toLocaleString('vi-VN')}
             </td>
             <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h6_12' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h6_12')">
-              ${r.h6_12.toLocaleString('vi-VN')}
+              ${h6_12.toLocaleString('vi-VN')}
             </td>
             <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h12_24' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h12_24')">
-              ${r.h12_24.toLocaleString('vi-VN')}
+              ${h12_24.toLocaleString('vi-VN')}
             </td>
             <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h24_48' ? 'bg-sky-200 dark:bg-sky-900/60 font-bold text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h24_48')">
-              ${r.h24_48.toLocaleString('vi-VN')}
+              ${h24_48.toLocaleString('vi-VN')}
             </td>
-            <td class="py-2.5 px-3 text-right font-mono ${r.h_over48 > 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-slate-700 dark:text-slate-200'} cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h_over48' ? 'bg-rose-100 dark:bg-rose-950/60 font-bold text-rose-600 dark:text-rose-300 ring-1 ring-rose-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h_over48')">
-              ${r.h_over48.toLocaleString('vi-VN')}
+            <td class="py-2.5 px-3 text-right font-mono ${h48_72 > 0 ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-slate-700 dark:text-slate-200'} cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h48_72' ? 'bg-amber-100 dark:bg-amber-950/60 font-bold text-amber-600 dark:text-amber-300 ring-1 ring-amber-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h48_72')">
+              ${h48_72.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono ${h72_96 > 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : 'text-slate-700 dark:text-slate-200'} cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h72_96' ? 'bg-rose-100 dark:bg-rose-950/60 font-bold text-rose-600 dark:text-rose-300 ring-1 ring-rose-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h72_96')">
+              ${h72_96.toLocaleString('vi-VN')}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono ${h_over96 > 0 ? 'text-rose-700 dark:text-rose-400 font-extrabold' : 'text-slate-700 dark:text-slate-200'} cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'h_over96' ? 'bg-rose-200 dark:bg-rose-900/70 font-extrabold text-rose-700 dark:text-rose-200 ring-1 ring-rose-500' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'h_over96')">
+              ${h_over96.toLocaleString('vi-VN')}
             </td>
             <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-900 dark:text-white cursor-pointer hover:bg-sky-100/70 dark:hover:bg-sky-900/40 rounded transition ${matrixSelectedStage === r.phan_loai && matrixSelectedHour === 'tong' ? 'bg-sky-200 dark:bg-sky-900/60 text-sky-600 dark:text-sky-300 ring-1 ring-sky-400' : ''}" onclick="drilldownMatrix('${r.phan_loai}', 'tong')">
-              ${r.tong.toLocaleString('vi-VN')}
+              ${tong.toLocaleString('vi-VN')}
             </td>
           </tr>
         `;
@@ -1695,10 +1769,16 @@
           if (matrixSelectedHour === 'h6_12' && (hours <= 6 || hours > 12)) return false;
           if (matrixSelectedHour === 'h12_24' && (hours <= 12 || hours > 24)) return false;
           if (matrixSelectedHour === 'h24_48' && (hours <= 24 || hours > 48)) return false;
+          if (matrixSelectedHour === 'h48_72' && (hours <= 48 || hours > 72)) return false;
+          if (matrixSelectedHour === 'h72_96' && (hours <= 72 || hours > 96)) return false;
+          if (matrixSelectedHour === 'h_over96' && hours <= 96) return false;
           if (matrixSelectedHour === 'h_over48' && hours <= 48) return false;
         }
 
         // Priority Dropdown Filter
+        if (pri === 'over96' && hours <= 96) return false;
+        if (pri === 'h72_96' && (hours <= 72 || hours > 96)) return false;
+        if (pri === 'h48_72' && (hours <= 48 || hours > 72)) return false;
         if (pri === 'high' && hours <= 24) return false;
         if (pri === 'med' && (hours <= 12 || hours > 24)) return false;
         if (pri === 'normal' && hours > 12) return false;
@@ -2014,6 +2094,9 @@
         }
 
         // Priority / Hour filter
+        if (pri === 'over96' && hours <= 96) return false;
+        if (pri === 'h72_96' && (hours <= 72 || hours > 96)) return false;
+        if (pri === 'h48_72' && (hours <= 48 || hours > 72)) return false;
         if (pri === 'high' && hours <= 24) return false;
         if (pri === 'med' && (hours <= 12 || hours > 24)) return false;
         if (pri === 'normal' && hours > 12) return false;
