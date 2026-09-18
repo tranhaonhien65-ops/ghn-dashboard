@@ -386,10 +386,54 @@
           <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
           <span id="btnExportAllBacklogText">Tải Excel Toàn Bộ Đơn</span>
         </button>
-        <button onclick="switchReport('orders')" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-ghn-orange to-orange-600 hover:from-ghn-orange-hover hover:to-orange-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition">
+        <button onclick="document.getElementById('sectionCard3Orders')?.scrollIntoView({behavior:'smooth', block:'start'})" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-ghn-orange to-orange-600 hover:from-ghn-orange-hover hover:to-orange-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-orange-500/20 active:scale-95 transition">
           <i data-lucide="search" class="w-4 h-4"></i>
           <span>Tra Cứu / Quét Barcode</span>
         </button>
+      </div>
+    </div>
+
+    <!-- 1. TÌNH HÌNH CHUNG (KPI CARDS - CHUẨN GIAO DIỆN METABASE) -->
+    <div class="space-y-2.5">
+      <div class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 px-1">
+        <span>1 &bull; TÌNH HÌNH CHUNG &mdash; Hai ô ngưỡng đếm theo giờ chính xác, không theo nấc.</span>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <!-- Tổng đơn tồn -->
+        <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 md:p-5 ghn-card-shadow transition-colors">
+          <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span>Tổng đơn tồn</span>
+            <span class="text-slate-300 dark:text-slate-600">•••</span>
+          </div>
+          <div id="kpiMbTotalOrders" class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white font-mono mt-2 tracking-tight">--</div>
+        </div>
+
+        <!-- Khối lượng đang tồn -->
+        <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 md:p-5 ghn-card-shadow transition-colors">
+          <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span>Khối lượng đang tồn</span>
+            <span class="text-slate-300 dark:text-slate-600">•••</span>
+          </div>
+          <div id="kpiMbTotalWeight" class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white font-mono mt-2 tracking-tight">--</div>
+        </div>
+
+        <!-- Tồn quá 24 giờ -->
+        <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 md:p-5 ghn-card-shadow transition-colors">
+          <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span>Tồn quá 24 giờ</span>
+            <span class="text-slate-300 dark:text-slate-600">•••</span>
+          </div>
+          <div id="kpiMbOver24h" class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white font-mono mt-2 tracking-tight">--</div>
+        </div>
+
+        <!-- Tồn quá 48 giờ -->
+        <div class="bg-white dark:bg-[#111c2d] border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 md:p-5 ghn-card-shadow transition-colors">
+          <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span>Tồn quá 48 giờ</span>
+            <span class="text-slate-300 dark:text-slate-600">•••</span>
+          </div>
+          <div id="kpiMbOver48h" class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white font-mono mt-2 tracking-tight">--</div>
+        </div>
       </div>
     </div>
 
@@ -1417,22 +1461,25 @@
         region: "Miền Trung"
       },
       summary: {
-        total_orders: 6380,
-        total_packages: 3620,
-        total_weight_kg: 42645.29,
-        total_weight_ton: 42.65,
-        last_updated: "2026-09-16 12:13:47"
+        total_orders: 6818,
+        total_packages: 3407,
+        total_weight_kg: 41175.67,
+        total_weight_ton: 41.18,
+        last_updated: "2026-09-18 08:16:52"
       },
+      total_orders: 6818,
+      total_packages: 3407,
+      total_weight_kg: 41175.67,
       ton_theo_phan_loai: [
-        { phan_loai: "Chờ phân loại", h0_6: 178, h6_12: 1, h12_24: 14, h24_48: 0, h48_72: 0, h72_96: 0, h_over96: 11, h_over48: 11, tong: 204, nhom: "Đang ở KTC" },
-        { phan_loai: "Đang phân loại", h0_6: 18, h6_12: 1, h12_24: 6, h24_48: 0, h48_72: 1, h72_96: 1, h_over96: 4, h_over48: 6, tong: 31, nhom: "Đang ở KTC" },
-        { phan_loai: "Chờ xuất kiện chuyển tiếp", h0_6: 844, h6_12: 0, h12_24: 44, h24_48: 0, h48_72: 0, h72_96: 0, h_over96: 1, h_over48: 1, tong: 889, nhom: "Đang ở KTC" },
-        { phan_loai: "Chờ xuất", h0_6: 386, h6_12: 59, h12_24: 56, h24_48: 3, h48_72: 2, h72_96: 0, h_over96: 1, h_over48: 3, tong: 507, nhom: "Đang ở KTC" },
-        { phan_loai: "Đang luân chuyển đến KTC", h0_6: 427, h6_12: 3576, h12_24: 737, h24_48: 1, h48_72: 0, h72_96: 0, h_over96: 7, h_over48: 7, tong: 4748, nhom: "Đang luân chuyển đến KTC" },
-        { phan_loai: "Tồn khác trong kho", h0_6: 0, h6_12: 1, h12_24: 0, h24_48: 0, h48_72: 0, h72_96: 0, h_over96: 0, h_over48: 0, tong: 1, nhom: "Đang ở KTC" }
+        { phan_loai: "Chờ phân loại", h0_6: 1894, h6_12: 1, h12_24: 1, h24_48: 0, h48_72: 0, h72_96: 0, h_over96: 8, h_over48: 8, tong: 1904, nhom: "Đang ở KTC" },
+        { phan_loai: "Đang phân loại", h0_6: 9, h6_12: 0, h12_24: 4, h24_48: 0, h48_72: 0, h72_96: 0, h_over96: 5, h_over48: 5, tong: 18, nhom: "Đang ở KTC" },
+        { phan_loai: "Chờ xuất kiện chuyển tiếp", h0_6: 6, h6_12: 3, h12_24: 4, h24_48: 0, h48_72: 0, h72_96: 0, h_over96: 0, h_over48: 0, tong: 13, nhom: "Đang ở KTC" },
+        { phan_loai: "Chờ xuất", h0_6: 1095, h6_12: 31, h12_24: 13, h24_48: 0, h48_72: 0, h72_96: 0, h_over96: 3, h_over48: 3, tong: 1142, nhom: "Đang ở KTC" },
+        { phan_loai: "Đang luân chuyển đến KTC", h0_6: 70, h6_12: 2450, h12_24: 1208, h24_48: 3, h48_72: 2, h72_96: 0, h_over96: 7, h_over48: 9, tong: 3740, nhom: "Đang luân chuyển đến KTC" },
+        { phan_loai: "Tồn khác trong kho", h0_6: 0, h6_12: 0, h12_24: 1, h24_48: 0, h48_72: 0, h72_96: 0, h_over96: 0, h_over48: 0, tong: 1, nhom: "Đang ở KTC" }
       ],
       ton_theo_kho: [
-        { ma_kho: "20335000", kho: "Kho Trung Chuyển Bình Định", h0_6: 1853, h6_12: 3638, h12_24: 857, h24_48: 4, h48_72: 3, h72_96: 1, h_over96: 24, h_over48: 28, tong: 6380 }
+        { ma_kho: "20335000", kho: "Kho Trung Chuyển Bình Định", h0_6: 3074, h6_12: 2485, h12_24: 1231, h24_48: 3, h48_72: 2, h72_96: 0, h_over96: 23, h_over48: 25, tong: 6818 }
       ]
     };
     const realBinhDinhBacklog = rawBacklogData;
@@ -1457,8 +1504,10 @@
         if (icon) icon.setAttribute('data-lucide', 'sun');
       }
       lucide.createIcons();
+      renderRealBacklogSection();
       fetchDashboardData();
       fetchBacklogData();
+      fetchOrdersData();
       startAutoRefresh(1800);
     });
 
@@ -1988,6 +2037,24 @@
       if (btnExportAllBacklogText) {
         btnExportAllBacklogText.textContent = `Tải Excel Toàn Bộ (${sumTotal.toLocaleString('vi-VN')} Đơn)`;
       }
+
+      // Populate 4 KPI cards (1. TÌNH HÌNH CHUNG)
+      const kpiTotalOrders = document.getElementById('kpiMbTotalOrders');
+      const kpiTotalWeight = document.getElementById('kpiMbTotalWeight');
+      const kpiOver24h = document.getElementById('kpiMbOver24h');
+      const kpiOver48h = document.getElementById('kpiMbOver48h');
+
+      const sumOver24 = sum2448 + sum4872 + sum7296 + sumOver96;
+      const sumOver48 = sum4872 + sum7296 + sumOver96;
+
+      if (kpiTotalOrders) kpiTotalOrders.textContent = sumTotal.toLocaleString('vi-VN');
+      if (kpiTotalWeight) {
+        const weightKg = rawBacklogData.total_weight_kg || (rawBacklogData.summary && rawBacklogData.summary.total_weight_kg) || 41175.67;
+        const tonVal = (weightKg / 1000).toFixed(0);
+        kpiTotalWeight.textContent = `${tonVal} tấn`;
+      }
+      if (kpiOver24h) kpiOver24h.textContent = sumOver24.toLocaleString('vi-VN');
+      if (kpiOver48h) kpiOver48h.textContent = sumOver48.toLocaleString('vi-VN');
 
       // 2. Render Card 2: Tồn theo kho × số giờ đã nằm
       const tbWarehouse = document.getElementById('warehouseMatrixTableBody');
