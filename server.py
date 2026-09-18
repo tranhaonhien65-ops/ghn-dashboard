@@ -348,13 +348,18 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
 def auto_sync_metabase_worker():
     """Background worker that periodically syncs data from GHN Metabase every 30 minutes."""
     import datetime
+    from updater import get_ghn_config
     # First sync after 10 seconds on startup
     time.sleep(10)
     while True:
         try:
             now = datetime.datetime.now().strftime('%H:%M:%S')
             print(f"[Auto-Sync {now}] Đang đồng bộ từ GHN Metabase...")
-            count = sync_metabase_live()
+            # Always pass override_token to force fetching a fresh JWT each cycle
+            # (saved JWT expires in ~30-60 min which causes silent failures)
+            cfg = get_ghn_config()
+            ghn_token = cfg.get('token', '')
+            count = sync_metabase_live(override_token=ghn_token)
             now2 = datetime.datetime.now().strftime('%H:%M:%S')
             print(f"[Auto-Sync {now2}] ✅ Đồng bộ thành công {count} đơn hàng!")
         except Exception as e:
